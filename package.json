@@ -16,7 +16,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.2",
     "ioredis": "^4.28.5",
-    "mysql2-promise": "^0.1.4",
+    "mariadb": "^3.0.0",
     "request": "^2.88.2"
   }
 }

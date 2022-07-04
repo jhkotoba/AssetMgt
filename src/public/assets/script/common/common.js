@@ -4,5 +4,4 @@ const constant = {
 	}
 }
 
-
 export { constant }

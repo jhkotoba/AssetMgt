@@ -43,15 +43,21 @@ let redisClient = new redis({
 app.use(
   session({
     store: new redisStore({ client: redisClient, prefix : "session:" }),
-    saveUninitialized: true,
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    cookie: { maxAge: 86400 }
+    HttpOnly: true, // 값을 true로 하면 사용자가 자바스크립트를 통해서 세션을 사용할 수 없도록 강제함
+    secure: process.argv[2] === 'dev' ? false : true, // 값을 true로 하면 https에서만 세션을 주고받을 수 있음. http에서는 세션을 주고받는 것이 불가능
+    saveUninitialized: true, // 세션에 저장할 때 초기화 여부
+    secret: process.env.SESSION_SECRET, // 세션을 발급할 때 사용되는 키
+    resave: false, // 세션을 저장하고 불러올 때 세션을 다시 저장할지 여부를 결정
+    cookie: { maxAge: 86400 } // 쿠키의 생명 기간
   })
 );
 
 // 정적자원
 app.use(express.static(__dirname + "\\public\\assets"));
+
+// 세션필터
+const sessionFilter = require("./config/sessionFilter.js");
+app.use(sessionFilter);
 
 // 메인
 const main = require("./routes/main.js");
@@ -76,6 +82,7 @@ app.use((request, response, next) => {
 
 //500
 app.use((error, request, response, next) => {
+  console.error(error);
   response.status(500).send("500");
 });
 
