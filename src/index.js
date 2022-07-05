@@ -6,11 +6,14 @@ const dotenv = require("dotenv");
 // 개발, 운영 분기처리
 dotenv.config({ path: process.argv[2] === 'dev' ? '.env.dev' : '.env' });
 
+// 전역상수
+global.basePath =  __dirname + '/server';
+global.public =  __dirname + '/public';
+
 // 서버 호스트
 const hostname = process.env.HOST_NAME;
 // 서버 포트
 const port = process.env.PORT;
-
 /**
  * Node.js를 위한 빠르고 개방적인 간결한 웹 프레임워크
  */
@@ -56,15 +59,15 @@ app.use(
 app.use(express.static(__dirname + "\\public\\assets"));
 
 // 세션필터
-const sessionFilter = require("./config/sessionFilter.js");
+const sessionFilter = require(`${basePath}/config/sessionFilter.js`);
 app.use(sessionFilter);
 
 // 메인
-const main = require("./routes/main.js");
+const main = require(`${basePath}/routes/main.js`);
 app.use("/", main);
 
 // 로그인
-const login = require("./routes/login.js");
+const login = require(`${basePath}/routes/login.js`);
 app.use("/login", login);
 
 // 계좌관리

@@ -1,3 +1,0 @@
-exports.loginProcess = async () => {
-
-}
