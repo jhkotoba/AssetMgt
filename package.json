@@ -17,6 +17,7 @@
     "express-session": "^1.17.2",
     "ioredis": "^4.28.5",
     "mariadb": "^3.0.0",
+    "nodejs-jsencrypt": "^3.0.0-rc.1",
     "request": "^2.88.2"
   }
 }

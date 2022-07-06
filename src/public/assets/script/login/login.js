@@ -27,5 +27,5 @@ window.addEventListener("DOMContentLoaded", event => {
 	}
 
 	// 메인 페이지 이동
-	// window.location.href = "/";
+	window.location.href = "/";
 }

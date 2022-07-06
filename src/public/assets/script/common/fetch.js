@@ -34,7 +34,7 @@ export const postFetch = param => {
 			cache: 'default',
 			credentials: 'same-origin',
 			headers: {
-			'Content-Type': 'application/json',
+				'Content-Type': 'application/json',
 			},
 			redirect: 'follow',
 			referrer: 'no-referrer',
