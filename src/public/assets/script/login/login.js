@@ -9,7 +9,7 @@ window.addEventListener("DOMContentLoaded", event => {
 
     // 로그인 버튼
 	login.addEventListener('click', loginProcess);
-	password.addEventListener('keyup', event => event.keyCode === 13 ? loginProcess(event) : null)
+	password.addEventListener('keyup', event => event.keyCode === 13 ? loginProcess(event) : null);
 });
 
 /**
