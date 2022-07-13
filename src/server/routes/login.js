@@ -11,4 +11,7 @@ router.get("/join", async (request, response) => response.sendFile(`${public}/vi
 // 로그인 처리
 router.post("/loginProcess", loginController.loginProcess);
 
+// 회원가입 처리
+router.post("/joinProcess", loginController.joinProcess);
+
 module.exports = router;

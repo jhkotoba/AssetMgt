@@ -2,6 +2,11 @@ const crypto = require('crypto');
 const jsencrypt = require(`nodejs-jsencrypt`);
 const userRepository = require(`${basePath}/repository/user/userRepository.js`);
 
+/**
+ * 회원체크 조회
+ * @param {object} params 
+ * @returns 
+ */
 exports.isUser = async (params) => {
 
     // 복호화 객체 생성
@@ -14,12 +19,14 @@ exports.isUser = async (params) => {
     //const salt = crypto.randomBytes(32).toString('base64');
 
     // 회원정보 조회
-    const user = await userRepository.selectUser(userId);
-    const encryptPwd = crypto.pbkdf2Sync(password, user.salt, 54297, 192, 'sha512').toString('base64');
+    let user = await userRepository.selectUser(userId);
+    const encryptPwd = crypto.pbkdf2Sync(password, user ? user.salt : '', 54297, 192, 'sha512').toString('base64');
 
-    if(encryptPwd === user.password){
-        return user;
+    if(!user){
+        return -1;
+    }else if(encryptPwd === user.password){
+        return 1;
     }else{
-        return null;
+        return 0;
     }
 }

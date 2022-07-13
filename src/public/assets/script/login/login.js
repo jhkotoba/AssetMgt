@@ -21,8 +21,8 @@ window.addEventListener("DOMContentLoaded", event => {
 	
 	// 로그인 처리
 	let loginRes = await postFetch({url: '/login/loginProcess', body: {userId, password}});
-	if(loginRes.resultCode !== 'SUCCESS'){
-		alert(loginRes.resultMessage);
+	if(loginRes.code !== 'SUCCESS'){
+		alert(loginRes.message);
 		return false;
 	}
 
