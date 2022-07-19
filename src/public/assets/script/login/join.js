@@ -74,6 +74,7 @@ function joinProcess(){
     // 암호화
 	params.password = crypt.encrypt(params.password);
     params.email = crypt.encrypt(params.email);
+	params.confirm = null;
 
     // 회원가입
 	postFetch({
