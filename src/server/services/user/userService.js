@@ -65,7 +65,14 @@ exports.joinUser = user => {
 
         return user;
     })
-    .then(user => userRepository.insertUser(user));
+    .then(async user => {
+        let row = await userRepository.insertUser(user);
+        if(row < 1 || warningStatus !== 0){
+            return Promise.reject({resultCode: 'INSERT_FAIL'});
+        }else{
+            return row;
+        }
+    });
 }
 
 /**

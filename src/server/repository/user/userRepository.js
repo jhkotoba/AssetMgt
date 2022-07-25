@@ -31,7 +31,30 @@ exports.selectUser = async (userId) => {
  * @returns 
  */
 exports.insertUser = async user => {    
-    return new Promise((resolve, reject) => {
-        resolve(1);
-    });
+    let conn = await pool.getConnection();
+    let result = await conn.query(
+        `INSERT INTO UR_USER (
+            USER_ID
+            , PASSWORD
+            , SALT
+            , EMAIL
+            , USE_YN
+            , INS_NO
+            , INS_DTTM
+            , UPT_NO
+            , UPT_DTTM
+        ) VALUES (
+            '${user.userId}'
+            , '${user.password}'
+            , '${user.salt}'
+            , '${user.email}'
+            , 'Y'
+            , 0
+            , NOW()
+            , 0
+            , NOW()
+        )`
+    );
+    conn.release();
+    return result;
 }

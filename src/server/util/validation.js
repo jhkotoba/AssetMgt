@@ -10,7 +10,7 @@
 		return true;
 	}else if((typeof value === "string" && value.trim() === "")){
 		return true;
-	}else if(typeof value === "object" && !Object.key(value).length){
+	}else if(typeof value === "object" && !Object.keys(value).length){
 		return true;
 	}else{
 		return false;
