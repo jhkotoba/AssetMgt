@@ -42,7 +42,8 @@ exports.joinProcess = async (request, response, next) => {
             }
         })
     }).then(() => {
-        return userService.joinUser({userId, password, email}).then(() => {
+        return userService.joinUser({userId, password, email}).then((value) => {
+            console.log('controller joinUser value:', value);
             response.status(200).json({message: '회원가입이 처리되었습니다.', resultCode: 'SUCCESS'});
         });
     }).catch(error => {
@@ -56,6 +57,9 @@ exports.joinProcess = async (request, response, next) => {
             break;
             case 'NOT_EMAIL_FORMAT': 
                 response.status(200).json({resultCode: error.resultCode, message: '이메일 형식이 올바르지 않습니다.'});
+            break;
+            case 'INSERT_FAIL':
+                response.status(200).json({resultCode: error.resultCode, message: '저장에 실패하였습니다.'});
             break;
             default:
                 response.status(500).json({resultCode: 'SYSTEM_ERROR', message: '시스템 오류가 발생하였습니다.'});

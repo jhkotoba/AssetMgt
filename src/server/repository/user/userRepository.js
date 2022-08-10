@@ -5,10 +5,9 @@ const pool = require(`${basePath}/config/database.js`);
  * @param {string} userId 
  * @returns 
  */
-exports.selectUser = async (userId) => {
-
-    let conn = await pool.getConnection();
-    let result = await conn.query(
+exports.selectUser = async (userId, conn) => {
+    
+    let query = 
         `SELECT
             USER_NO     AS userNo
             , USER_ID   AS userId
@@ -19,10 +18,17 @@ exports.selectUser = async (userId) => {
         WHERE 1=1
         AND USER_ID = '${userId}'
         LIMIT 1
-        `
-    );
-    conn.release();
-    return result[0];
+        `;
+
+    if(conn){
+        let result = conn.query(query);
+        conn.release();
+        return result[0];
+    }else{
+        let connection = await pool.getConnection();
+        let result = connection.query(query);
+        return result[0];
+    }
 }
 
 /**
@@ -30,8 +36,78 @@ exports.selectUser = async (userId) => {
  * @param {*} user 
  * @returns 
  */
-exports.insertUser = async user => {    
-    let conn = await pool.getConnection();
+exports.insertUser = async (user, conn) => {
+
+    let query = 
+        `INSERT INTO UR_USER (
+            USER_ID
+            , PASSWORD
+            , SALT
+            , EMAIL
+            , USE_YN
+            , INS_NO
+            , INS_DTTM
+            , UPT_NO
+            , UPT_DTTM
+        ) VALUES (
+            '${user.userId}'
+            , '${user.password}'
+            , '${user.salt}'
+            , '${user.email}'
+            , 'Y'
+            , 0
+            , NOW()
+            , 0
+            , NOW()
+        )`;
+
+
+    if(conn){
+        let result = conn.query(query);
+        conn.release();
+        return result;
+    }else{
+        let connection = await pool.getConnection();
+        let result = connection.query(query);
+        return result;
+    }
+
+    // let conn = await pool.getConnection();
+    // let result = await conn.query(
+    //     `INSERT INTO UR_USER (
+    //         USER_ID
+    //         , PASSWORD
+    //         , SALT
+    //         , EMAIL
+    //         , USE_YN
+    //         , INS_NO
+    //         , INS_DTTM
+    //         , UPT_NO
+    //         , UPT_DTTM
+    //     ) VALUES (
+    //         '${user.userId}'
+    //         , '${user.password}'
+    //         , '${user.salt}'
+    //         , '${user.email}'
+    //         , 'Y'
+    //         , 0
+    //         , NOW()
+    //         , 0
+    //         , NOW()
+    //     )`
+    // );
+    // conn.release();
+    // return result;
+}
+
+
+/**
+ * 회원등록
+ * @param {*} user 
+ * @returns 
+ */
+ exports.insertUser_test = async (user, conn) => {    
+    //let conn = await pool.getConnection();
     let result = await conn.query(
         `INSERT INTO UR_USER (
             USER_ID
@@ -55,6 +131,6 @@ exports.insertUser = async user => {
             , NOW()
         )`
     );
-    conn.release();
+    //conn.release();
     return result;
 }

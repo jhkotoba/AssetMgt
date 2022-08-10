@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const jsencrypt = require(`nodejs-jsencrypt`);
 const userRepository = require(`${basePath}/repository/user/userRepository.js`);
 const validation = require(`${basePath}/util/validation.js`);
+const pool = require(`${basePath}/config/database.js`);
 
 /**
  * 회원체크 조회
@@ -52,8 +53,14 @@ exports.getUser = userId => userRepository.selectUser(userId);
  * @param {object} user 
  * @returns 
  */
-exports.joinUser = user => {
-    return new Promise((resolve, reject) => insertUserValidation(resolve, reject, user))
+ exports.joinUser = async user => {
+
+    // DB연결
+    let conn = await pool.getConnection();
+    // 트렌젝션
+    await conn.beginTransaction();
+
+    let joinUser = new Promise((resolve, reject) => insertUserValidation(resolve, reject, user))
     .then(user => {
 
         // 암호 솔트 생성
@@ -62,18 +69,56 @@ exports.joinUser = user => {
 
         // 비밀번호 단반향 암호화
         user.password = crypto.pbkdf2Sync(user.password, salt, 54297, 192, 'sha512').toString('base64');
-
         return user;
-    })
-    .then(async user => {
-        let row = await userRepository.insertUser(user);
-        if(row < 1 || warningStatus !== 0){
-            return Promise.reject({resultCode: 'INSERT_FAIL'});
-        }else{
-            return row;
+    }).then(async user => {
+
+        // 회원등록
+        let row = await userRepository.insertUser(user, conn);
+
+        // 커밋
+        conn.commit();
+        return row;
+    }).catch(err => {
+
+        // 롤백
+        conn.rollback();
+
+        // 등록실패
+        return Promise.reject({resultCode: 'INSERT_FAIL', error: err});
+    }).finally(() => {
+        if(conn != null) {
+            // 연결해제
+            conn.release();
         }
     });
+
+    return joinUser;
 }
+
+
+// exports.joinUser = user => {
+
+//     return new Promise((resolve, reject) => insertUserValidation(resolve, reject, user))
+//     .then(user => {
+
+//         // 암호 솔트 생성
+//         const salt = crypto.randomBytes(32).toString('base64');
+//         user.salt = salt;
+
+//         // 비밀번호 단반향 암호화
+//         user.password = crypto.pbkdf2Sync(user.password, salt, 54297, 192, 'sha512').toString('base64');
+
+//         return user;
+//     })
+//     .then(async user => {
+//         let row = await userRepository.insertUser(user);
+//         if(row < 1 || warningStatus !== 0){
+//             return Promise.reject({resultCode: 'INSERT_FAIL'});
+//         }else{
+//             return row;
+//         }
+//     });
+// }
 
 /**
  * 사용자 유효성검사
