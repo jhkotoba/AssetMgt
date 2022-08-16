@@ -21,12 +21,12 @@ exports.selectUser = async (userId, conn) => {
         `;
 
     if(conn){
-        let result = conn.query(query);
+        let result = await conn.query(query);
         conn.release();
         return result[0];
     }else{
         let connection = await pool.getConnection();
-        let result = connection.query(query);
+        let result = await connection.query(query);
         return result[0];
     }
 }
@@ -61,14 +61,13 @@ exports.insertUser = async (user, conn) => {
             , NOW()
         )`;
 
-
     if(conn){
-        let result = conn.query(query);
+        let result = await conn.query(query);
         conn.release();
         return result;
     }else{
         let connection = await pool.getConnection();
-        let result = connection.query(query);
+        let result = await connection.query(query);
         return result;
     }
 

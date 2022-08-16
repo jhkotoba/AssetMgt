@@ -29,23 +29,19 @@ exports.joinProcess = async (request, response, next) => {
     const crypt = new jsencrypt.JSEncrypt();
     crypt.setPrivateKey(process.env.AES256_PRIVATE_KEY);
     
+    // 회원 아이디
     let userId = request.body.userId;
+    // 회원 비밀번호
     let password = crypt.decrypt(request.body.password);
+    // 회원 이메일
     let email = crypt.decrypt(request.body.email);
 
-    new Promise((resolve, reject) => {
-        userService.getUser(userId).then(user => {
-            if(validation.isEmpty(user)){
-                resolve();
-            }else{
-                reject({resultCode: 'ALREADY_EXISTS_ID'});
-            }
-        })
-    }).then(() => {
-        return userService.joinUser({userId, password, email}).then((value) => {
-            console.log('controller joinUser value:', value);
-            response.status(200).json({message: '회원가입이 처리되었습니다.', resultCode: 'SUCCESS'});
-        });
+    // 회원등록
+    userService.joinUser({userId, password, email}).then(value => {
+        // 회원등록 성공 응답 처리
+        response.status(200).json({message: '회원가입이 처리되었습니다.', resultCode: 'SUCCESS'});
+
+    // 회원등록 예외 및 오류
     }).catch(error => {
         console.error(error);
         switch(error.resultCode){
