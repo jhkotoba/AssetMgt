@@ -43,8 +43,7 @@ exports.joinProcess = async (request, response, next) => {
 
     // 회원등록 예외 및 오류
     }).catch(error => {
-        console.error(error);
-        switch(error.resultCode){
+        switch(error.message){
             case 'ALREADY_EXISTS_ID': 
                 response.status(200).json({resultCode: error.resultCode, message: '이미 존재하는 아이디 입니다.'});
             break;
