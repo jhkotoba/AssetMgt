@@ -1,6 +1,5 @@
 const userService = require(`${basePath}/services/user/userService.js`);
 const jsencrypt = require(`nodejs-jsencrypt`);
-const validation = require(`${basePath}/util/validation.js`);
 
 // 로그인 처리
 exports.loginProcess = async (request, response, next) => {
@@ -57,7 +56,7 @@ exports.joinProcess = async (request, response, next) => {
                 response.status(200).json({resultCode: error.resultCode, message: '저장에 실패하였습니다.'});
             break;
             default:
-                response.status(500).json({resultCode: 'SYSTEM_ERROR', message: '시스템 오류가 발생하였습니다.'});
+                response.status(500).json({resultCode: 'SYSTEM_ERROR', message: `시스템 오류가 발생하였습니다.(${error.message})`});
             break;
         }
     });
