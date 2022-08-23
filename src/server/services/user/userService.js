@@ -86,9 +86,11 @@ exports.getUser = userId => userRepository.selectUser(userId);
     // 저장체크
     if(row.affectedRows < 1){
         await conn.rollback();
+        conn.release();
         throw new Error('INSERT_FAIL');
     }else{
         // 커밋
         await conn.commit();
+        conn.release();
     }
 }

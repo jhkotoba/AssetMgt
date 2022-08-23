@@ -26,8 +26,8 @@ exports.selectUser = async (userId, conn) => {
     }else{
         let connection = await pool.getConnection();
         let result = await connection.query(query);
+        await connection.commit();
         connection.release();
-        connection.commit();
         return result[0];
     }
 }
@@ -63,15 +63,13 @@ exports.insertUser = async (user, conn) => {
         )`;
 
     if(conn){
-        console.log('--------conn');
         let result = await conn.query(query);
         return result;
     }else{
-        console.log('--------connection');
         let connection = await pool.getConnection();
         let result = await connection.query(query);
+        await connection.commit();
         connection.release();
-        connection.commit();
         return result;
     }
 
