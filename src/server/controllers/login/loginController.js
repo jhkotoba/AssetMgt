@@ -3,17 +3,16 @@ const jsencrypt = require(`nodejs-jsencrypt`);
 
 // 로그인 처리
 exports.loginProcess = async (request, response, next) => {
-        
-    let user = await userService.isUser(request.body);
-    let result = {};
-
-    if(user){
-
-    }else{
-
-    }
     
-    return response.json(result);
+    // 회원정보 조회 및 비밀번호체크 
+    let user = await userService.getLoginUser(request.body);
+        
+    if(user == null){
+        response.status(200).json({message: '로그인에 실패하였습니다.', resultCode: 'FAIL'});
+    }else{
+        request.session.user = {userNo: user.userNo, userId: user.userId, email: user.email}
+        response.status(200).json({message: 'SUCCESS', resultCode: 'SUCCESS'});
+    }
 }
 
 /**

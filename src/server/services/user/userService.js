@@ -9,7 +9,7 @@ const pool = require(`${basePath}/config/database.js`);
  * @param {object} params 
  * @returns 
  */
-exports.isUser = async (params) => {
+exports.getLoginUser = async (params) => {
 
     // 복호화 객체 생성
     const crypt = new jsencrypt.JSEncrypt();
@@ -18,27 +18,15 @@ exports.isUser = async (params) => {
     let userId = crypt.decrypt(params.userId);
     let password = crypt.decrypt(params.password);
 
-    //const salt = crypto.randomBytes(32).toString('base64');
-
     // 회원정보 조회
     let user = await userRepository.selectUser(userId);
     const encryptPwd = crypto.pbkdf2Sync(password, user ? user.salt : '', 54297, 192, 'sha512').toString('base64');
 
-    if(user ){
-
+    if(encryptPwd === user.password){
+        return user;
     }else{
-
+        return null;
     }
-
-    return Promise.reject({resultCode: 'ALREADY_EXISTS_ID'});
-
-    // if(!user){
-    //     return -1;
-    // }else if(encryptPwd === user.password){
-    //     return 1;
-    // }else{
-    //     return 0;
-    // }
 }
 
 /**

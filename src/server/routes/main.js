@@ -1,13 +1,6 @@
-const path = require("path");
 const express = require("express");
 const router = express.Router();
 
-router.get("/", async (request, response) => {
-
-    console.log('request.sessionID ::', request.sessionID);
-    console.log('request.session.user ::', request.session.user);
-
-    response.sendFile(path.join (__dirname , "../public/view/index.html"));
-});
+router.get("/", async (request, response) => response.sendFile(`${public}/view/main/main.html`));
 
 module.exports = router;

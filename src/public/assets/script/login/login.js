@@ -21,11 +21,10 @@ window.addEventListener("DOMContentLoaded", event => {
 	
 	// 로그인 처리
 	let loginRes = await postFetch({url: '/login/loginProcess', body: {userId, password}});
-	if(loginRes.code !== 'SUCCESS'){
+	if(loginRes.resultCode === 'SUCCESS'){
+		// 메인 페이지 이동
+		window.location.href = "/";
+	}else{
 		alert(loginRes.message);
-		return false;
 	}
-
-	// 메인 페이지 이동
-	window.location.href = "/";
 }
