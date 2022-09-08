@@ -1,25 +1,25 @@
 const pool = require(`${basePath}/config/database.js`);
 
 /**
- * 회원정보 조회
- * @param {string} userId 
+ * 메뉴목록 조회
  * @returns 
  */
- exports.selectUser = async conn => {
+ exports.selectMenuList = async conn => {
 
+    let query = 
     `SELECT
-    	MENU_NO
-    	, MENU_NM
-    	, MENU_URL
-    	, MENU_LV
-    	, MENU_SEQ
-    	, GROUP_NO
-    	, DISP_YN
-    	, USE_YN
-    	, INS_NO
-    	, DATE_FORMAT(INS_DTTM, '%Y-%m-%d %H:%i:%S') AS INS_DTTM
-    	, UPT_NO
-    	, DATE_FORMAT(UPT_DTTM, '%Y-%m-%d %H:%i:%S') AS UPT_DTTM
+    	MENU_NO     AS menuNo
+    	, MENU_NM   AS menuNm
+    	, MENU_URL  AS menuUrl
+    	, MENU_LV   AS menuLv
+    	, MENU_SEQ  AS menuSeq
+    	, GROUP_NO  AS groupNo
+    	, DISP_YN   AS dispYn
+    	, USE_YN    AS useYn
+    	, INS_NO    AS insNo
+    	, DATE_FORMAT(INS_DTTM, '%Y-%m-%d %H:%i:%S') AS insDttm
+    	, UPT_NO    AS uptNo
+    	, DATE_FORMAT(UPT_DTTM, '%Y-%m-%d %H:%i:%S') AS uptDttm
     FROM MENU
     `
     if(conn){

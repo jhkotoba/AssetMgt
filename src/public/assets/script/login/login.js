@@ -1,5 +1,6 @@
 import { constant } from "/script/common/common.js";
 import { postFetch } from "/script/common/fetch.js";
+import { createMenu } from "/script/common/menu.js";
 
 const crypt = new JSEncrypt();
 window.addEventListener("DOMContentLoaded", event => {
@@ -25,19 +26,17 @@ window.addEventListener("DOMContentLoaded", event => {
 		alert(loginRes.message);
 	}
 
-	// // 사용자 메뉴조회
-	// let menuRes = await postFetch({url: '/system/getMenuList', body: {data:111}});
-	// if(menuRes.resultCode !== 'SUCCESS'){
-	// 	alert(menuRes.message);
-	// 	return false;
-	// }
-
-	// console.log('menuRes:', menuRes);
+	// 사용자 메뉴조회
+	let menuRes = await postFetch({url: '/system/getMenuList', body: {}});
+	if(menuRes.resultCode !== 'SUCCESS'){
+		alert(menuRes.message);
+		return false;
+	}
 	
-	// // 세션스토로지 초기화
-	// sessionStorage.removeItem("menu");	
-	// // 메뉴 태그 생성, 세션스토로지 저장
-	// sessionStorage.setItem("menu", createAsideMenu(menuRes.data));
+	// 세션스토로지 초기화
+	sessionStorage.removeItem("menu");	
+	// 메뉴 태그 생성, 세션스토로지 저장
+	sessionStorage.setItem("menu", createMenu(menuRes.data));
 
 	// 메인 페이지 이동
 	window.location.href = "/";

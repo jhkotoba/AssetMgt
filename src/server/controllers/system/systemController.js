@@ -1,10 +1,10 @@
 const menuService = require(`${basePath}/services/system/menuService.js`);
 
-// 로그인 처리
+// 메뉴목록 조회
 exports.getMenuList = async (request, response, next) => {
-
-    console.log('=============== systemController getMenuList ===============');
-    
-    let menuList = await menuService.getMenuList();
-    response.status(200).json({message: 'SUCCESS', resultCode: 'SUCCESS', data: menuList});
+    response.status(200).json({
+        message: 'SUCCESS',
+        resultCode: 'SUCCESS',
+        data: await menuService.getMenuList()
+    });
 }
