@@ -34,9 +34,9 @@ window.addEventListener("DOMContentLoaded", event => {
 	}
 	
 	// 세션스토로지 초기화
-	sessionStorage.removeItem("menu");	
+	sessionStorage.removeItem(constant.storage.menu);	
 	// 메뉴 태그 생성, 세션스토로지 저장
-	sessionStorage.setItem("menu", createMenu(menuRes.data));
+	sessionStorage.setItem(constant.storage.menu, createMenu(menuRes.data));
 
 	// 메인 페이지 이동
 	window.location.href = "/";
