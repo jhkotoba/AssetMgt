@@ -18,6 +18,8 @@
     "ioredis": "^4.28.5",
     "mariadb": "^3.0.1",
     "nodejs-jsencrypt": "^3.0.0-rc.1",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "winston": "^3.8.2",
+    "winston-daily-rotate-file": "^4.7.1"
   }
 }

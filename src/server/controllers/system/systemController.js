@@ -11,6 +11,11 @@ exports.getMenuList = async (request, response, next) => {
             data: value
         });
     }).catch(error => {
+
+        // 로그아웃 처리
+        request.session.destroy();
+
+        // 예외 응답
         switch(error.message){
             case 'NO_SEARCH_MENU':
                 response.status(200).json({resultCode: error.message, message: `시스템 오류가 발생하였습니다. (${error.message})`});

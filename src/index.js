@@ -9,6 +9,7 @@ dotenv.config({ path: process.argv[2] === 'dev' ? '.env.dev' : '.env' });
 // 전역상수
 global.basePath =  __dirname + '/server';
 global.public =  __dirname + '/public';
+global.rootPath =  __dirname;
 
 // 서버 호스트
 const hostname = process.env.HOST_NAME;
