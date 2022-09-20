@@ -37,22 +37,22 @@ exports.joinProcess = async (request, response, next) => {
     // 회원등록
     userService.joinUser({userId, password, email}).then(value => {
         // 회원등록 성공 응답 처리
-        response.status(200).json({message: '회원가입이 처리되었습니다.', resultCode: 'SUCCESS'});
+        response.status(200).json({resultCode: 'SUCCESS', message: '회원가입이 처리되었습니다.'});
 
     // 회원등록 예외 및 오류
     }).catch(error => {
         switch(error.message){
             case 'ALREADY_EXISTS_ID': 
-                response.status(200).json({resultCode: error.resultCode, message: '이미 존재하는 아이디 입니다.'});
+                response.status(200).json({resultCode: error.message, message: '이미 존재하는 아이디 입니다.'});
             break;
             case 'EMPTY_PARAMETER': 
-                response.status(200).json({resultCode: error.resultCode, message: '입력값이 누락되었습니다.'});
+                response.status(200).json({resultCode: error.message, message: '입력값이 누락되었습니다.'});
             break;
             case 'NOT_EMAIL_FORMAT': 
-                response.status(200).json({resultCode: error.resultCode, message: '이메일 형식이 올바르지 않습니다.'});
+                response.status(200).json({resultCode: error.message, message: '이메일 형식이 올바르지 않습니다.'});
             break;
             case 'INSERT_FAIL':
-                response.status(200).json({resultCode: error.resultCode, message: '저장에 실패하였습니다.'});
+                response.status(200).json({resultCode: error.message, message: '저장에 실패하였습니다.'});
             break;
             default:
                 response.status(500).json({resultCode: 'SYSTEM_ERROR', message: `시스템 오류가 발생하였습니다.(${error.message})`});

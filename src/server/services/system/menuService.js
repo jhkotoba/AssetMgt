@@ -6,4 +6,11 @@ const pool = require(`${basePath}/config/database.js`);
  * @param {object} params 
  * @returns 
  */
-exports.getMenuList = async () => menuRepository.selectMenuList();
+exports.getMenuList = async () => {
+    let menuList = await menuRepository.selectMenuList();
+    if(menuList.length < 1){
+        throw new Error('NO_SEARCH_MENU');
+    }
+
+    return menuList;
+}
