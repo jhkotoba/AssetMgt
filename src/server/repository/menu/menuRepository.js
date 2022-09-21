@@ -7,7 +7,8 @@ const pool = require(`${basePath}/config/database.js`);
  exports.selectMenuList = async conn => {
 
     let query = 
-    `SELECT
+    `/* menuRepository.selectMenuList */
+    SELECT
     	MENU_NO     AS menuNo
     	, MENU_NM   AS menuNm
     	, MENU_URL  AS menuUrl
@@ -21,7 +22,9 @@ const pool = require(`${basePath}/config/database.js`);
     	, UPT_NO    AS uptNo
     	, DATE_FORMAT(UPT_DTTM, '%Y-%m-%d %H:%i:%S') AS uptDttm
     FROM MENU
-    `
+    `;
+    logger.debug('\n' + query);
+
     if(conn){
         let result = await conn.query(query);
         return result;
