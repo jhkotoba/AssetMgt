@@ -1,5 +1,5 @@
-const pool = require(`${basePath}/config/database.js`);
-const logger = require(`${basePath}/config/logger.js`);
+const database = require(`${basePath}/config/database.js`);
+//const logger = require(`${basePath}/config/logger.js`);
 
 /**
  * 회원정보 조회
@@ -19,21 +19,23 @@ exports.selectUser = async (userId, conn) => {
         , EMAIL     AS email
     FROM UR_USER
     WHERE 1=1
-    AND USER_ID = '${userId}'
-    LIMIT 1
+    -- AND USER_ID = '${userId}'
+    -- LIMIT 1
     `;
-    logger.debug('\n' + query);
 
-    if(conn){
-        let result = await conn.query(query);
-        return result[0];
-    }else{
-        let connection = await pool.getConnection();
-        let result = await connection.query(query);
-        await connection.commit();
-        connection.release();
-        return result[0];
-    }
+    //logger.debug('\n' + query);
+    return await database.selectOne(query, conn);
+    
+    // if(conn){
+    //     let result = await conn.query(query);
+    //     return result[0];
+    // }else{
+    //     let connection = await database.pool.getConnection();
+    //     let result = await connection.query(query);
+    //     await connection.commit();
+    //     connection.release();
+    //     return result[0];
+    // }
 }
 
 /**
@@ -72,7 +74,7 @@ exports.insertUser = async (user, conn) => {
         let result = await conn.query(query);
         return result;
     }else{
-        let connection = await pool.getConnection();
+        let connection = await database.pool.getConnection();
         let result = await connection.query(query);
         await connection.commit();
         connection.release();

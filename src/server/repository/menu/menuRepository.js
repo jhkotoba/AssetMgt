@@ -1,4 +1,5 @@
-const pool = require(`${basePath}/config/database.js`);
+const database = require(`${basePath}/config/database.js`);
+const logger = require(`${basePath}/config/logger.js`);
 
 /**
  * 메뉴목록 조회
@@ -29,7 +30,7 @@ const pool = require(`${basePath}/config/database.js`);
         let result = await conn.query(query);
         return result;
     }else{
-        let connection = await pool.getConnection();
+        let connection = await database.pool.getConnection();
         let result = await connection.query(query);
         await connection.commit();
         connection.release();
