@@ -1,18 +1,31 @@
 const userService = require(`${basePath}/services/user/userService.js`);
-const jsencrypt = require(`nodejs-jsencrypt`);
+const jsencrypt = require('nodejs-jsencrypt');
+const logger = require(`${basePath}/config/logger.js`);
 
 // 로그인 처리
 exports.loginProcess = async (request, response, next) => {
-    
+
     // 회원정보 조회 및 비밀번호체크 
-    let user = await userService.getLoginUser(request.body);
-        
-    if(user == null){
-        response.status(200).json({message: '로그인에 실패하였습니다.', resultCode: 'FAIL'});
-    }else{
-        request.session.user = {userNo: user.userNo, userId: user.userId, email: user.email}
-        response.status(200).json({message: 'SUCCESS', resultCode: 'SUCCESS'});
-    }
+    userService.getLoginUser(request.body)
+        .then(user => {
+            if(user == null){
+                response.status(200).json({message: '로그인에 실패하였습니다.', resultCode: 'FAIL'});
+            }else{
+                request.session.user = {userNo: user.userNo, userId: user.userId, email: user.email}
+                response.status(200).json({message: 'SUCCESS', resultCode: 'SUCCESS'});
+            }
+        }).catch(error => {
+            logger.error(error);
+            switch(error.message){
+                case 'ID_OR_PASSWORD_NOT_MATCH':
+                    response.status(200).json({message: '로그인에 실패하였습니다.', resultCode: 'FAIL'});
+                    break;
+                default :
+                    response.status(500).json({resultCode: 'SYSTEM_ERROR', message: `시스템 오류가 발생하였습니다.(${error.message})`});
+                    break;
+            }
+            
+        });
 }
 
 /**

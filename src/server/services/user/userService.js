@@ -22,10 +22,17 @@ exports.getLoginUser = async (params) => {
     let user = await userRepository.selectUser(userId);
     const encryptPwd = crypto.pbkdf2Sync(password, user ? user.salt : '', 54297, 192, 'sha512').toString('base64');
 
+    // 아이디 조회가 되지 않았을 경우
+    if(validation.isEmpty(user)){
+        throw new Error('ID_OR_PASSWORD_NOT_MATCH');
+    }
+
+    // 비밀번호 일치
     if(encryptPwd === user.password){
         return user;
+    // 비밀번호 불일치
     }else{
-        return null;
+        throw new Error('ID_OR_PASSWORD_NOT_MATCH');
     }
 }
 
