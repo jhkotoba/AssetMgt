@@ -56,7 +56,7 @@ app.use(
     saveUninitialized: true, // 세션에 저장할 때 초기화 여부
     secret: process.env.SESSION_SECRET, // 세션을 발급할 때 사용되는 키
     resave: false, // 세션을 저장하고 불러올 때 세션을 다시 저장할지 여부를 결정
-    cookie: { maxAge: 86400 } // 쿠키의 생명 기간
+    cookie: { maxAge: 3600000 } // 쿠키의 생명 기간
   })
 );
 
