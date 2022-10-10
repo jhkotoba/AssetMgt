@@ -29,9 +29,13 @@
 		
 		let item = resultList[i];
 		let next = resultList[i+1];
-		
-		html += '<li>' + resultList[i].menuNm;
-		
+
+		if(item.menuLv > 1){
+			html += `<li data-lv="${item.menuLv}" class="off"><div>${resultList[i].menuNm}</div>`;
+		}else{
+			html += `<li data-lv="${item.menuLv}"><div>${resultList[i].menuNm}</div>`;
+		}
+
 		if(item.menuLv != next?.menuLv){
 			if(item.menuLv < next?.menuLv){
 				html += '<ul>';
