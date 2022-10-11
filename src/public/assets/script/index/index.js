@@ -10,6 +10,7 @@ aside.addEventListener('click', event => {
         let cList = event.target.nextSibling.childNodes[0].classList;
         cList.contains('off') ? cList.remove('off') : cList.add('off');
     }else{
+        sessionStorage.setItem(constant.storage.menu, document.getElementsByTagName('aside')[0].innerHTML);
         document.location.href = event.target.dataset.url;
     }
 });
