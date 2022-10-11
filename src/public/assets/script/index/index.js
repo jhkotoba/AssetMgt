@@ -6,10 +6,10 @@ import { constant } from "/script/common/common.js";
 const aside = document.getElementsByTagName('aside')[0];
 aside.innerHTML = sessionStorage.getItem(constant.storage.menu);
 aside.addEventListener('click', event => {
-    console.log(event.target.textContent);
-
-    const lv = event.target.dataset;
-    console.log(lv);
-    
-    
+    if(event.target.dataset.lv == 1){
+        let cList = event.target.nextSibling.childNodes[0].classList;
+        cList.contains('off') ? cList.remove('off') : cList.add('off');
+    }else{
+        document.location.href = event.target.dataset.url;
+    }
 });

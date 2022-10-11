@@ -7,20 +7,15 @@ a{text-decoration: none; color: #cdcdcd;}
 nav{margin: 0 auto; max-width: 100%; min-height: 45px; background: #4C4C4C; box-shadow:0 3px 15px rgba(0,0,0,.35); font-size: 1.2em;}
 
 /* aside */
-aside {background: #4C4C4C; position:fixed; margin-top: 10px; box-shadow:0 3px 15px rgba(0,0,0,.35); height: calc(100% - 75px); width: 150px; float: left;}
+aside {background: #4C4C4C; position:fixed; margin-top: 10px; box-shadow:0 3px 15px rgba(0,0,0,.35); height: calc(100% - 75px); width: 160px; float: left;}
 aside > ul {margin-top: 0px; cursor: pointer;}
-aside ul li {display: block;
-    float: right;
-    width: 150px;}
-aside ul li div{    height: 30px;
-    background: #3e3e3e;
-    font-size: 15px;
-    text-indent: 5px;
-    border: 1px solid #2d2d2d;
-    padding-top: 10px;}
+aside ul li {display: block; float: right; width: 150px;}
+aside ul li div{height: 30px; user-select: none; font-size: 15px; text-indent: 5px; border: 1px solid #2d2d2d; padding-top: 10px;}
+aside > ul > li > div {background: #464646 !important;}
+aside > ul > li div {background: #585858;}
 
 /* main */
-.main{background: #343434; position:fixed; margin-top: 10px; box-shadow:0 3px 15px rgba(0,0,0,.35); height: calc(100% - 75px); margin-left: 160px; width: calc(100% - 176px);}
+.main{background: #343434; position:fixed; margin-top: 10px; box-shadow:0 3px 15px rgba(0,0,0,.35); height: calc(100% - 75px); margin-left: 170px; width: calc(100% - 186px);}
 
 /* input */
 input{background: #3c3b3b; color:#C6C6C6; font-size: 1em; height: 30px; border: 1px solid #646464; border-radius: 2px; text-indent: 5px; width: 100%; margin: 1px 1px 1px 1px;}
@@ -31,6 +26,15 @@ button{background: #4C4C4C; border: 1px solid #585858; border-radius: 2px; color
 button:hover{background: #3A3A3A;}
 button:active{background: #5E5E5E;}
 button:disabled{color: #615e5e;}
+
+/* scroll */
+.scroll{overflow-y: scroll;}
+.scroll::-webkit-scrollbar {width: 10px;}
+.scroll::-webkit-scrollbar-button:start:decrement,::-webkit-scrollbar-button:end:increment {display: none;}
+.scroll::-webkit-scrollbar-track {background: #5A5A5A; border: 1px solid #484747;}
+.scroll::-webkit-scrollbar-thumb {background: #404040;}
+.scroll::-webkit-scrollbar-corner{background: #4C4C4C;}
+
 
 .big-button-group{margin-top: 10px; text-align: center;}
 .big-button-group button{width: 100px; height: 50px; font-size: 17px;}

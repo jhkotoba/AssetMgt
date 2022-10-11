@@ -31,9 +31,9 @@
 		let next = resultList[i+1];
 
 		if(item.menuLv > 1){
-			html += `<li data-lv="${item.menuLv}" class="off"><div>${resultList[i].menuNm}</div>`;
+			html += `<li class="off"><div data-url="${resultList[i].menuUrl}">${resultList[i].menuNm}</div>`;
 		}else{
-			html += `<li data-lv="${item.menuLv}"><div>${resultList[i].menuNm}</div>`;
+			html += `<li><div data-lv="${item.menuLv}">${resultList[i].menuNm}</div>`;
 		}
 
 		if(item.menuLv != next?.menuLv){
