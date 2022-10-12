@@ -6,7 +6,9 @@ a{text-decoration: none; color: #cdcdcd;}
 /* text */
 .nav-title{font-size: 20px; font-weight: 700; padding-top: 7px; padding-left: 20px;}
 .title{font-size: 20px; font-weight: 700;}
-.sub-title{font-size: 17px; font-weight: 700;}
+.sub-title{font-size: 17px; font-weight: 700; height: 30px;}
+.sub-title > .text{vertical-align: middle;}
+.sub-title > .button-box{float: right;}
 
 /* nav */
 nav{margin: 0 auto; max-width: 100%; min-height: 45px; background: #4C4C4C; box-shadow:0 3px 15px rgba(0,0,0,.35); font-size: 1.2em;}
@@ -33,7 +35,8 @@ button:active{background: #5E5E5E;}
 button:disabled{color: #615e5e;}
 
 /* scroll */
-.scroll{overflow-y: scroll;}
+.scroll{overflow-y: auto;}
+.scroll-fix{overflow-y: scroll !important;}
 .scroll::-webkit-scrollbar {width: 10px;}
 .scroll::-webkit-scrollbar-button:start:decrement,::-webkit-scrollbar-button:end:increment {display: none;}
 .scroll::-webkit-scrollbar-track {background: #5A5A5A; border: 1px solid #484747;}
