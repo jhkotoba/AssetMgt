@@ -1,8 +1,4 @@
 export const getFetch = (url, option) => {
-	
-	let blind = document.querySelector('.blind');
-	blind?.classList.add('on');
-	
 	return new Promise((resolve, reject) => {
 		fetch(url, {
 			method: 'GET',				
@@ -17,16 +13,11 @@ export const getFetch = (url, option) => {
 		})
 		.then(response => response.json())
 		.then(data => resolve(data))
-		.catch(error => reject(error))
-		.finally(() => blind?.classList.remove('on'));
+		.catch(error => reject(error));
 	})
 }
 
-export const postFetch = param => {
-	
-	let blind = document.querySelector('.blind')
-	blind?.classList.add('on');
-	
+export const postFetch = param => {	
 	return new Promise((resolve, reject) => {
 		fetch(param.url, {
 			method: 'POST',				
@@ -42,7 +33,6 @@ export const postFetch = param => {
 		})
 		.then(response => response.json())
 		.then(data => resolve(data))
-		.catch(error => reject(error))
-		.finally(() => blind?.classList.remove('on'));
+		.catch(error => reject(error));
 	})
 }
