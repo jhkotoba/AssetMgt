@@ -5,12 +5,12 @@ import { construct } from "./plugin/construct.js";
 /**
  * wGrid
  * @author JeHoon 
- * @version 0.10.5
+ * @version 0.10.6
  */
  export class wGrid {
 
     // 생성자
-    constructor(targetId, paramater){
+    constructor(target, paramater){
 
         this.self = this;
 
@@ -30,7 +30,11 @@ import { construct } from "./plugin/construct.js";
         this.outerEvent = paramater.event;
 
         // 엘리멘트 생성
-        this.element = construct.createElement(targetId);
+        if(typeof target == 'string'){
+            this.element = construct.createElement(target);
+        }else{
+            this.element = target;
+        }
 
         // 그리드 상태값 생성
         this.state = construct.createState();
@@ -395,10 +399,22 @@ import { construct } from "./plugin/construct.js";
      */
     setData = function(paramater){
 
-        // 데이터를 그리드에 삽입
-        for(let i=0; i<paramater.list.length; i++){
+        let list = [];
+        let isRefresh = true;
 
-            let item = paramater.list[i];
+        // 배열
+        if(typeof paramater == 'object' && typeof paramater.length == 'number'){
+            list = paramater;
+        // 객체
+        }else if(typeof paramater == 'object' && typeof paramater.length == 'undefined'){
+            list = paramater.list;
+            isRefresh = paramater.isRefresh;
+        }else {
+            console.error('setData paramater error');
+        }
+
+        // 데이터를 그리드에 삽입
+        for(let item of list){
 
             // 기본 데이터 세팅
             item._rowSeq = this.getNextSeq();
@@ -406,10 +422,10 @@ import { construct } from "./plugin/construct.js";
         }
 
         // 데이터 저장
-        this.data = paramater.list;
+        this.data = list;
 
         // 필드 새로고침
-        if(paramater.isRefresh) this.refresh();
+        if(isRefresh) this.refresh();
     }
 
     /**
@@ -425,6 +441,14 @@ import { construct } from "./plugin/construct.js";
 
         // 조회목록 없을시 메시지 표시
         this.emptyMessageDisply();
+    }
+
+    /**
+     * 그리고 초기화
+     */
+    empty = function(){
+        this.data = [];
+        this.refresh();
     }
 
     /**
