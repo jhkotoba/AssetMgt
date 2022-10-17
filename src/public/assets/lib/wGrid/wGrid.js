@@ -5,7 +5,7 @@ import { construct } from "./plugin/construct.js";
 /**
  * wGrid
  * @author JeHoon 
- * @version 0.10.6
+ * @version 0.10.7
  */
  export class wGrid {
 
@@ -51,6 +51,9 @@ import { construct } from "./plugin/construct.js";
         // 내부 이벤트 생성        
         this.innerEvent = construct.createEvent(this, paramater);
 
+        // 그리드 스타일 세팅
+        this.initStyle(this.option);
+
         // 그리드 생성
         this.create();
 
@@ -73,6 +76,25 @@ import { construct } from "./plugin/construct.js";
         if(rowSeq){
             delete this.state.seqRowElement[rowSeq];
             delete this.state.seqCellElement[rowSeq];
+        }
+    }
+
+    /**
+     * 그리드 사용자 정의 스타일 적용
+     */
+    initStyle = function(option){
+
+        if(option.style.height){
+            this.element.body.style.height = option.style.height;
+        }
+
+        if(option.style.overflow.x == 'overlay' || option.style.overflow.x == 'scroll'){
+            this.element.head.style.overflowX = option.style.overflow.x;
+            this.element.body.style.overflowX = option.style.overflow.x;
+        }
+        if(option.style.overflow.y == 'overlay' || option.style.overflow.y == 'scroll'){
+            this.element.head.style.overflowY = option.style.overflow.y;
+            this.element.body.style.overflowY = option.style.overflow.y;
         }
     }
 
@@ -383,7 +405,6 @@ import { construct } from "./plugin/construct.js";
         // 스타일 적용
         cell.width ? td.style.width = cell.width : null;
         div.style.align = cell.align ? cell.align : "center";
-
         return td;
     }
 
@@ -432,6 +453,7 @@ import { construct } from "./plugin/construct.js";
      * 그리드 새로고침 (필드부분 재생성)
      */
     refresh = function(){
+
         // 필드 비우기
         while(this.element.bodyTb.hasChildNodes()){
             this.element.bodyTb.removeChild(this.element.bodyTb.firstChild);
@@ -444,7 +466,7 @@ import { construct } from "./plugin/construct.js";
     }
 
     /**
-     * 그리고 초기화
+     * 그리드 초기화
      */
     empty = function(){
         this.data = [];

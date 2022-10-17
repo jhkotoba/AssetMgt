@@ -7,7 +7,17 @@
 
 .wgrid-table-header{background: #4C4C4C; border-collapse: collapse; border-spacing: 0; color: rgba(246, 246, 246, .8); width: 100%;}
 .wgrid-div-header{overflow: hidden;}
+.wgrid-div-header::-webkit-scrollbar {width: 10px;}
+.wgrid-div-header::-webkit-scrollbar-button:start:decrement,::-webkit-scrollbar-button:end:increment {display: none;}
+.wgrid-div-header::-webkit-scrollbar-track {background: #5A5A5A; border: 1px solid #484747;}
+.wgrid-div-header::-webkit-scrollbar-thumb {background: #404040;}
+.wgrid-div-header::-webkit-scrollbar-corner{background: #4C4C4C;}
 .wgrid-div-body{overflow: hidden;}
+.wgrid-div-body::-webkit-scrollbar {width: 10px;}
+.wgrid-div-body::-webkit-scrollbar-button:start:decrement,::-webkit-scrollbar-button:end:increment {display: none;}
+.wgrid-div-body::-webkit-scrollbar-track {background: #5A5A5A; border: 1px solid #484747;}
+.wgrid-div-body::-webkit-scrollbar-thumb {background: #404040;}
+.wgrid-div-body::-webkit-scrollbar-corner{background: #4C4C4C;}
 .wgrid-empty-message{margin-left: 45%; margin-top: 19%;}
 .wgrid-hide{display:none !important; }
 
@@ -56,7 +66,6 @@
 .wgrid-wth100p{position:relative; width: 100% !important;}
 .wgrid-wth-date{position:relative; width: calc(100% - 30px) !important;}
 .wgrid-wth-edit{position:relative; width: calc(100% - 10px) !important;}
-
 
 /*유효성검사 툴팁 메세지*/
 .wgrid-vail-tooltip.right{position: absolute; background-color: rgba(0, 0, 0, 0.7); padding: 10px; color: rgba(246, 246, 246, .8); box-shadow: 0 3px 15px rgba(0,0,0,.75); animation: fadeIn 0.36s ease-in; border-radius: 4px; font-size: 1.3em; z-index: 7999;}

@@ -75,7 +75,10 @@
         let option = {
             style:{
                 width: '100%', 
-                height: '500px'               
+                height: '500px',
+                overflow: {
+                    x: null, y: null
+                }
             },
             format:{
                 date: "YYYY-MM-DD"
@@ -106,6 +109,15 @@
                 }
                 if(paramater.option.style.height){
                     option.style.height = paramater.option.style.height;
+                }
+                if(paramater.option.style.overflow){
+                    if(paramater.option.style.overflow.x){
+                        option.style.overflow.x = paramater.option.style.overflow.x;
+                    }
+                    if(paramater.option.style.overflow.y){
+                        option.style.overflow.y = paramater.option.style.overflow.y;
+                    }
+                   
                 }
             }
             if(paramater.option.empty){

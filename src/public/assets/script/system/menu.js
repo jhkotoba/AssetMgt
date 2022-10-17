@@ -32,7 +32,8 @@ const menu = {
                 {title:'등록일시', element: 'text', name: 'insDttm', width: '10%'},
                 {title:'수정자', element: 'text', name: 'uptNo', width: '5%'},
                 {title:'수정일시', element: 'text', name: 'uptDttm', width: '10%'},
-            ]
+            ],
+            option: { style: { height: '34.5vh', overflow: { y: 'scroll'}} }
         });
 
         this.grid.sub = new wGrid('subMenu', {
@@ -49,7 +50,8 @@ const menu = {
                 {title:'등록일시', element: 'text', name: 'insDttm', width: '10%'},
                 {title:'수정자', element: 'text', name: 'uptNo', width: '5%'},
                 {title:'수정일시', element: 'text', name: 'uptDttm', width: '10%'},
-            ]
+            ],
+            option: { style: { height: '34.5vh', overflow: { y: 'scroll'}} }
         });
 
         this.data.origin.length > 0 ? this.initGrid() : null;
@@ -63,6 +65,11 @@ const menu = {
         this.grid.sub.empty();
 
         this.data.origin.forEach(item => item.menuLv == 1 ? this.data.topList.push(item) : this.data.subList.push(item));
-        this.grid.top.setData(this.data.topList);
+        //this.grid.top.setData(this.data.topList);
+        
+
+        // TEST
+        this.grid.top.setData(this.data.origin);
+        this.grid.sub.setData(this.data.origin);
     }
 }
