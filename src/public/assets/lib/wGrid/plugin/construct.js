@@ -42,22 +42,23 @@
     createConstant(){
         return {
             STATE: {
-                SELECT: "SELECT",
-                INSERT: "INSERT",
-                UPDATE: "UPDATE",
-                REMOVE: "REMOVE"
+                SELECT: 'SELECT',
+                INSERT: 'INSERT',
+                UPDATE: 'UPDATE',
+                REMOVE: 'REMOVE'
             },
             TR_CLS_STATE: {
-                SELECT: "",
-                INSERT: "wgrid-insert-tr",
-                UPDATE: "wgrid-update-tr",
-                REMOVE: "wgrid-remove-tr"
+                SELECT: '',
+                INSERT: 'wgrid-insert-tr',
+                UPDATE: 'wgrid-update-tr',
+                REMOVE: 'wgrid-remove-tr',
+                CHOOSE: 'wgrid-choose-tr'
             },
             TAG_CLS_STATE:{
-                SELECT: "",
-                INSERT: "wgrid-insert-tag",
-                UPDATE: "wgrid-update-tag",
-                REMOVE: "wgrid-remove-tag"
+                SELECT: '',
+                INSERT: 'wgrid-insert-tag',
+                UPDATE: 'wgrid-update-tag',
+                REMOVE: 'wgrid-remove-tag'
             },
             EMPTY: "EMPTY"
         }
@@ -97,7 +98,8 @@
             row: {
                 style:{                    
                     cursor: "inherit",
-                }
+                },
+                chose: false
             }
         }
 
@@ -152,6 +154,9 @@
                         option.row.style.cursor = paramater.option.row.style.cursor;
                     }                    
                 }
+                if(paramater.option.row.chose == true){
+                    option.row.chose = paramater.option.row.chose;
+                }
             }
         }
         return option;
@@ -182,7 +187,7 @@
 
         // 생성할 이벤트 종류
         let evList = ["click", "change", "keyup"];
-        // 정의할 이벤트
+        // 내부 연결 이벤트
         let innerEvent = {};
 
         // 필드 이벤트 세팅
@@ -230,7 +235,8 @@
 
             self.element.body.addEventListener(evList[i], event => {
                 
-                let sequence = self.util.closest("TR", event.target).dataset.rowSeq;
+                let row = self.util.closest("TR", event.target);
+                let sequence = row.dataset.rowSeq;
                 let index = self.getSeqIndex(sequence);
 
                 // 연결할 이벤트 체크
@@ -262,6 +268,15 @@
                 case "text": case "checkbox": case "select": case "date": case "dateTime":
                     self.data[self.getSeqIndex(sequence)][event.target.name] = event.target.value;
                     break;
+                }
+
+                /**
+                 * 그리드 내부 이벤트 
+                 */
+                // 행선택 chose 옵션 설정시
+                if(evList[i] == 'click' && paramater.option.row.chose == true){
+                    self.element.bodyTb.childNodes.forEach(item => item.classList.remove('wgrid-choose-tr'));
+                    row.classList.add('wgrid-choose-tr');
                 }
 
                 event.stopPropagation();
