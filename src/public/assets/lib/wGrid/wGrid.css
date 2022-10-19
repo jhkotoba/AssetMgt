@@ -34,6 +34,11 @@
 .wgrid-select{background: #4e4e4e; color:#C6C6C6; font-size: 1em; height: 30px; border: 1px solid #585858; border-radius: 2px; padding: .25rem .5rem; vertical-align: bottom;}
 .wgrid-select:disabled{background: #4e4e4e; color:#777777;; font-size: 1em; height: 30px; border: 1px solid #585858; border-radius: 2px; padding: .25rem .5rem; vertical-align: bottom;}
 
+.wgrid-checkbox{-webkit-appearance: none; -moz-appearance: none; appearance: none; background: rgb(149, 148, 148); border-color: rgb(83, 80, 80); border-radius: 2px; cursor: pointer; height: 18px; outline: 0; width: 18px;}
+.wgrid-checkbox::after{border: solid rgb(213, 213, 213); border-width: 0 2px 2px 0; content: ''; display: none; height: 40%; left: 37%; position: relative; top: 20%; transform: rotate(45deg); width: 15%;}
+.wgrid-checkbox:checked{background: #454549;}
+.wgrid-checkbox:checked::after {display: block;}
+
 .wgrid-btn{background: #4C4C4C; color:#C6C6C6; border: 1px solid #585858; display: inline-block; border-radius: 2px;	text-align: center; white-space: nowrap; vertical-align: bottom; user-select: none; overflow: visible; margin: 0; cursor: pointer; font-weight:600; padding: .25rem .5rem; height: 30px;}
 .wgrid-btn:hover{background: #3A3A3A;}
 .wgrid-btn:active{background: #5E5E5E;}
@@ -42,7 +47,7 @@
 .wgrid-addremove-btn:hover{background: #3A3A3A;}
 .wgrid-addremove-btn:active{background: #5E5E5E;}
 
-.wgrid-choose-tr{background: #434343;}
+.wgrid-choose-tr{background: #434343; font-weight: 700; color: white;}
 .wgrid-remove-tr{background: #795757 !important;}
 .wgrid-remove-tag{background: #654A4A !important; pointer-events: none; color: #777777 !important;}
 .wgrid-remove-tag:disabled{background: #795757 !important;}

@@ -141,6 +141,7 @@ import { construct } from "./plugin/construct.js";
             }else if(field.element == "checkbox"){
                 // 체크박스 생성
                 tag = document.createElement("input");
+                tag.classList.add('wgrid-checkbox');
                 tag.setAttribute("type", "checkbox");
                 tag.setAttribute("name", field.name);
                 div.appendChild(tag);
@@ -287,6 +288,7 @@ import { construct } from "./plugin/construct.js";
         if(type == "checkbox"){
             // 체크박스 생성
             tag = document.createElement("input");
+            tag.classList.add('wgrid-checkbox');
             tag.setAttribute("type", "checkbox");
             tag.setAttribute("name", cell.name);
             div.appendChild(tag);
@@ -375,7 +377,7 @@ import { construct } from "./plugin/construct.js";
             div.textContent = cell.emptyText;
         }
 
-        // 그리드 상태값에 따른 색상변경, 행 색상 사용인 경우        
+        // 그리드 상태값에 따른 색상변경, 행 색상 사용인 경우
         if(tag && this.option.body.state.use == true){
             switch(row._state){
             case this.constant.STATE.SELECT: break;
