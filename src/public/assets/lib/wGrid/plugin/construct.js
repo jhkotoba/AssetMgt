@@ -92,7 +92,7 @@
             },
             body: {
                 state:{
-                    use: true
+                    use: false
                 }
             },
             row: {
@@ -139,6 +139,7 @@
                     option.head.show = true;
                 }
             }
+            option.body.state.use = true;
             if(paramater.option.body){
                 if(paramater.option.body.state){
                     if(paramater.option.body.state.use == false){

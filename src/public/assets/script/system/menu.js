@@ -5,7 +5,11 @@ window.addEventListener("DOMContentLoaded", event => menu.createMenu());
 const menu = {
 
     data: {
-        origin: [], topList: [], subList: []
+        origin: [], topList: [], subList: [],
+        mapping: {
+            mapping: {Y: '사용', N: '미사용'},
+            select: {list: [{value:'Y', text:'사용'}, {value:'N', text:'미사용'}]}
+        }
     },
     grid: {
         top: null, sub: null,
@@ -25,11 +29,12 @@ const menu = {
         // 상위메뉴 그리드 생성
         this.grid.top = new wGrid('topMenu', {
             fields: [
+                {element:"checkbox", name: "check", width:'3%', align:"center", edit: "checkbox"},
                 {title:'메뉴번호', element: 'text', name: 'menuNo', width: '5%'},
-                {title:'메뉴명', element: 'text', name: 'menuNm', width: '45%'},
+                {title:'메뉴명', element: 'text', name: 'menuNm', width: '40%'},
                 {title:'메뉴순번', element: 'text', name: 'menuSeq', width: '5%'},
-                {title:'전시여부', element: 'text', name: 'dispYn', width: '5%'},
-                {title:'사용여부', element: 'text', name: 'useYn', width: '5%'},
+                {title:'전시여부', element: 'text', name: 'dispYn', width: '6%', data: this.data.mapping},
+                {title:'사용여부', element: 'text', name: 'useYn', width: '6%', data: this.data.mapping},
                 {title:'등록자', element: 'text', name: 'insNo', width: '5%'},
                 {title:'등록일시', element: 'text', name: 'insDttm', width: '10%'},
                 {title:'수정자', element: 'text', name: 'uptNo', width: '5%'},
@@ -37,11 +42,15 @@ const menu = {
             ],
             option: { style: {
                 height: '34.5vh', overflow: { y: 'scroll'}},
+                body: { state: true },
                 row: { style: {cursor: 'pointer'}, chose: true }
             },
             event: {
                 click: (event, item, index, sequence) => {
-                   
+                    if(['INPUT', 'SELECT', 'BUTTON'].includes(event.target.tagName) == false){
+                        let list = this.data.subList.filter(f => item.menuSeq == f.groupNo);
+                        this.grid.sub.setData(JSON.parse(JSON.stringify(list)));
+                    }
                 }
             }
         });
@@ -53,8 +62,8 @@ const menu = {
                 {title:'메뉴명', element: 'text', name: 'menuNm', width: '25%'},
                 {title:'메뉴URL', element: 'text', name: 'menuUrl', width: '25%'},                
                 {title:'메뉴순번', element: 'text', name: 'menuSeq', width: '5%'},
-                {title:'전시여부', element: 'text', name: 'dispYn', width: '5%'},
-                {title:'사용여부', element: 'text', name: 'useYn', width: '5%'},
+                {title:'전시여부', element: 'select', name: 'dispYn', width: '5%', data: this.data.ynData},
+                {title:'사용여부', element: 'select', name: 'useYn', width: '5%', data: this.data.ynData},
                 {title:'등록자', element: 'text', name: 'insNo', width: '5%'},
                 {title:'등록일시', element: 'text', name: 'insDttm', width: '10%'},
                 {title:'수정자', element: 'text', name: 'uptNo', width: '5%'},
@@ -78,7 +87,7 @@ const menu = {
         // 상위메뉴 하위메뉴 분리
         this.data.origin.forEach(item => item.menuLv == 1 ? this.data.topList.push(item) : this.data.subList.push(item));
         // 상위메뉴 세팅
-        this.grid.top.setData(this.data.topList.sort((a,b) => a.menuSeq - b.menuSeq));
+        this.grid.top.setData(JSON.parse(JSON.stringify(this.data.topList)).sort((a,b) => a.menuSeq - b.menuSeq));
     }
 }
 
