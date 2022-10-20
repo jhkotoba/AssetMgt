@@ -51,9 +51,6 @@ import { construct } from "./plugin/construct.js";
         // 내부 이벤트 생성        
         this.innerEvent = construct.createEvent(this, paramater);
 
-        // 그리드 스타일 세팅
-        this.initStyle(this.option);
-
         // 그리드 생성
         this.create();
 
@@ -76,25 +73,6 @@ import { construct } from "./plugin/construct.js";
         if(rowSeq){
             delete this.state.seqRowElement[rowSeq];
             delete this.state.seqCellElement[rowSeq];
-        }
-    }
-
-    /**
-     * 그리드 사용자 정의 스타일 적용
-     */
-    initStyle = function(option){
-
-        if(option.style.height){
-            this.element.body.style.height = option.style.height;
-        }
-
-        if(option.style.overflow.x == 'overlay' || option.style.overflow.x == 'scroll'){
-            this.element.head.style.overflowX = option.style.overflow.x;
-            this.element.body.style.overflowX = option.style.overflow.x;
-        }
-        if(option.style.overflow.y == 'overlay' || option.style.overflow.y == 'scroll'){
-            this.element.head.style.overflowY = option.style.overflow.y;
-            this.element.body.style.overflowY = option.style.overflow.y;
         }
     }
 
@@ -879,6 +857,14 @@ import { construct } from "./plugin/construct.js";
                 remove.classList.remove(cancelTag);
             }
         }
+    }
+
+    /**
+     * 선택한 체크박스의 행을 편집상태로 변환
+     * @param {string} name 
+     */
+    modifyStateCheckedElement(name){
+        // ...
     }
 
     /**

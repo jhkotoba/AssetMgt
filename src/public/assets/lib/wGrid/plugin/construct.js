@@ -165,16 +165,30 @@
 
     /**
      * wGrid 생성시 그리드 세팅
-     * @param {element} element 
+     * @param {element} el 
      * @param {object} paramater 
      */
-    settingGrid(element, paramater){
-        element.target.classList.add("wgrid-field");
-        if(paramater?.option?.style?.width){
-            element.target.style.width = paramater.option.style.width + "px";
+    settingGrid(el, param){
+
+        el.target.classList.add("wgrid-field");
+        if(param?.option?.style?.width){
+            el.target.style.width = param.option.style.width;
         }
-        if(paramater?.option?.style?.height){
-            element.target.style.height = paramater.option.style.height + "px";
+        if(param?.option?.style?.height){
+            el.target.style.height = param.option.style.height;
+        }
+
+        if(param?.option?.style?.height){
+            el.body.style.height = param.option.style.height;
+        }
+
+        if(param?.option?.style?.overflow?.x == 'overlay' || param?.option?.style?.overflow?.x == 'scroll'){
+            el.head.style.overflowX = param.option.style.overflow.x;
+            el.body.style.overflowX = param.option.style.overflow.x;
+        }
+        if(param?.option?.style?.overflow?.y == 'overlay' || param?.option?.style?.overflow?.y == 'scroll'){
+            el.head.style.overflowY = param.option.style.overflow.y;
+            el.body.style.overflowY = param.option.style.overflow.y;
         }
     },
 
@@ -275,7 +289,9 @@
                  * 그리드 내부 이벤트 
                  */
                 // 행선택 chose 옵션 설정시
-                if(evList[i] == 'click' && paramater.option.row.chose == true){
+                if(evList[i] == 'click' 
+                && ['INPUT', 'SELECT', 'BUTTON'].includes(event.target.tagName) == false
+                && paramater.option.row.chose == true){
                     self.element.bodyTb.childNodes.forEach(item => item.classList.remove('wgrid-choose-tr'));
                     row.classList.add('wgrid-choose-tr');
                 }

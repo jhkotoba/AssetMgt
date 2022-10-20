@@ -1,6 +1,12 @@
 import { postFetch } from "/script/common/fetch.js";
 
-window.addEventListener("DOMContentLoaded", event => menu.createMenu());
+window.addEventListener("DOMContentLoaded", function(){
+    // 메뉴생성
+    menu.createMenu();
+    
+    // 메뉴관리 이벤트 생성
+    menu.createEvent();
+});
 
 const menu = {
 
@@ -88,6 +94,16 @@ const menu = {
         this.data.origin.forEach(item => item.menuLv == 1 ? this.data.topList.push(item) : this.data.subList.push(item));
         // 상위메뉴 세팅
         this.grid.top.setData(JSON.parse(JSON.stringify(this.data.topList)).sort((a,b) => a.menuSeq - b.menuSeq));
+    },
+
+    /**
+     * 메뉴 이벤트 생성
+     */
+    createEvent(){
+        let topEdit = document.getElementById('topEdit');
+        topEdit.addEventListener('click', () => {
+            this.grid.top.modifyStateCheckedElement('check');
+        });
     }
 }
 
