@@ -776,20 +776,35 @@ import { construct } from "./plugin/construct.js";
     }
 
     /**
-     * 행의 상태를 취소(삭제, 편집상태를 취소)
-     * @param {number} rowIdx 
+     * 선택한 체크박스의 행을 편집,삭제 상태로 부터 복원
+     * @param {string} name 
+     * @returns 
      */
-    cancelStateRowIdx(rowIdx){
-        this.cancelStateRow(rowIdx, this.getIdxSequence(rowIdx));
-    }
+    cancelStateCheckedElement = name => this.cancelStateRowSeqs(this.getNameCheckedSeqs(name));
 
     /**
-     * 행의 상태를 취소(삭제, 편집상태를 취소)
+     * 행을 편집,삭제 상태로 부터 복원 (rowIdxList)
+     * @param {Array} rowIdxList 
+     */
+    cancelStateRowIdxs = rowIdxList => rowIdxList.forEach(idx => this.cancelStateRowIdx(idx));
+
+    /**
+     * 행을 편집,삭제 상태로 부터 복원 (rowSeqList)
+     * @param {Array} rowSeqList 
+     */
+    cancelStateRowSeqs = rowSeqList => rowSeqList.forEach(req => this.cancelStateRowSeq(req));
+
+    /**
+     * 행을 편집,삭제 상태로 부터 복원 (rowIdx)
+     * @param {number} rowIdx 
+     */
+    cancelStateRowIdx = rowIdx => this.cancelStateRow(rowIdx, this.getIdxSequence(rowIdx));
+
+    /**
+     * 행을 편집,삭제 상태로 부터 복원 (rowSeq)
      * @param {number} rowSeq 
      */
-    cancelStateRowSeq(rowSeq){
-        this.cancelStateRow(this.getSeqIndex(rowSeq), rowSeq);
-    }
+    cancelStateRowSeq = rowSeq => this.cancelStateRow(this.getSeqIndex(rowSeq), rowSeq);
 
     /**
      * 행의 상태를 취소(삭제, 편집상태를 취소)
@@ -821,14 +836,7 @@ import { construct } from "./plugin/construct.js";
 
             // cell 생성후 태그 연결
             let loaded = [];
-            this.fields.forEach((field, fIdx) => {
-                let result = this._bodyListCellCreate(field, fIdx, this.data[rowIdx], rowIdx);
-                tr.appendChild(result.td);
-                // 셀 행 직후 콜백함수 호출 세팅
-                if(this.util.isFunction(field.loaded)){
-                    loaded.push({fn: field.loaded, tag: result.tag, row: Object.assign({}, this.data[rowIdx])});
-                }
-            });
+            this.fields.forEach((field, idx) => tr.appendChild(this.createCell(this.data[rowIdx], rowIdx, field, idx, loaded)));
             // 행생성후 loaded함수 호출
             loaded.forEach(item => item.fn(item.tag, item.row));
 
@@ -863,9 +871,7 @@ import { construct } from "./plugin/construct.js";
      * 선택한 체크박스의 행을 편집상태로 변환
      * @param {string} name 
      */
-    modifyStateCheckedElement(name){
-        // ...
-    }
+    modifyStateCheckedElement = name => this.modifyStateRowSeqs(this.getNameCheckedSeqs(name));
 
     /**
      * 행 편집상태로 변경 (rowIdxList)
@@ -917,16 +923,10 @@ import { construct } from "./plugin/construct.js";
         // 자식노드 비우기
         this.util.childElementEmpty(tr);
 
-        // cell 생성후 태그 연결
+        // CELL 생성        
         let loaded = [];
-        this.fields.forEach((field, fIdx) => {
-            let result = this._bodyListCellCreate(field, fIdx, this.data[rowIdx], rowIdx);
-            tr.appendChild(result.td);
-            // 셀 행 직후 콜백함수 호출 세팅
-            if(this.util.isFunction(field.loaded)){
-                loaded.push({fn: field.loaded, tag: result.tag, row: Object.assign({}, this.data[rowIdx])});
-            }
-        });
+        this.fields.forEach((field, idx) => tr.appendChild(this.createCell(this.data[rowIdx], rowIdx, field, idx, loaded)));
+        
         // 행생성후 loaded함수 호출
         loaded.forEach(item => item.fn(item.tag, item.row));
 
@@ -946,6 +946,12 @@ import { construct } from "./plugin/construct.js";
             });
         }        
     }
+
+    /**
+     * 선택한 체크박스의 행을 삭제상태로 변환
+     * @param {string} name 
+     */
+    removeStateCheckedElement = name => this.removeStateRowSeqs(this.getNameCheckedSeqs(name));
 
     /**
      * 행 삭제상태로 변경 (rowIdxList)

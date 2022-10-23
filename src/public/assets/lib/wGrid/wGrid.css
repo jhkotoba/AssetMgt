@@ -38,6 +38,8 @@
 .wgrid-checkbox::after{border: solid rgb(213, 213, 213); border-width: 0 2px 2px 0; content: ''; display: none; height: 40%; left: 37%; position: relative; top: 20%; transform: rotate(45deg); width: 15%;}
 .wgrid-checkbox:checked{background: #454549;}
 .wgrid-checkbox:checked::after {display: block;}
+.wgrid-checkbox:checked.wgrid-remove-tag{background: #654A4A}
+.wgrid-checkbox:checked.wgrid-update-tag{background: #535473;}
 
 .wgrid-btn{background: #4C4C4C; color:#C6C6C6; border: 1px solid #585858; display: inline-block; border-radius: 2px;	text-align: center; white-space: nowrap; vertical-align: bottom; user-select: none; overflow: visible; margin: 0; cursor: pointer; font-weight:600; padding: .25rem .5rem; height: 30px;}
 .wgrid-btn:hover{background: #3A3A3A;}
@@ -53,6 +55,7 @@
 .wgrid-remove-tag:disabled{background: #795757 !important;}
 .wgrid-update-tr{background: #5A607D;}
 .wgrid-update-tag{background: #535473;}
+span.wgrid-update-tag {background: inherit;}
 .wgrid-update-tag:disabled{background: #5A607D;}
 .wgrid-insert-tr{background: #54794f;}
 .wgrid-insert-tag{background: #41583e;}

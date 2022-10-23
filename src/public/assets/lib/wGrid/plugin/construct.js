@@ -173,10 +173,7 @@
         el.target.classList.add("wgrid-field");
         if(param?.option?.style?.width){
             el.target.style.width = param.option.style.width;
-        }
-        if(param?.option?.style?.height){
-            el.target.style.height = param.option.style.height;
-        }
+        }     
 
         if(param?.option?.style?.height){
             el.body.style.height = param.option.style.height;
