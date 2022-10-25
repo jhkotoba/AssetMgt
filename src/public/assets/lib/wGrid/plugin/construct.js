@@ -47,18 +47,14 @@
                 UPDATE: 'UPDATE',
                 REMOVE: 'REMOVE'
             },
-            TR_CLS_STATE: {
-                SELECT: '',
-                INSERT: 'wgrid-insert-tr',
-                UPDATE: 'wgrid-update-tr',
-                REMOVE: 'wgrid-remove-tr',
-                CHOOSE: 'wgrid-choose-tr'
-            },
-            TAG_CLS_STATE:{
-                SELECT: '',
-                INSERT: 'wgrid-insert-tag',
-                UPDATE: 'wgrid-update-tag',
-                REMOVE: 'wgrid-remove-tag'
+            class:{
+                select: '',
+                insert: 'insert',
+                update: 'update',
+                remove: 'remove',
+                choose: 'choose',
+                header: 'header',
+                body: 'body'
             },
             EMPTY: "EMPTY"
         }
@@ -170,7 +166,7 @@
      */
     settingGrid(el, param){
 
-        el.target.classList.add("wgrid-field");
+        el.target.classList.add("wgrid");
         if(param?.option?.style?.width){
             el.target.style.width = param.option.style.width;
         }     
@@ -289,8 +285,8 @@
                 if(evList[i] == 'click' 
                 && ['INPUT', 'SELECT', 'BUTTON'].includes(event.target.tagName) == false
                 && paramater.option.row.chose == true){
-                    self.element.bodyTb.childNodes.forEach(item => item.classList.remove('wgrid-choose-tr'));
-                    row.classList.add('wgrid-choose-tr');
+                    self.element.bodyTb.childNodes.forEach(item => item.classList.remove(self.constant.class.choose));
+                    row.classList.add(self.constant.class.choose);
                 }
 
                 event.stopPropagation();

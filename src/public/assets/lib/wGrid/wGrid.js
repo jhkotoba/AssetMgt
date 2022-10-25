@@ -5,7 +5,7 @@ import { construct } from "./plugin/construct.js";
 /**
  * wGrid
  * @author JeHoon 
- * @version 0.10.8
+ * @version 0.10.10
  */
  export class wGrid {
 
@@ -119,7 +119,6 @@ import { construct } from "./plugin/construct.js";
             }else if(field.element == "checkbox"){
                 // 체크박스 생성
                 tag = document.createElement("input");
-                tag.classList.add('wgrid-checkbox');
                 tag.setAttribute("type", "checkbox");
                 tag.setAttribute("name", field.name);
                 div.appendChild(tag);
@@ -147,8 +146,7 @@ import { construct } from "./plugin/construct.js";
         }
 
         // 헤드 클래스 적용
-        this.element.head.classList.add("wgrid-div-header");
-        this.element.headTb.classList.add("wgrid-table-header");
+        this.element.head.classList.add(this.constant.class.header);
         
         // 헤드 태그연결
         this.element.headTb.appendChild(this.element.headTr);
@@ -169,8 +167,7 @@ import { construct } from "./plugin/construct.js";
         }
 
         // 바디 클래스 적용
-        this.element.body.classList.add("wgrid-div-body");        
-        this.element.bodyTb.classList.add("wgrid-table-body");
+        this.element.body.classList.add(this.constant.class.body);
 
         // 태그 연결
         this.element.body.appendChild(this.element.bodyTb);
@@ -266,7 +263,6 @@ import { construct } from "./plugin/construct.js";
         if(type == "checkbox"){
             // 체크박스 생성
             tag = document.createElement("input");
-            tag.classList.add('wgrid-checkbox');
             tag.setAttribute("type", "checkbox");
             tag.setAttribute("name", cell.name);
             div.appendChild(tag);
@@ -353,22 +349,6 @@ import { construct } from "./plugin/construct.js";
             && !row[cell.name]){                    
             // 정의된 빈값 표시
             div.textContent = cell.emptyText;
-        }
-
-        // 그리드 상태값에 따른 색상변경, 행 색상 사용인 경우
-        if(tag && this.option.body.state.use == true){
-            switch(row._state){
-            case this.constant.STATE.SELECT: break;
-            case this.constant.STATE.INSERT:
-                tag.classList.add(this.constant.TAG_CLS_STATE.INSERT);
-                break;
-            case this.constant.STATE.UPDATE:
-                tag.classList.add(this.constant.TAG_CLS_STATE.UPDATE);
-                break;
-            case this.constant.STATE.REMOVE:
-                tag.classList.add(this.constant.TAG_CLS_STATE.REMOVE);
-                break;
-            }
         }
         
         // 셀 엘리먼트 인덱싱
@@ -491,24 +471,11 @@ import { construct } from "./plugin/construct.js";
         let tr = this.createRow(row, this.data.length-1);
 
         if(this.option.body.state.use == true){
-            tr.classList.add(this.constant.TR_CLS_STATE.INSERT);
+            tr.classList.add(this.constant.class.insert);
         }
         
 
         return tr;
-    }
-
-    /**
-     * 시퀀스와 컬럼명으로 해당 좌표 구함
-     * @param {string/number} rowSeq 
-     * @param {string} name 
-     * @returns 
-     * @deprecated getSeqCellElement 를 사용
-     */
-    getCellElement(rowSeq, name){
-        let tr = this.getElementBodyTable()
-            .querySelectorAll("tr[data-row-seq='"+ rowSeq +"']")[0];
-        return tr.querySelectorAll("[name='" + name + "']")[0];
     }
 
     /**
@@ -677,15 +644,6 @@ import { construct } from "./plugin/construct.js";
     appendRow = () => this.element.bodyTb.appendChild(this.createNewRow());
 
     /**
-     * name값으로 체크된 체크박스 찾아서 가져오기
-     * @param {string} name 
-     * @returns 
-     * @deprecated getCheckedElement 로 대체
-     */
-    getNameCheckedNodes = (name) => this.getElementBodyTable()
-        .querySelectorAll("input[type='checkbox'][name='"+name+"']:checked");
-
-    /**
      * rowSeq 값으로 행 엘리먼트 가져오기
      * @param {string/number} rowSeq 
      * @returns 
@@ -841,8 +799,7 @@ import { construct } from "./plugin/construct.js";
             loaded.forEach(item => item.fn(item.tag, item.row));
 
             // 취소할 상태값 저장
-            cancelTr = this.constant.TR_CLS_STATE.UPDATE;
-            cancelTag = this.constant.TAG_CLS_STATE.UPDATE;
+            cancelTr = this.constant.class.update;
             break;
         // 삭제상태 취소
         case this.constant.STATE.REMOVE:
@@ -851,19 +808,13 @@ import { construct } from "./plugin/construct.js";
             this.data[rowIdx]._state = this.constant.STATE.SELECT;
             
             // 취소할 상태값 저장
-            cancelTr = this.constant.TR_CLS_STATE.REMOVE;
-            cancelTag = this.constant.TAG_CLS_STATE.REMOVE;
+            cancelTr = this.constant.class.remove;
             break;
         }
 
         if(this.option.body.state.use == true){
             // ROW스타일 row 태그 스타일 삭제            
             tr.classList.remove(cancelTr);
-
-            // 행 자식노드의 태그의 스타일(클래스) 삭제
-            for(let remove of tr.getElementsByClassName(this.constant.TAG_CLS_STATE.REMOVE)){
-                remove.classList.remove(cancelTag);
-            }
         }
     }
 
@@ -877,33 +828,25 @@ import { construct } from "./plugin/construct.js";
      * 행 편집상태로 변경 (rowIdxList)
      * @param {Array} rowIdxList 
      */
-    modifyStateRowIdxs(rowIdxList){
-        rowIdxList.forEach(idx => this.modifyStateRowIdx(idx));
-    }
+    modifyStateRowIdxs = rowIdxList => rowIdxList.forEach(idx => this.modifyStateRowIdx(idx));
 
     /**
      * 행 편집상태로 변경(rowSeqList)
      * @param {Array} rowSeqList 
      */
-    modifyStateRowSeqs(rowSeqList){
-        rowSeqList.forEach(req => this.modifyStateRowSeq(req));
-    }
+    modifyStateRowSeqs = rowSeqList => rowSeqList.forEach(req => this.modifyStateRowSeq(req));
 
     /**
      * 행 편집상태로 변경 (rowIdx)
      * @param {number} rowIdx 
      */
-    modifyStateRowIdx(rowIdx){
-        this.modifyStateRow(rowIdx, this.getIdxSequence(rowIdx));
-    }
+    modifyStateRowIdx = rowIdx => this.modifyStateRow(rowIdx, this.getIdxSequence(rowIdx));
     
     /**
      * 행 편집상태로 변경 (seq)
      * @param {string/number} rowSeq 
      */
-    modifyStateRowSeq(rowSeq){
-        this.modifyStateRow(this.getSeqIndex(rowSeq), rowSeq);
-    }
+    modifyStateRowSeq = rowSeq => this.modifyStateRow(this.getSeqIndex(rowSeq), rowSeq);
 
     // 행 편집상태로 변경   
     modifyStateRow(rowIdx, rowSeq){
@@ -931,20 +874,8 @@ import { construct } from "./plugin/construct.js";
         loaded.forEach(item => item.fn(item.tag, item.row));
 
         if(this.option.body.state.use == true){
-            tr.classList.add(this.constant.TR_CLS_STATE.UPDATE);
-            tr.childNodes.forEach(td => {
-                switch(td.firstChild.firstChild.tagName){
-                    case "INPUT":
-                        if(td.firstChild.firstChild.type == "checkbox"){
-                            break;
-                        }
-                    case "BUTTON":
-                    case "SELECT":
-                        td.firstChild.firstChild.classList.add(this.constant.TAG_CLS_STATE.UPDATE);
-                    break;
-                }
-            });
-        }        
+            tr.classList.add(this.constant.class.update);
+        }
     }
 
     /**
@@ -992,16 +923,7 @@ import { construct } from "./plugin/construct.js";
         let tr = this.getRowElementRowSeq(rowSeq);
 
         if(this.option.body.state.use == true){
-            tr.classList.add(this.constant.TR_CLS_STATE.REMOVE);
-            tr.childNodes.forEach(td => {
-                switch(td.firstChild.firstChild.tagName){
-                    case "INPUT":
-                        if(td.firstChild.firstChild.type == "checkbox") break;
-                    case "BUTTON":
-                        td.firstChild.firstChild.classList.add(this.constant.TAG_CLS_STATE.REMOVE);
-                    break;
-                }
-            });
+            tr.classList.add(this.constant.class.remove);
         }        
 
         // 조회목록 없을시 메시지 표시
