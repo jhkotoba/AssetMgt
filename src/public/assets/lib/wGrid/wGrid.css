@@ -26,8 +26,6 @@
 .wgrid .body::-webkit-scrollbar-thumb {background: #404040;}
 .wgrid .body::-webkit-scrollbar-corner{background: #4C4C4C;}
 .wgrid .body table{background: #5A5A5A; border-collapse: collapse; border-spacing: 0; font-size: 0.9em;  color: rgba(246, 246, 246, .8); width: 100%;}
-.wgrid .body table span{font-size: 1em;}
-.wgrid .body table td {overflow: hidden; white-space: nowrap; text-overflow: ellipsis; border-bottom: 0; border-top: 0; border: 1px solid #363636; padding: 5px 5px 5px 5px; text-align: center; border-collapse: collapse; border-spacing: 0; height: 30px;}
 .wgrid .body table tr:hover{ background: #363636;border-color: #363636;border-bottom: 0; border-top: 0; border: 1px solid #363636; padding: 5px 5px 5px 5px; text-align: center; border-collapse: collapse; border-spacing: 0; transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;}
 .wgrid .body table tr:active{ background: #1c1c1c;border-color: #363636;border-bottom: 0; border-top: 0; border: 1px solid #363636; padding: 5px 5px 5px 5px; text-align: center; border-collapse: collapse; border-spacing: 0; transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;}
 
@@ -40,6 +38,7 @@
 .wgrid .body table tr.update:hover{background: #3F4356;}
 .wgrid .body table tr.update:active{background: #282B37;}
 .wgrid .body table tr.update > td select, input{background: #535473;}
+.wgrid .body table tr.update > td div input{background: #535473;}
 .wgrid .body table tr.update > td span {background: inherit;}
 .wgrid .body table tr.update input[type='checkbox']{background: #535473;}
 .wgrid .body table tr.update input[type='checkbox']:disabled{background: #5A607D;}
@@ -50,23 +49,26 @@
 .wgrid .body table tr.remove:hover{background: #593F3F !important;}
 .wgrid .body table tr.remove:active{background: #3C2B2B !important;}
 .wgrid .body table tr.remove > td select, input{background: #654A4A;}
+.wgrid .body table tr.remove > td div input{background: #654A4A;}
 .wgrid .body table tr.remove > td span {background: inherit;}
 .wgrid .body table tr.remove input[type='checkbox']{background: #654A4A !important; pointer-events: none; color: #777777 !important;}
 .wgrid .body table tr.remove input[type='checkbox']:disabled{background: #795757 !important;}
 .wgrid .body table tr.remove input[type='checkbox']:checked::after {display: block;}
 .wgrid .body table tr.remove input[type='checkbox']:checked{background: #654A4A;}
 
-.wgrid .body table tr.insert{background: #79794F;}
-.wgrid .body table tr.insert:hover{background: #5d5d3d !important;}
-.wgrid .body table tr.insert:active{background: #40402a !important;}
-.wgrid .body table tr.insert > td select, input{background: #58583E;}
+.wgrid .body table tr.insert{background: #7B7B5D;}
+.wgrid .body table tr.insert:hover{background: #606048 !important;}
+.wgrid .body table tr.insert:active{background: #464634 !important;}
+.wgrid .body table tr.insert > td select, input{background: #5A5A47;}
+.wgrid .body table tr.insert > td div input{background: #5A5A47;}
 .wgrid .body table tr.insert > td span {background: inherit;}
-.wgrid .body table tr.insert input[type='checkbox']{background: #535473;}
-.wgrid .body table tr.insert input[type='checkbox']:disabled{background: #78794F;}
+.wgrid .body table tr.insert input[type='checkbox']{background: #5A5A47;}
+.wgrid .body table tr.insert input[type='checkbox']:disabled{background: #7C7D5D;}
 .wgrid .body table tr.insert input[type='checkbox']:checked::after {display: block;}
-.wgrid .body table tr.insert input[type='checkbox']:checked{background: #58583E;}
+.wgrid .body table tr.insert input[type='checkbox']:checked{background: #5A5A47;}
 
-
+.wgrid .body table tr td {overflow: hidden; white-space: nowrap; text-overflow: ellipsis; border-bottom: 0; border-top: 0; border: 1px solid #363636; padding: 5px 5px 5px 5px; text-align: center; border-collapse: collapse; border-spacing: 0; height: 30px;}
+.wgrid .body table tr td span{font-size: 1em;}
 
 
 /*  */

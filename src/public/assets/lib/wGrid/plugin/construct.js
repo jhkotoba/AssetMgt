@@ -63,10 +63,10 @@
 
     /**
      * wGrid 생성시 옵션 세팅
-     * @param {object} paramater 
+     * @param {object} param 
      * @returns 
      */
-    createOption(paramater){
+    createOption(param){
 
         // 옵션 기본값 세팅
         let option = {
@@ -96,63 +96,67 @@
                     cursor: "inherit",
                 },
                 chose: false
+            },
+            checkbox: {
+                check: true,
+                uncheck: false
             }
         }
 
         // 옵션값 세팅
-        if(paramater.option){
-            if(paramater.option.style){
-                if(paramater.option.style.width){
-                    option.style.width = paramater.option.style.width;
+        if(param.option){
+            if(param.option.style){
+                if(param.option.style.width){
+                    option.style.width = param.option.style.width;
                 }
-                if(paramater.option.style.height){
-                    option.style.height = paramater.option.style.height;
+                if(param.option.style.height){
+                    option.style.height = param.option.style.height;
                 }
-                if(paramater.option.style.overflow){
-                    if(paramater.option.style.overflow.x){
-                        option.style.overflow.x = paramater.option.style.overflow.x;
+                if(param.option.style.overflow){
+                    if(param.option.style.overflow.x){
+                        option.style.overflow.x = param.option.style.overflow.x;
                     }
-                    if(paramater.option.style.overflow.y){
-                        option.style.overflow.y = paramater.option.style.overflow.y;
+                    if(param.option.style.overflow.y){
+                        option.style.overflow.y = param.option.style.overflow.y;
                     }
                    
                 }
             }
-            if(paramater.option.empty){
-                if(paramater.option.empty.message){
-                    option.empty.message = paramater.option.empty.message;
+            if(param.option.empty){
+                if(param.option.empty.message){
+                    option.empty.message = param.option.empty.message;
                 }
             }
-            if(paramater.option.format){
-                if(paramater.option.format.date){
-                    option.format.date = paramater.option.format.date
+            if(param.option.format){
+                if(param.option.format.date){
+                    option.format.date = param.option.format.date
                 }
             }
-            if(paramater.option.head){
-                if(paramater.option.head.show == false){
+            if(param.option.head){
+                if(param.option.head.show == false){
                     option.head.show = false;
                 }else{
                     option.head.show = true;
                 }
             }
             option.body.state.use = true;
-            if(paramater.option.body){
-                if(paramater.option.body.state){
-                    if(paramater.option.body.state.use == false){
+            if(param.option.body){
+                if(param.option.body.state){
+                    if(param.option.body.state.use == false){
                         option.body.state.use = false;
                     }else{
                         option.body.state.use = true;
                     }
                 }
             }
-            if(paramater.option.row){
-                if(paramater.option.row.style){
-                    if(paramater.option.row.style.cursor){
-                        option.row.style.cursor = paramater.option.row.style.cursor;
+            if(param.option.row){
+                if(param.option.row.style){
+                    if(param.option.row.style.cursor){
+                        option.row.style.cursor = param.option.row.style.cursor;
                     }                    
                 }
-                if(paramater.option.row.chose == true){
-                    option.row.chose = paramater.option.row.chose;
+                if(param.option.row.chose == true){
+                    option.row.chose = param.option.row.chose;
                 }
             }
         }
@@ -162,7 +166,7 @@
     /**
      * wGrid 생성시 그리드 세팅
      * @param {element} el 
-     * @param {object} paramater 
+     * @param {object} param 
      */
     settingGrid(el, param){
 
@@ -188,10 +192,10 @@
     /**
      * wGrid 생성시 그리드 이벤트 세팅
      * @param {this} self 
-     * @param {object} paramater 
+     * @param {object} param 
      * @returns 
      */
-    createEvent(self, paramater){
+    createEvent(self, param){
 
         // 생성할 이벤트 종류
         let evList = ["click", "change", "keyup"];
@@ -199,9 +203,9 @@
         let innerEvent = {};
 
         // 필드 이벤트 세팅
-        for(let i=0; i<paramater.fields.length; i++){
+        for(let i=0; i<param.fields.length; i++){
             
-            let item = paramater.fields[i];
+            let item = param.fields[i];
             
             // 빈값이면 통과
             if(item.event == undefined || item.event == null){
@@ -243,7 +247,12 @@
 
             self.element.body.addEventListener(evList[i], event => {
                 
+                // 체크박스 클릭이벤트 강제 종료
+                if(event.type == 'click' && event.target.dataset.sync == 'checkbox') return;
+                
                 let row = self.util.closest("TR", event.target);
+                if(!row)return;
+                
                 let sequence = row.dataset.rowSeq;
                 let index = self.getSeqIndex(sequence);
 
@@ -273,8 +282,18 @@
 
                 // 데이터 동기화
                 switch(event.target.dataset.sync){
-                case "text": case "checkbox": case "select": case "date": case "dateTime":
-                    self.data[self.getSeqIndex(sequence)][event.target.name] = event.target.value;
+                case 'checkbox':
+                    self.data[index][event.target.name] = 
+                        event.target.checked == true ? self.option.checkbox.check : self.option.checkbox.uncheck;
+                    break;
+                case 'number':
+                    let number = Number(event.target.value.replace('/[^0-9]/g', ''));
+                    let value = Number.isNaN(number) ? self.data[index][event.target.name] : number;
+                    self.data[index][event.target.name] = value;
+                    event.target.value = value;
+                    break;
+                case 'text': case 'select': case 'date': case 'dateTime':
+                    self.data[index][event.target.name] = event.target.value;
                     break;
                 }
 
@@ -284,7 +303,7 @@
                 // 행선택 chose 옵션 설정시
                 if(evList[i] == 'click' 
                 && ['INPUT', 'SELECT', 'BUTTON'].includes(event.target.tagName) == false
-                && paramater.option.row.chose == true){
+                && self.option.row.chose == true){
                     self.element.bodyTb.childNodes.forEach(item => item.classList.remove(self.constant.class.choose));
                     row.classList.add(self.constant.class.choose);
                 }

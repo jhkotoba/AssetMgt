@@ -35,12 +35,12 @@ const menu = {
         // 상위메뉴 그리드 생성
         this.grid.top = new wGrid('topMenu', {
             fields: [
-                {element:"checkbox", name: "check", width:'3%', align:"center", edit: "checkbox"},
+                {element:'checkbox', name: 'check', edit: 'checkbox', width:'3%', align:'center'},
                 {title:'메뉴번호', element: 'text', name: 'menuNo', width: '5%'},
-                {title:'메뉴명', element: 'text', name: 'menuNm', width: '38%'},
-                {title:'메뉴순번', element: 'text', name: 'menuSeq', width: '5%'},
-                {title:'전시여부', element: 'text', name: 'dispYn', width: '7%', edit:"select",  data: this.data.mapping},
-                {title:'사용여부', element: 'text', name: 'useYn', width: '7%', edit:"select", data: this.data.mapping},
+                {title:'메뉴명', element: 'text', name: 'menuNm', edit: 'text', width: '38%'},
+                {title:'메뉴순번', element: 'text', name: 'menuSeq', edit: 'number', width: '5%'},
+                {title:'전시여부', element: 'text', name: 'dispYn', edit:'select', width: '7%', data: this.data.mapping},
+                {title:'사용여부', element: 'text', name: 'useYn', edit:'select', width: '7%', data: this.data.mapping},
                 {title:'등록자', element: 'text', name: 'insNo', width: '5%'},
                 {title:'등록일시', element: 'text', name: 'insDttm', width: '10%'},
                 {title:'수정자', element: 'text', name: 'uptNo', width: '5%'},
@@ -100,12 +100,15 @@ const menu = {
      * 메뉴 이벤트 생성
      */
     createEvent(){
-        // 상위 그리드 취소 버튼
-        topCancel.addEventListener('click', () => this.grid.top.cancelStateCheckedElement('check'));
+
+        topAdd.addEventListener('click', () => this.grid.top.prependRow());
+        // 상 그리드 편집 버튼
+        topEdit.addEventListener('click', () => this.grid.top.modifyStateCheckedElement('check'));
         // 상위 그리드 삭제 버튼
         topRemove.addEventListener('click', () => this.grid.top.removeStateCheckedElement('check'));
-        // 상위 그리드 편집 버튼
-        topEdit.addEventListener('click', () => this.grid.top.modifyStateCheckedElement('check'));
+        // 상위 그리드 취소 버튼
+        topCancel.addEventListener('click', () => this.grid.top.cancelStateCheckedElement('check'));
+        
         // 상위 그리드 저장 버튼
 
         // 하위 그리드 취소 버튼

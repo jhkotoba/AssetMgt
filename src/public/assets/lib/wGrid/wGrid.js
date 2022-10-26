@@ -5,7 +5,7 @@ import { construct } from "./plugin/construct.js";
 /**
  * wGrid
  * @author JeHoon 
- * @version 0.10.10
+ * @version 0.10.11
  */
  export class wGrid {
 
@@ -248,9 +248,10 @@ import { construct } from "./plugin/construct.js";
         // 태그 생성전 엘리먼트 타입 구분
         if(row._state == this.constant.STATE.INSERT || row._state == this.constant.STATE.UPDATE){
             if(cell.edit){
-                if(cell.edit == "text") type = "text-edit";
-                else if(cell.edit == "date") type = "date-edit";
-                else if(cell.edit == "dateTime") type = "dateTime-edit";
+                if(cell.edit == 'text') type = 'text-edit';
+                else if(cell.edit == 'number') type = 'number-edit';
+                else if(cell.edit == 'date') type = 'date-edit';
+                else if(cell.edit == 'dateTime') type = 'dateTime-edit';
                 else type = cell.edit;
             }else{
                 type = cell.element;
@@ -265,8 +266,13 @@ import { construct } from "./plugin/construct.js";
             tag = document.createElement("input");
             tag.setAttribute("type", "checkbox");
             tag.setAttribute("name", cell.name);
-            div.appendChild(tag);
+            if(this.option.checkbox.check == row[cell.name]){
+                tag.checked = true;
+            }else{
+                tag.checked = false;
+            }
             tag.dataset.sync = "checkbox";
+            div.appendChild(tag);
         }else if(type == "button"){            
             // 버튼 생성
             tag = document.createElement("button");
@@ -323,7 +329,7 @@ import { construct } from "./plugin/construct.js";
             /* 개발중 */
         }else if(type == "dateTime-edit"){
             /* 개발중 */
-        }else if(type == "text" || !type){
+        }else if(type == 'text' || type == 'number' || !type){
             tag = document.createElement("span");
             tag.setAttribute("name", cell.name);
             // 코드맵핑
@@ -340,6 +346,15 @@ import { construct } from "./plugin/construct.js";
             tag.classList.add("wgrid-wth-edit");
             tag.setAttribute("name", cell.name);
             tag.dataset.sync = "text";
+            tag.value = row[cell.name];
+            div.appendChild(tag);
+        }else if(type == 'number-edit'){
+            tag = document.createElement("input");
+            tag.classList.add("wgrid-input");
+            tag.classList.add("wgrid-wth-edit");
+            tag.setAttribute("name", cell.name);
+            tag.setAttribute("maxlength", cell.maxlength ? cell.maxlength : 3);
+            tag.dataset.sync = "number";
             tag.value = row[cell.name];
             div.appendChild(tag);
         }
@@ -771,7 +786,6 @@ import { construct } from "./plugin/construct.js";
      */
     cancelStateRow(rowIdx, rowSeq){
         var cancelTr = null;
-        var cancelTag = null;
 
         // 변경할 행 엘리먼트
         let tr = this.getRowElementRowSeq(rowSeq);
@@ -853,6 +867,17 @@ import { construct } from "./plugin/construct.js";
 
         // 편집할 행 엘리먼트
         let tr = this.getRowElementRowSeq(rowSeq);
+        
+        // 이전상태 분기처리
+        switch(this.data[rowIdx]._state){
+        case this.constant.STATE.INSERT: 
+        case this.constant.STATE.UPDATE:
+            return;
+        case this.constant.STATE.REMOVE:
+            // 삭제 상태에서 편집 상태로 변경시 행 상태 원복 진행
+            this.cancelStateRow(rowIdx, rowSeq);
+            break;
+        }
        
         // 편집모드 변경전 본래값 저장
         this.originData[rowSeq] = {};
@@ -917,14 +942,28 @@ import { construct } from "./plugin/construct.js";
      * @param {number} rowIdx 
      * @param {string/number} rowSeq 
      */
-    removeStateRow(rowIdx, rowSeq){
-        this.data[rowIdx]._state = this.constant.STATE.REMOVE;
+    removeStateRow(rowIdx, rowSeq){        
 
         let tr = this.getRowElementRowSeq(rowSeq);
 
+        // 이전상태 분기처리
+        switch(this.data[rowIdx]._state){
+        case this.constant.STATE.INSERT:
+             // 신규행 제거
+             this.removeRow(rowIdx, rowSeq);
+        case this.constant.STATE.REMOVE:
+            return;
+        case this.constant.STATE.UPDATE:
+            // 삭제 상태에서 편집 상태로 변경시 행 상태 원복 진행
+            this.cancelStateRow(rowIdx, rowSeq);
+            break;
+        }
+
         if(this.option.body.state.use == true){
             tr.classList.add(this.constant.class.remove);
-        }        
+        }
+
+        this.data[rowIdx]._state = this.constant.STATE.REMOVE;
 
         // 조회목록 없을시 메시지 표시
         this.emptyMessageDisply();
