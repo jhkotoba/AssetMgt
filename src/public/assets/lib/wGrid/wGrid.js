@@ -626,7 +626,7 @@ import { construct } from "./plugin/construct.js";
      * @param {*} sequence 
      * @returns 
      */
-     getSeqRowElement = sequence => this.state.seqRowElement[sequence];
+    getSeqRowElement = sequence => this.state.seqRowElement[sequence];
 
     /**
      * 그리드 셀 엘리먼트 인덱싱
@@ -672,7 +672,7 @@ import { construct } from "./plugin/construct.js";
      */
     getCheckedElement = name => Object.entries(this.state.seqCellElement)
         .filter(f => f[1][name].checked == true)
-        .flatMap(fm => fm[1][name])
+        .flatMap(fm => fm[1][name]);
 
     /**
      * name값으로 body 체크박스 전체 선택/해제
@@ -680,9 +680,13 @@ import { construct } from "./plugin/construct.js";
      * @param {boolean} bool 
      * @returns 
      */
-    setAllChecked = (name, bool) => Object.entries(this.state.seqCellElement)
-        .flatMap(fm => fm[1][name])
-        .forEach(check => check.checked = bool)
+    setAllChecked = (name, bool) => {
+        for(let seq in this.state.seqCellElement){
+            this.state.seqCellElement[seq][name].checked = bool;
+            this.data[this.getSeqIndex(seq)][name] = 
+                bool == true ? this.option.checkbox.check : this.option.checkbox.uncheck;
+        }
+    }
 
     /**
      * name값으로 체크된 체크박스 seq(list)번호 가져오기

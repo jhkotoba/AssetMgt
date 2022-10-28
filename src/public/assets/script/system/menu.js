@@ -35,7 +35,7 @@ const menu = {
         // 상위메뉴 그리드 생성
         this.grid.top = new wGrid('topMenu', {
             fields: [
-                {element:'checkbox', name: 'check', edit: 'checkbox', width:'3%', align:'center'},
+                {title: null, element:'checkbox', name: 'check', edit: 'checkbox', width:'3%', align:'center'},
                 {title:'메뉴번호', element: 'text', name: 'menuNo', width: '5%'},
                 {title:'메뉴명', element: 'text', name: 'menuNm', edit: 'text', width: '38%'},
                 {title:'메뉴순번', element: 'text', name: 'menuSeq', edit: 'number', width: '5%'},
@@ -107,10 +107,9 @@ const menu = {
         // 상위 그리드 삭제 버튼
         topRemove.addEventListener('click', () => this.grid.top.removeStateCheckedElement('check'));
         // 상위 그리드 취소 버튼
-        topCancel.addEventListener('click', () => this.grid.top.cancelStateCheckedElement('check'));
-        
+        topCancel.addEventListener('click', () => this.grid.top.cancelStateCheckedElement('check'));        
         // 상위 그리드 저장 버튼
-
+        topSave.addEventListener('click', () => { });
         // 하위 그리드 취소 버튼
         // 하위 그리드 편집 버튼
         // 하위 그리드 저장 버튼

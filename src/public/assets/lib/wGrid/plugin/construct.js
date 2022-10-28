@@ -232,6 +232,12 @@
         for(let i=0; i<evList.length; i++){
             // 이벤트 등록
             self.element.head.addEventListener(evList[i], event => {
+
+                // 헤드 체크박스 전체선택
+                if(event.target.type == 'checkbox' && evList[i] == 'change'){
+                    self.setAllChecked(event.target.name, event.target.checked);
+                }
+                
                 if(innerEvent[evList[i]]
                     && innerEvent[evList[i]][event.target.name]
                     && innerEvent[evList[i]][event.target.name].head ){
