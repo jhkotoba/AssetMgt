@@ -91,8 +91,10 @@ const menu = {
         this.grid.sub.empty();
 
         // 상위메뉴 하위메뉴 분리
-        this.data.origin.forEach(item => item.menuLv == 1 ? this.data.topList.push(item) : this.data.subList.push(item));
-        // 상위메뉴 세팅
+        this.data.origin.forEach(item => {
+            item.check = false;
+            item.menuLv == 1 ? this.data.topList.push(item) : this.data.subList.push(item)
+        });
         this.grid.top.setData(JSON.parse(JSON.stringify(this.data.topList)).sort((a,b) => a.menuSeq - b.menuSeq));
     },
 
@@ -109,10 +111,32 @@ const menu = {
         // 상위 그리드 취소 버튼
         topCancel.addEventListener('click', () => this.grid.top.cancelStateCheckedElement('check'));        
         // 상위 그리드 저장 버튼
-        topSave.addEventListener('click', () => { });
+        topSave.addEventListener('click', () => this.applyTopMenu(this.grid.top.getApplyData()));
+
         // 하위 그리드 취소 버튼
         // 하위 그리드 편집 버튼
         // 하위 그리드 저장 버튼
+    },
+
+    /**
+     * 메뉴정보 등록/수정/삭제 적용
+     * @param {array<object>} list 
+     */
+    applyTopMenu(list){
+
+        if(list.filter(f => f._state == 'REMOVE').length > 0){
+            if(confirm('상위메뉴 삭제시 하위메뉴도 삭제됩니다. 진행하시겠습니까?') == false){
+                return false;
+            }
+        }
+
+        if(confirm('등록/수정/삭제 내역을 저장하시겠습니까?') == false){
+            return false;
+        }
+
+        postFetch({url: '/system/applyMenu', body: {menuLv: 1, applyList: list}})
+            .then(res => console.log(res))
+            .catch(error => alert(error));
     }
 }
 

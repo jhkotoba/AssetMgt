@@ -9,4 +9,7 @@ router.get("/menu", async (request, response) => response.send(await model.model
 // 메뉴목록 조회
 router.post("/getMenuList", systemController.getMenuList);
 
+// 메뉴목록 적용
+router.post("/applyMenu", systemController.applyMenu);
+
 module.exports = router;

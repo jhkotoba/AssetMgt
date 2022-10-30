@@ -14,3 +14,14 @@ exports.getMenuList = async () => {
 
     return menuList;
 }
+
+/**
+ * 메뉴정보 등록/수정/삭제 적용
+ * @param {*} param 
+ */
+exports.applyMenu =  async (param) => {
+
+    return new Promise((resolve, reject) => {
+        resolve('OK');
+    });
+}

@@ -406,12 +406,11 @@ import { construct } from "./plugin/construct.js";
             list = paramater.list;
             isRefresh = paramater.isRefresh;
         }else {
-            console.error('setData paramater error');
+            console.error('setData paramater error:', typeof paramater, paramater);
         }
 
         // 데이터를 그리드에 삽입
         for(let item of list){
-
             // 기본 데이터 세팅
             item._rowSeq = this.getNextSeq();
             item._state = this.constant.STATE.SELECT;
