@@ -1,4 +1,4 @@
-const database = require(`${basePath}/config/database.js`);
+const repository = require(`${basePath}/config/repository.js`);
 
 /**
  * 회원정보 조회
@@ -8,7 +8,7 @@ const database = require(`${basePath}/config/database.js`);
 exports.selectUser = async (userId, conn) => {
     
     // 회원정보 조회 쿼리
-    return await database.selectOne(
+    return await repository.selectOne(
         `/* userRepository.selectUser */
         SELECT
             USER_NO     AS userNo
@@ -19,8 +19,7 @@ exports.selectUser = async (userId, conn) => {
         FROM UR_USER
         WHERE 1=1
         AND USER_ID = '${userId}'
-        LIMIT 1`
-    , conn);
+        LIMIT 1`, conn);
 }
 
 /**
@@ -31,7 +30,7 @@ exports.selectUser = async (userId, conn) => {
 exports.insertUser = async (user, conn) => {
 
     // 회원등록
-    return await database.insert(
+    return await repository.insert(
         `INSERT INTO UR_USER (
             USER_ID
             , PASSWORD

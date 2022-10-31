@@ -1,4 +1,4 @@
-const database = require(`${basePath}/config/database.js`);
+const repository = require(`${basePath}/config/repository.js`);
 
 /**
  * 메뉴목록 조회
@@ -6,7 +6,7 @@ const database = require(`${basePath}/config/database.js`);
  */
  exports.selectMenuList = async conn => {
 
-    return await database.selectList(
+    return await repository.selectList(
         `/* menuRepository.selectMenuList */
         SELECT
             MENU_NO     AS menuNo
@@ -23,4 +23,13 @@ const database = require(`${basePath}/config/database.js`);
             , DATE_FORMAT(UPT_DTTM, '%Y-%m-%d %H:%i:%S') AS uptDttm
         FROM MENU`
     , conn);
+}
+
+exports.insertMenuList = async conn => {
+
+
+
+
+
+
 }

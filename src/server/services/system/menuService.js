@@ -1,5 +1,5 @@
 const menuRepository = require(`${basePath}/repository/menu/menuRepository.js`);
-const pool = require(`${basePath}/config/database.js`);
+const database = require(`${basePath}/config/database.js`);
 
 /**
  * 메뉴목록 조회
@@ -21,7 +21,28 @@ exports.getMenuList = async () => {
  */
 exports.applyMenu =  async (param) => {
 
-    return new Promise((resolve, reject) => {
-        resolve('OK');
-    });
+    // 상위하위 메뉴 구분(1:상위, 2:하위)
+    let level = param.menuLv;
+
+    let insertList = [];
+    let updateList = [];
+    let deleteList = [];
+    
+    for(let item in param.applyList){
+        switch(item._state){
+            case 'INSERT':
+                insertList.push(item);
+                break;
+            case 'UPDATE':
+                updateList.push(item);
+                break;
+            case 'REMOVE':
+                deleteList.push(item);
+                break;
+        }
+    }
+
+    // return new Promise((resolve, reject) => {
+    //     resolve('OK');
+    // });
 }

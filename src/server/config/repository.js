@@ -1,0 +1,72 @@
+const logger = require(`${basePath}/config/logger.js`);
+const db = require(`${basePath}/config/database.js`);
+
+// 단건 조회 쿼리문 실행
+exports.selectOne = async (query, oConn) => {
+  logger.debug('\n' + query);
+  let conn = oConn ? oConn : await db.getConnection();
+
+  try {
+    let rows = await conn.query(query);    
+    if(rows.length > 1){
+      throw new Error('TOO_MAYN_RESULT');
+    }else{
+      return rows[0];
+    }
+  }catch(error){
+    if(conn){
+      await conn.rollback();
+      conn.release();
+    }
+    throw error;
+  }finally{
+    if (!oConn && conn) conn.release();
+  }
+};
+
+// 복수건 조회
+exports.selectList = async (query, oConn) => {
+  logger.debug('\n' + query);
+  let conn = oConn ? oConn : await db.getConnection();
+
+  try {
+    return await conn.query(query);
+  }catch(error){
+    if(conn){
+      await conn.rollback();
+      conn.release();
+    }
+    throw error;
+  }finally{
+    if (!oConn && conn) conn.release();
+  }
+}
+
+// 저장
+exports.insert = async (query, oConn) => {
+  logger.debug('\n' + query);
+  let conn = oConn ? oConn : await db.getConnection();
+
+  try {
+    let result = await conn.query(query);
+    return result;
+  }catch(error){
+    if(conn){
+      await conn.rollback();
+      conn.release();
+    }
+    throw(error);
+  }finally{
+    if (!oConn && conn) conn.release();
+  }
+}
+
+// 수정
+exports.update = async (query, isRelease) => {
+  
+}
+
+// 삭제
+exports.delete = async (query, isRelease) => {
+  
+}

@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const jsencrypt = require(`nodejs-jsencrypt`);
 const userRepository = require(`${basePath}/repository/user/userRepository.js`);
 const validation = require(`${basePath}/util/validation.js`);
-const database = require(`${basePath}/config/database.js`);
+const db = require(`${basePath}/config/database.js`);
 
 /**
  * 회원체크 조회
@@ -50,7 +50,7 @@ exports.getUser = userId => userRepository.selectUser(userId);
  exports.joinUser = async user => {
 
     // DB연결
-    let conn = await database.pool.getConnection();
+    let conn = await db.getConnection();
     // 트렌젝션
     await conn.beginTransaction();
 
