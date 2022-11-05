@@ -28,7 +28,7 @@ exports.applyMenu =  async (param) => {
     let updateList = [];
     let deleteList = [];
     
-    for(let item in param.applyList){
+    for(let item of param.applyList){
         switch(item._state){
             case 'INSERT':
                 insertList.push(item);

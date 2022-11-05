@@ -460,22 +460,38 @@ import { construct } from "./plugin/construct.js";
         };
 
         // 필드값 세팅
-        for(let i=0; i<this.fields.length; i++){            
-            let item = this.fields[i];
+        for(let field of this.fields){
             
-            row[item.name] = "";
-
-            // 해당 행에 셀렉트박스 데이터가 있는 경우, 셀렉트박스 empty값이 없거나 false일 경우
-            if(item.data && item.data.select 
-                && (!item.data.select.empty || item.data.select === false)
-                && item.data.select.list.length > 0){
-
-                if(item.data.select.value){
-                    row[item.name] = item.data.select.list[0][item.data.select.value];
-                }else{
-                    row[item.name] = item.data.select.list[0].value;
+            // 신규행 추가시 기본값 세팅
+            if(field.data?.value){
+                row[field.name] = field.data.value;
+            }else{
+                switch(field.element){
+                case 'text': case 'select': default:
+                    row[field.name] = "";
+                    break;
+                case 'number':
+                    row[field.name] = 0;
+                    break;
+                case 'checkbox': 
+                    row[field.name] = this.option.checkbox.check;
+                    break;
                 }
             }
+
+            // 해당 행에 셀렉트박스 데이터가 있는 경우, 셀렉트박스 empty값이 없거나 false일 경우
+            if(field.data && field.data.select 
+                && (!field.data.select.empty || field.data.select === false)
+                && field.data.select.list.length > 0){
+
+                if(field.data.select.value){
+                    row[field.name] = field.data.select.list[0][field.data.select.value];
+                }else{
+                    row[field.name] = field.data.select.list[0].value;
+                }
+            }
+
+            
         }
 
         // 신규 데이터 추가
@@ -488,7 +504,6 @@ import { construct } from "./plugin/construct.js";
             tr.classList.add(this.constant.class.insert);
         }
         
-
         return tr;
     }
 
@@ -794,6 +809,10 @@ import { construct } from "./plugin/construct.js";
         let tr = this.getRowElementRowSeq(rowSeq);
         
         switch(this.data[rowIdx]._state){
+        // 등록상태 취소(삭제)
+        case this.constant.STATE.INSERT:
+            this.removeRow(rowIdx, rowSeq);
+            break;
         // 편집상태 취소(편집의 경우 행 재생성)
         case this.constant.STATE.UPDATE:
             
