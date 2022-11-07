@@ -40,7 +40,11 @@ exports.getMenuList = async (request, response, next) => {
  */
 exports.applyMenu = async (request, response, next) => {
 
-    await menuService.applyMenu(request.body).then(result => {
+    await menuService.applyMenu({  
+        applyList: request.body.applyList,
+        menuLv: request.body.menuLv,
+        userNo: request.session.user.userNo
+    }).then(result => {
 
         response.status(200).json({
             message: 'SUCCESS',

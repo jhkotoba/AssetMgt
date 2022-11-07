@@ -25,11 +25,52 @@ const repository = require(`${basePath}/config/repository.js`);
     , conn);
 }
 
-exports.insertMenuList = async conn => {
+/**
+ * 메뉴목록 저장
+ * @param {*} params 
+ * @param {*} conn 
+ * @returns 
+ */
+exports.insertMenuList = async (params, conn) => {
 
-
-
-
-
-
+    let query = `
+    /* menuRepository.insertMenuList */
+    INSERT INTO MENU (
+        ${params.level == 1 ? ', MENU_NM' : ', MENU_URL'}
+        , MENU_LV
+        , MENU_SEQ
+        , GROUP_NO
+        , DISP_YN
+        , USE_YN
+        , INS_NO
+        , INS_DTTM
+        , UPT_NO
+        , UPT_DTTM
+    )
+    `;
+    let list = params.insertList;
+    for(let i=0; i<list.length; i++){
+        query += ' SELECT ';
+        query += `'${list[i].menuNm}'`;
+        if(params.level == 2){
+            query += list[i].menuUrl
+        }
+        query += `, '${params.level}'`;
+        query += `, ${list[i].menuSeq}`;
+        if(params.level == 1){
+            query += ', 0';
+        }else if(params.level == 2){
+            query += `, ${list[i].groupNo}`;
+        }
+        query += `, '${list[i].dispYn}'`
+        query += `, '${list[i].useYn}'`
+        query += `, '${params.userNo}'`;
+        query += ', NOW()';
+        query += `, '${params.userNo}'`;
+        query += ', NOW()';
+        if(i+1 < list.length){
+            query += ' UNION ALL ';
+        }
+    }
+    return await repository.insert(query, conn);
 }

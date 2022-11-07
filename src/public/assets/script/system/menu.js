@@ -210,7 +210,7 @@ const menu = {
             element.focus();
         }
 
-        return isValidation
+        return isValidation;
     }
 }
 

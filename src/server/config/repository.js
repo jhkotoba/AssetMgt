@@ -9,11 +9,13 @@ exports.selectOne = async (query, oConn) => {
   try {
     let rows = await conn.query(query);    
     if(rows.length > 1){
+      logger.error('SELECT ONE ERROR:: TOO_MAYN_RESULT');
       throw new Error('TOO_MAYN_RESULT');
     }else{
       return rows[0];
     }
   }catch(error){
+    logger.error('SELECT ONE ERROR::', error);
     if(conn){
       await conn.rollback();
       conn.release();
@@ -32,6 +34,7 @@ exports.selectList = async (query, oConn) => {
   try {
     return await conn.query(query);
   }catch(error){
+    logger.error('SELECT LIST ERROR::', error);
     if(conn){
       await conn.rollback();
       conn.release();
@@ -51,6 +54,7 @@ exports.insert = async (query, oConn) => {
     let result = await conn.query(query);
     return result;
   }catch(error){
+    logger.error('INSERT ERROR::', error);
     if(conn){
       await conn.rollback();
       conn.release();
