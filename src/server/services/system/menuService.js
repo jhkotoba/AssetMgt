@@ -1,3 +1,4 @@
+const logger = require(`${basePath}/config/logger.js`);
 const menuRepository = require(`${basePath}/repository/menu/menuRepository.js`);
 const db = require(`${basePath}/config/database.js`);
 
@@ -19,53 +20,47 @@ exports.getMenuList = async () => {
  * 메뉴정보 등록/수정/삭제 적용
  * @param {*} param 
  */
-exports.applyMenu =  async (params) => {
+exports.applyMenu = async (params) => {
 
     // 상위하위 메뉴 구분(1:상위, 2:하위)
-    let level = params.menuLv;
-    let userNo = params.userNo;
-
+    const level = params.menuLv;
+    const userNo = params.userNo;
     let insertList = [];
     let updateList = [];
     let deleteList = [];
     
+    // 데이터 세팅
     for(let item of params.applyList){
         switch(item._state){
-            case 'INSERT':
-                insertList.push(item);
-                break;
-            case 'UPDATE':
-                updateList.push(item);
-                break;
-            case 'REMOVE':
-                deleteList.push(item);
-                break;
+        case 'INSERT': insertList.push(item); break;
+        case 'UPDATE': updateList.push(item); break;
+        case 'REMOVE': deleteList.push(item); break;
         }
     }
+    const cnts = {insertCnt: insertList.length, updateCnt: updateList.length, deleteCnt: deleteList.length};
 
     // DB연결
     let conn = await db.getConnection();
     // 트렌젝션
     await conn.beginTransaction();
 
-    console.log('------------------------------------>');
-    console.log('insertList:', insertList);
-
-    
-    await menuRepository.insertMenuList({insertList, userNo, level}, conn);
-    
-
-
-    console.log('------------------------------------> END');
-    // 커밋
-    await conn.commit();
-    conn.release();
-
-    // await conn.rollback();
-    // conn.release();
-    // throw new Error('INSERT_FAIL');
-
-    // return new Promise((resolve, reject) => {
-    //     resolve('OK');
-    // });
+    // 적용사항 저장/수정/삭제
+    Promise.all([
+        cnts.insertCnt > 0 ? await menuRepository.insertMenuList({insertList, userNo, level}, conn) : null,
+        cnts.updateCnt > 0 ? await menuRepository.updateMenuList({deleteList, userNo, level}, conn) : null,
+        cnts.deleteCnt > 0 ? await menuRepository.deleteMenuList({insertList, userNo, level}, conn) : null
+    ]).then(values => {
+        console.log('values::', values);
+    }).catch(async error => {
+        logger.error('applyMenu ERROR ::', error);
+        if(conn){
+            await conn.rollback();
+            conn.release();
+        }
+    }).finally(async () => {
+        if(conn){
+            await conn.commit();
+            conn.release();
+        }
+    });
 }

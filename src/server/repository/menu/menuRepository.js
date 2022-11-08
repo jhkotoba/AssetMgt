@@ -36,7 +36,7 @@ exports.insertMenuList = async (params, conn) => {
     let query = `
     /* menuRepository.insertMenuList */
     INSERT INTO MENU (
-        ${params.level == 1 ? ', MENU_NM' : ', MENU_URL'}
+        ${params.level == 1 ? 'MENU_NM' : 'MENU_URL'}
         , MENU_LV
         , MENU_SEQ
         , GROUP_NO
@@ -46,14 +46,14 @@ exports.insertMenuList = async (params, conn) => {
         , INS_DTTM
         , UPT_NO
         , UPT_DTTM
-    )
-    `;
+    ) \n`;
     let list = params.insertList;
     for(let i=0; i<list.length; i++){
         query += ' SELECT ';
-        query += `'${list[i].menuNm}'`;
-        if(params.level == 2){
-            query += list[i].menuUrl
+        if(params.level == 1){
+            query += `'${list[i].menuNm}'`;
+        }else{
+            query += `'${list[i].menuUrl}'`;
         }
         query += `, '${params.level}'`;
         query += `, ${list[i].menuSeq}`;
@@ -67,9 +67,9 @@ exports.insertMenuList = async (params, conn) => {
         query += `, '${params.userNo}'`;
         query += ', NOW()';
         query += `, '${params.userNo}'`;
-        query += ', NOW()';
+        query += ', NOW() \n';
         if(i+1 < list.length){
-            query += ' UNION ALL ';
+            query += ' UNION ALL \n';
         }
     }
     return await repository.insert(query, conn);
