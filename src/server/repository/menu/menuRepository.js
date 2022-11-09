@@ -1,4 +1,6 @@
-const repository = require(`${basePath}/config/repository.js`);
+const logger = require(`${basePath}/config/logger.js`);
+const repo = require(`${basePath}/config/repository.js`);
+const util = require(`${basePath}/config/utils.js`);
 
 /**
  * 메뉴목록 조회
@@ -6,7 +8,7 @@ const repository = require(`${basePath}/config/repository.js`);
  */
  exports.selectMenuList = async conn => {
 
-    return await repository.selectList(
+    return await repo.selectList(
         `/* menuRepository.selectMenuList */
         SELECT
             MENU_NO     AS menuNo
@@ -72,5 +74,43 @@ exports.insertMenuList = async (params, conn) => {
             query += ' UNION ALL \n';
         }
     }
-    return await repository.insert(query, conn);
+    return await repo.insert(query, conn);
+}
+
+/**
+ * 
+ * @param {*} params 
+ * @param {*} conn 
+ */
+exports.updateMenuList = async (params, conn) => {
+    logger.debug(`menuRepository.updateMenuList \n params:: [${JSON.stringify(params)}]`);
+    let query = `UPDATE MENU M JOIN (
+        SELECT * FROM (
+    `;
+    for(let i=0; i<params.updateList.length; i++){
+        let p = params.updateList[i];
+        query += `      SELECT ${p.menuNo} AS MENU_NO, ${repo.string(p.menuNm)} AS MENU_NM, ${repo.string(p.menuUrl)} AS MENU_URL, ${p.menuLv} AS MENU_LV, ${p.menuSeq} AS MENU_SEQ, ${p.groupNo} AS GROUP_NO, ${repo.string(p.dispYn)} AS DISP_YN, ${repo.string(p.useYn)} AS USE_YN, ${params.userNo} AS UPT_NO`
+        if(i+1 < params.updateList.length){
+            query += ' UNION ALL \n';
+        }
+    }
+    query += `
+        ) A
+        INNER JOIN MENU M
+        ON M.MENU_NO = A.MENU_NO
+        AND M.MENU_NO IN (` + params.updateList.map(item => item.menuNo).join() + `)
+    ) U
+    ON U.MENU_NO = M.MENU_NO
+    SET
+    ${params.level == 1 ? 'M.MENU_NM = U.MENU_NM' : 'M.MENU_URL = U.MENU_URL'}
+    , M.MENU_LV = U.MENU_LV 
+    , M.MENU_SEQ = U.MENU_SEQ
+    , M.GROUP_NO = U.GROUP_NO
+    , M.DISP_YN = U.DISP_YN
+    , M.USE_YN = U.USE_YN
+    , M.UPT_NO = U.UPT_NO
+    , M.UPT_DTTM = NOW()
+    `;
+    console.log(query);
+    return await repo.update(query, conn);
 }

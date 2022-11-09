@@ -47,8 +47,8 @@ exports.applyMenu = async (params) => {
     // 적용사항 저장/수정/삭제
     Promise.all([
         cnts.insertCnt > 0 ? await menuRepository.insertMenuList({insertList, userNo, level}, conn) : null,
-        cnts.updateCnt > 0 ? await menuRepository.updateMenuList({deleteList, userNo, level}, conn) : null,
-        cnts.deleteCnt > 0 ? await menuRepository.deleteMenuList({insertList, userNo, level}, conn) : null
+        cnts.updateCnt > 0 ? await menuRepository.updateMenuList({updateList, userNo, level}, conn) : null,
+        cnts.deleteCnt > 0 ? await menuRepository.deleteMenuList({deleteList, userNo, level}, conn) : null
     ]).then(values => {
         console.log('values::', values);
     }).catch(async error => {

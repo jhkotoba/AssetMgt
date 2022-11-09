@@ -66,11 +66,30 @@ exports.insert = async (query, oConn) => {
 }
 
 // 수정
-exports.update = async (query, isRelease) => {
-  
+exports.update = async (query, oConn) => {
+  logger.debug('\n' + query);
+  let conn = oConn ? oConn : await db.getConnection();
+
+  try {
+    let result = await conn.query(query);
+    return result;
+  }catch(error){
+    logger.error('UPDATE ERROR::', error);
+    if(conn){
+      await conn.rollback();
+      conn.release();
+    }
+    throw(error);
+  }finally{
+    if (!oConn && conn) conn.release();
+  }
 }
 
 // 삭제
 exports.delete = async (query, isRelease) => {
   
 }
+
+// 문자대입
+exports.string = value => `'${value}'`;
+

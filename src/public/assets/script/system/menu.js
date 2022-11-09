@@ -45,7 +45,7 @@ const menu = {
                 {title:'등록자', element: 'text', name: 'insNo', width: '5%'},
                 {title:'등록일시', element: 'text', name: 'insDttm', width: '10%'},
                 {title:'수정자', element: 'text', name: 'uptNo', width: '5%'},
-                {title:'수정일시', element: 'text', name: 'uptDttm', width: '10%'},
+                {title:'수정일시', element: 'text', name: 'uptDttm', width: '10%'}
             ],
             option: { style: {
                 height: '34.5vh', overflow: { y: 'scroll'}},
