@@ -1,4 +1,5 @@
 const logger = require(`${basePath}/config/logger.js`);
+const utils = require(`${basePath}/config/utils.js`);
 const db = require(`${basePath}/config/database.js`);
 
 // 단건 조회 쿼리문 실행
@@ -91,5 +92,5 @@ exports.delete = async (query, isRelease) => {
 }
 
 // 문자대입
-exports.string = value => `'${value}'`;
+exports.string = value => utils.isEmpty(value) ? 'NULL' : `'${value}'`;
 

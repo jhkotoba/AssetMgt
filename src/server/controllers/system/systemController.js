@@ -45,7 +45,6 @@ exports.applyMenu = async (request, response, next) => {
         menuLv: request.body.menuLv,
         userNo: request.session.user.userNo
     }).then(result => {
-
         response.status(200).json({
             message: 'SUCCESS',
             resultCode: 'SUCCESS',

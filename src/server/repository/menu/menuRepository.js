@@ -1,6 +1,5 @@
 const logger = require(`${basePath}/config/logger.js`);
 const repo = require(`${basePath}/config/repository.js`);
-const util = require(`${basePath}/config/utils.js`);
 
 /**
  * 메뉴목록 조회
@@ -23,8 +22,7 @@ const util = require(`${basePath}/config/utils.js`);
             , DATE_FORMAT(INS_DTTM, '%Y-%m-%d %H:%i:%S') AS insDttm
             , UPT_NO    AS uptNo
             , DATE_FORMAT(UPT_DTTM, '%Y-%m-%d %H:%i:%S') AS uptDttm
-        FROM MENU`
-    , conn);
+        FROM MENU`, conn);
 }
 
 /**
@@ -84,12 +82,22 @@ exports.insertMenuList = async (params, conn) => {
  */
 exports.updateMenuList = async (params, conn) => {
     logger.debug(`menuRepository.updateMenuList \n params:: [${JSON.stringify(params)}]`);
-    let query = `UPDATE MENU M JOIN (
-        SELECT * FROM (
+    let query = 
+    ` /* menuRepository.updateMenuList */
+    UPDATE MENU M JOIN (
+        SELECT
+            M.MENU_NO
+            , ${params.level == 1 ? 'IFNULL(A.MENU_NM, M.MENU_NM) AS MENU_NM' : 'IFNULL(A.MENU_URL, M.MENU_URL) AS MENU_URL'}
+            , IFNULL(A.MENU_LV, M.MENU_LV) AS MENU_LV
+            , IFNULL(A.MENU_SEQ, M.MENU_SEQ) AS MENU_SEQ
+            , IFNULL(A.GROUP_NO, M.GROUP_NO) AS GROUP_NO
+            , IFNULL(A.DISP_YN, M.DISP_YN) AS DISP_YN
+            , IFNULL(A.USE_YN, M.USE_YN) AS USE_YN
+        FROM (
     `;
     for(let i=0; i<params.updateList.length; i++){
         let p = params.updateList[i];
-        query += `      SELECT ${p.menuNo} AS MENU_NO, ${repo.string(p.menuNm)} AS MENU_NM, ${repo.string(p.menuUrl)} AS MENU_URL, ${p.menuLv} AS MENU_LV, ${p.menuSeq} AS MENU_SEQ, ${p.groupNo} AS GROUP_NO, ${repo.string(p.dispYn)} AS DISP_YN, ${repo.string(p.useYn)} AS USE_YN, ${params.userNo} AS UPT_NO`
+        query += `      SELECT ${p.menuNo} AS MENU_NO, ${repo.string(p.menuNm)} AS MENU_NM, ${repo.string(p.menuUrl)} AS MENU_URL, ${p.menuLv} AS MENU_LV, ${p.menuSeq} AS MENU_SEQ, ${p.groupNo} AS GROUP_NO, ${repo.string(p.dispYn)} AS DISP_YN, ${repo.string(p.useYn)} AS USE_YN`
         if(i+1 < params.updateList.length){
             query += ' UNION ALL \n';
         }
@@ -108,9 +116,8 @@ exports.updateMenuList = async (params, conn) => {
     , M.GROUP_NO = U.GROUP_NO
     , M.DISP_YN = U.DISP_YN
     , M.USE_YN = U.USE_YN
-    , M.UPT_NO = U.UPT_NO
+    , M.UPT_NO = ${params.userNo}
     , M.UPT_DTTM = NOW()
     `;
-    console.log(query);
     return await repo.update(query, conn);
 }

@@ -43,14 +43,22 @@ exports.applyMenu = async (params) => {
     let conn = await db.getConnection();
     // 트렌젝션
     await conn.beginTransaction();
-
+    
     // 적용사항 저장/수정/삭제
-    Promise.all([
+    return Promise.all([
         cnts.insertCnt > 0 ? await menuRepository.insertMenuList({insertList, userNo, level}, conn) : null,
         cnts.updateCnt > 0 ? await menuRepository.updateMenuList({updateList, userNo, level}, conn) : null,
         cnts.deleteCnt > 0 ? await menuRepository.deleteMenuList({deleteList, userNo, level}, conn) : null
     ]).then(values => {
-        console.log('values::', values);
+        if(cnts.insertCnt != values[0]?.affectedRows ? values[0]?.affectedRows : 0){
+            return Promise.reject(new Error('ISNERT_COUNT_DIFFERENT'));
+        }else if(cnts.updateCnt != values[1]?.affectedRows ? values[1]?.affectedRows : 0){
+            return Promise.reject(new Error('UPDATE_COUNT_DIFFERENT'));
+        }else if(cnts.deleteCnt != values[2]?.affectedRows ? values[2]?.affectedRows : 0){
+            return Promise.reject(new Error('DELETE_COUNT_DIFFERENT'));
+        }else{  
+            return cnts;
+        }
     }).catch(async error => {
         logger.error('applyMenu ERROR ::', error);
         if(conn){
