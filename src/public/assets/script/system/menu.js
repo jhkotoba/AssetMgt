@@ -4,6 +4,8 @@ import { isEmpty } from "/script/common/validation.js";
 window.addEventListener('DOMContentLoaded', function(event){
     // 메뉴생성
     menu.createMenu();
+    // 메뉴조회
+    menu.selectMenu();
     // 메뉴관리 이벤트 생성
     menu.createEvent();
 });
@@ -22,16 +24,45 @@ const menu = {
         top: null, sub: null,
     },
 
+    selectMenu(){
+
+        // 메뉴목록 조회
+        postFetch({url: '/system/getMenuList', body: {}})
+            .then(res => {
+                console.log('res::', res);
+                res.resultCode == 'SUCCESS' ? this.data.origin = res.data : Promise.reject(new Error(res.message))
+            })
+            .then(() => {
+                this.grid.top && this.grid.sub ? this.initGrid() : null
+            })
+            .catch(error => alert(error));
+
+    },
+
+    /**
+     * 메뉴 데이터 초기화
+     */
+     initGrid(){
+
+        console.log('initGrid');
+
+        this.data.topList = [];
+        this.data.subList = [];
+        this.grid.top.empty();
+        this.grid.sub.empty();
+
+        // 상위메뉴 하위메뉴 분리
+        this.data.origin.forEach(item => {
+            item.check = false;
+            item.menuLv == 1 ? this.data.topList.push(item) : this.data.subList.push(item)
+        });
+        this.grid.top.setData(JSON.parse(JSON.stringify(this.data.topList)).sort((a,b) => a.menuSeq - b.menuSeq), true);
+    },
+
     /**
      *  메뉴 최초생성
      */
     createMenu() {
-
-        // 메뉴목록 조회
-        postFetch({url: '/system/getMenuList', body: {}})
-            .then(res => res.resultCode == 'SUCCESS' ? this.data.origin = res.data : Promise.reject(new Error(res.message)))
-            .then(() => this.grid.top && this.grid.sub ? this.initGrid() : null)
-            .catch(error => alert(error));
 
         // 상위메뉴 그리드 생성
         this.grid.top = new wGrid('topMenu', {
@@ -79,31 +110,15 @@ const menu = {
             option: { style: { height: '34.5vh', overflow: { y: 'scroll'}} }
         });
     
-        this.data.origin.length > 0 ? this.initGrid() : null;
+        //this.data.origin.length > 0 ? this.initGrid() : null;
     },
 
-    /**
-     * 메뉴 데이터 초기화
-     */
-    initGrid(){
-        this.data.topList = [];
-        this.data.subList = [];
-        this.grid.top.empty();
-        this.grid.sub.empty();
-
-        // 상위메뉴 하위메뉴 분리
-        this.data.origin.forEach(item => {
-            item.check = false;
-            item.menuLv == 1 ? this.data.topList.push(item) : this.data.subList.push(item)
-        });
-        this.grid.top.setData(JSON.parse(JSON.stringify(this.data.topList)).sort((a,b) => a.menuSeq - b.menuSeq));
-    },
+    
 
     /**
      * 메뉴 이벤트 생성
      */
     createEvent(){
-
         // 상위 메뉴 추가 버튼
         topAdd.addEventListener('click', () => this.grid.top.prependRow());
         // 상위 메뉴 편집 버튼
@@ -143,7 +158,7 @@ const menu = {
 
         // 작업내용 저장 호출
         postFetch({url: '/system/applyMenu', body: {menuLv: 1, applyList: list}})
-            .then(res => console.log(res))
+            .then(res => this.selectMenu())
             .catch(error => alert(error));
     },
 

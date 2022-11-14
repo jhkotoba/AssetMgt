@@ -87,8 +87,23 @@ exports.update = async (query, oConn) => {
 }
 
 // 삭제
-exports.delete = async (query, isRelease) => {
-  
+exports.delete = async (query, oConn) => {
+  logger.debug('\n' + query);
+  let conn = oConn ? oConn : await db.getConnection();
+
+  try {
+    let result = await conn.query(query);
+    return result;
+  }catch(error){
+    logger.error('DELETE ERROR::', error);
+    if(conn){
+      await conn.rollback();
+      conn.release();
+    }
+    throw(error);
+  }finally{
+    if (!oConn && conn) conn.release();
+  }
 }
 
 // 문자대입

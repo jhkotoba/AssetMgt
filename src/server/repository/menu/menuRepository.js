@@ -121,3 +121,10 @@ exports.updateMenuList = async (params, conn) => {
     `;
     return await repo.update(query, conn);
 }
+
+/**
+ * 
+ * @param {*} params 
+ * @param {*} conn 
+ */
+exports.deleteMenuList = async (params, conn) => await repo.delete('DELETE FROM MENU WHERE 1=1 AND MENU_NO IN (' + params.deleteList.map(item => item.menuNo).join() + ')', conn);

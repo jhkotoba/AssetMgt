@@ -5,7 +5,7 @@ import { construct } from "./plugin/construct.js";
 /**
  * wGrid
  * @author JeHoon 
- * @version 0.10.11
+ * @version 0.10.12
  */
  export class wGrid {
 
@@ -180,6 +180,7 @@ import { construct } from "./plugin/construct.js";
      * @param {number} idx 
      */
     createRow = function(row, idx){
+        console.log(idx, row);
 
         // ROW 생성
         let tr = document.createElement("tr");
@@ -190,6 +191,7 @@ import { construct } from "./plugin/construct.js";
 		this.setIdxSequence(idx, row._rowSeq);
 
         // 행 엘리먼트 인덱싱
+        console.log('row._rowSeq:', row._rowSeq);
         this.setSeqRowElement(row._rowSeq, tr);
 
         // CELL 생성        
@@ -387,16 +389,17 @@ import { construct } from "./plugin/construct.js";
      * 그리드 데이터 가져오기
      * @returns 
      */
-    getData = () => this.data;
+    getData = function(){
+        return JSON.parse(JSON.stringify(this.data));
+    }
 
     /**
-     * 데이서 추가
+     * 데이터 추가
      * @param {object} paramater 
      */
     setData = function(paramater){
 
         let list = [];
-        let isRefresh = true;
 
         // 배열
         if(typeof paramater == 'object' && typeof paramater.length == 'number'){
@@ -420,13 +423,19 @@ import { construct } from "./plugin/construct.js";
         this.data = list;
 
         // 필드 새로고침
-        if(isRefresh) this.refresh();
+        this.refresh();
     }
 
     /**
      * 그리드 새로고침 (필드부분 재생성)
      */
     refresh = function(){
+
+        // 그리드 상태 초기화
+        this.state.seqIndex = {};
+        this.state.idxSequence = {};
+        this.state.seqRowElement = {};
+        this.state.seqCellElement = {};
 
         // 필드 비우기
         while(this.element.bodyTb.hasChildNodes()){
@@ -458,6 +467,7 @@ import { construct } from "./plugin/construct.js";
             _rowSeq: this.getNextSeq(),
             _state: this.constant.STATE.INSERT
         };
+        console.log("new row:", row);
 
         // 필드값 세팅
         for(let field of this.fields){
@@ -498,6 +508,8 @@ import { construct } from "./plugin/construct.js";
         this.data.push(row);
 
         // 신규행 추가
+        console.log('this.data.length:', this.data.length);
+        console.log('this.data.length-1:', this.data.length-1);
         let tr = this.createRow(row, this.data.length-1);
 
         if(this.option.body.state.use == true){
@@ -711,8 +723,10 @@ import { construct } from "./plugin/construct.js";
         let seqList = [];
         this.getCheckedElement(name)
             .forEach(check => {
+                console.log('check:', check);
                 seqList.push(Number(this.util.getTrNode(check).dataset.rowSeq));
             });
+        console.log('seqList:', seqList)
         return seqList;
     }
 
