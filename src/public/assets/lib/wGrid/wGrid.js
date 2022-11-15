@@ -685,11 +685,23 @@ import { construct } from "./plugin/construct.js";
     appendRow = () => this.element.bodyTb.appendChild(this.createNewRow());
 
     /**
+     * 최상위 rowElement 반환
+     * @returns
+     */
+    getFirstRowElement = () => this.getSeqRowElement(this.getIdxSequence(0));
+
+    /**
+     * 최상위 rowSeq 반환
+     * @returns
+     */
+    getFirstRowSeq = () => this.getFirstRowElement().dataset.rowSeq;
+
+    /**
      * rowSeq 값으로 행 엘리먼트 가져오기
      * @param {string/number} rowSeq 
      * @returns 
      */    
-    getRowElementRowSeq = rowSeq => this.state.seqRowElement[rowSeq];
+    getRowElementRowSeq = rowSeq => this.getSeqRowElement(rowSeq);
 
      /**
      * name값으로 체크된 체크박스된 엘리먼트 가져오기
@@ -723,10 +735,8 @@ import { construct } from "./plugin/construct.js";
         let seqList = [];
         this.getCheckedElement(name)
             .forEach(check => {
-                console.log('check:', check);
                 seqList.push(Number(this.util.getTrNode(check).dataset.rowSeq));
             });
-        console.log('seqList:', seqList)
         return seqList;
     }
 
