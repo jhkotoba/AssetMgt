@@ -54,7 +54,7 @@ exports.applyMenu = async (request, response, next) => {
         // 예외 응답
         switch(error.message){        
             default:
-                response.status(500).json({resultCode: 'SYSTEM_ERROR', message: `시스템 오류가 발생하였습니다. (${error.message})`});
+                response.status(500).json({resultCode: 'SYSTEM_ERROR', message: `시스템 오류가 발생하였습니다.`});
             break;
         }
     });
