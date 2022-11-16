@@ -79,12 +79,25 @@ const menu = {
                 {title:'등록자', element: 'text', name: 'insNo', width: '5%'},
                 {title:'등록일시', element: 'text', name: 'insDttm', width: '10%'},
                 {title:'수정자', element: 'text', name: 'uptNo', width: '5%'},
-                {title:'수정일시', element: 'text', name: 'uptDttm', width: '10%'}
+                {title:'수정일시', element: 'text', name: 'uptDttm', width: '10%'}                
             ],
             option: { style: {
                 height: '34.5vh', overflow: { y: 'scroll'}},
                 body: { state: true },
-                row: { style: {cursor: 'pointer'}, chose: true }
+                row: { style: {cursor: 'pointer'}, chose: true}                
+            },
+            dataset: {
+                menuNo: {type: 'number', maxLength: null, required: true, unique: true},
+                menuNm: {type: 'string', maxLength: 20, required: true, unique: false},
+                menuUrl: {type: 'string', maxLength: 100, required: false, unique: false},
+                menuLv: {type: 'number', maxLength: null, required: true, unique: false},
+                menuSeq: {type: 'number', maxLength: null, required: true, unique: false},
+                groupNo: {type: 'number', maxLength: null, required: true, unique: false},
+                useYn: {type: 'string', maxLength: 1, required: true, unique: false},
+                insNo: {type: 'number', maxLength: null, required: true, unique: false},
+                insDttm: {type: 'string', maxLength: null, required: true, unique: false},
+                uptNo: {type: 'number', maxLength: null, required: true, unique: false},
+                uptDttm: {type: 'string', maxLength: null, required: true, unique: false},
             },
             event: {
                 click: (event, item, index, sequence) => {
@@ -104,11 +117,11 @@ const menu = {
             fields: [
                 {title: null, element:'checkbox', name: 'check', edit: 'checkbox', width:'3%', align:'center'},
                 {title:'메뉴번호', element: 'text', name: 'menuNo', width: '5%'},
-                {title:'메뉴명', element: 'text', name: 'menuNm', edit: 'text', width: '22%'},
+                {title:'메뉴명', element: 'text', name: 'menuNm', edit: 'text', width: '21%'},
                 {title:'메뉴URL', element: 'text', name: 'menuUrl', edit: 'text', width: '22%'},                
-                {title:'메뉴순번', element: 'text', name: 'menuSeq', width: '8%'},
-                {title:'전시여부', element: 'select', name: 'dispYn', width: '5%', data: this.data.ynData},
-                {title:'사용여부', element: 'select', name: 'useYn', width: '5%', data: this.data.ynData},
+                {title:'메뉴순번', element: 'number', name: 'menuSeq', edit: 'number', width: '5%'},
+                {title:'전시여부', element: 'text', name: 'dispYn', edit:'select', width: '7%', data: this.data.mapping},
+                {title:'사용여부', element: 'text', name: 'useYn', edit:'select', width: '7%', data: this.data.mapping},
                 {title:'등록자', element: 'text', name: 'insNo', width: '5%'},
                 {title:'등록일시', element: 'text', name: 'insDttm', width: '10%'},
                 {title:'수정자', element: 'text', name: 'uptNo', width: '5%'},

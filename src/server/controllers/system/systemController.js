@@ -1,4 +1,5 @@
 const menuService = require(`${basePath}/services/system/menuService.js`);
+const logger = require(`${basePath}/config/logger.js`);
 
 /**
  * 메뉴목록 조회
@@ -52,6 +53,7 @@ exports.applyMenu = async (request, response, next) => {
         });
     }).catch(error => {
         // 예외 응답
+        logger.error(`systemController.applyMenu catch ERROR::[${error}]`);
         switch(error.message){        
             default:
                 response.status(500).json({resultCode: 'SYSTEM_ERROR', message: `시스템 오류가 발생하였습니다.`});

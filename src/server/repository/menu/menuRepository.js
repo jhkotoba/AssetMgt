@@ -32,7 +32,7 @@ const repo = require(`${basePath}/config/repository.js`);
  * @returns 
  */
 exports.insertMenuList = async (params, conn) => {
-
+    logger.debug(`menuRepository.insertMenuList \n params:: [${JSON.stringify(params)}]`);
     let query = `
     /* menuRepository.insertMenuList */
     INSERT INTO MENU (

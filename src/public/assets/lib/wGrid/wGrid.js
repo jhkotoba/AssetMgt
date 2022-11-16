@@ -467,7 +467,6 @@ import { construct } from "./plugin/construct.js";
             _rowSeq: this.getNextSeq(),
             _state: this.constant.STATE.INSERT
         };
-        console.log("new row:", row);
 
         // 필드값 세팅
         for(let field of this.fields){
@@ -500,16 +499,12 @@ import { construct } from "./plugin/construct.js";
                     row[field.name] = field.data.select.list[0].value;
                 }
             }
-
-            
         }
 
         // 신규 데이터 추가
         this.data.push(row);
 
         // 신규행 추가
-        console.log('this.data.length:', this.data.length);
-        console.log('this.data.length-1:', this.data.length-1);
         let tr = this.createRow(row, this.data.length-1);
 
         if(this.option.body.state.use == true){
