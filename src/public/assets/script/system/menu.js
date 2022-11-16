@@ -14,12 +14,18 @@ window.addEventListener('load', function(event){});
 const menu = {
 
     data: {
-        origin: [], topList: [], subList: [],
         topMenuNo: null,
+        isSubMenuApply: false,
+        origin: [], topList: [], subList: [],
         mapping: {
             mapping: {Y: '사용', N: '미사용'},
             select: {list: [{value:'Y', text:'사용'}, {value:'N', text:'미사용'}]}
-        }
+        },
+        newRow: {
+            top: {check: false, menuNm: '', menuLv: 1, menuSeq: 0, groupNo: 0, dispYn: 'Y', useYn: 'Y'},
+            sub: {check: false, menuUrl: '', menuLv: 2, menuSeq: 0, groupNo: 0, dispYn: 'Y', useYn: 'Y'}
+        },
+        optionRow: { style: {cursor: 'pointer'}, chose: true}
     },
     grid: {
         top: null, sub: null,
@@ -81,31 +87,31 @@ const menu = {
                 {title:'수정자', element: 'text', name: 'uptNo', width: '5%'},
                 {title:'수정일시', element: 'text', name: 'uptDttm', width: '10%'}                
             ],
-            option: { style: {
-                height: '34.5vh', overflow: { y: 'scroll'}},
+            option: { 
+                style: {
+                    height: '34.5vh', overflow: { y: 'scroll'}
+                },
                 body: { state: true },
-                row: { style: {cursor: 'pointer'}, chose: true}                
-            },
-            dataset: {
-                menuNo: {type: 'number', maxLength: null, required: true, unique: true},
-                menuNm: {type: 'string', maxLength: 20, required: true, unique: false},
-                menuUrl: {type: 'string', maxLength: 100, required: false, unique: false},
-                menuLv: {type: 'number', maxLength: null, required: true, unique: false},
-                menuSeq: {type: 'number', maxLength: null, required: true, unique: false},
-                groupNo: {type: 'number', maxLength: null, required: true, unique: false},
-                useYn: {type: 'string', maxLength: 1, required: true, unique: false},
-                insNo: {type: 'number', maxLength: null, required: true, unique: false},
-                insDttm: {type: 'string', maxLength: null, required: true, unique: false},
-                uptNo: {type: 'number', maxLength: null, required: true, unique: false},
-                uptDttm: {type: 'string', maxLength: null, required: true, unique: false},
+                row: { style: {cursor: 'pointer'}, chose: true},
+                data: { insert: this.data.newRow.top }
             },
             event: {
                 click: (event, item, index, sequence) => {
+                    // 변경 진행상태에서 정지
+                    if(this.data.isSubMenuApply == true && confirm('하위메뉴 변경사항이 있습니다. 무시하고 진행하시겠습니까?') == false){
+                        return false;
+                    // 행선택 복원, 진행상태 여부 복원
+                    }else{
+                        this.grid.top.chageOption('option.row.chose', true);
+                        this.data.isSubMenuApply = false;
+                    }
+                    // 하위메뉴 목록 출력
                     if(['INPUT', 'SELECT', 'BUTTON'].includes(event.target.tagName) == false){
                         // 최상위 메뉴번호 세팅
                         this.data.topMenuNo = item.menuNo;
+                        this.data.newRow.sub.groupNo = item.menuNo;
                         // 하위메뉴 출력
-                        let list = this.data.subList.filter(f => item.menuSeq == f.groupNo);
+                        let list = this.data.subList.filter(f => item.menuNo == f.groupNo);
                         this.grid.sub.setData(JSON.parse(JSON.stringify(list)));
                     }
                 }
@@ -117,8 +123,8 @@ const menu = {
             fields: [
                 {title: null, element:'checkbox', name: 'check', edit: 'checkbox', width:'3%', align:'center'},
                 {title:'메뉴번호', element: 'text', name: 'menuNo', width: '5%'},
-                {title:'메뉴명', element: 'text', name: 'menuNm', edit: 'text', width: '21%'},
-                {title:'메뉴URL', element: 'text', name: 'menuUrl', edit: 'text', width: '22%'},                
+                {title:'메뉴명', element: 'text', name: 'menuNm', edit: 'text', width: '18%'},
+                {title:'메뉴URL', element: 'text', name: 'menuUrl', edit: 'text', width: '26%'},                
                 {title:'메뉴순번', element: 'number', name: 'menuSeq', edit: 'number', width: '5%'},
                 {title:'전시여부', element: 'text', name: 'dispYn', edit:'select', width: '7%', data: this.data.mapping},
                 {title:'사용여부', element: 'text', name: 'useYn', edit:'select', width: '7%', data: this.data.mapping},
@@ -127,7 +133,10 @@ const menu = {
                 {title:'수정자', element: 'text', name: 'uptNo', width: '5%'},
                 {title:'수정일시', element: 'text', name: 'uptDttm', width: '10%'},
             ],
-            option: { style: { height: '34.5vh', overflow: { y: 'scroll'}} }
+            option: { 
+                style: { height: '34.5vh', overflow: { y: 'scroll'}},
+                data: { insert: this.data.newRow.sub }
+            }
         });
     },
 
@@ -147,15 +156,29 @@ const menu = {
         btnTopSave.addEventListener('click', () => this.applyTopMenu(this.grid.top.getApplyData()));
 
         // 하위 메뉴 추가 버튼
-        btnSubAdd.addEventListener('click', () => this.grid.sub.prependRow());
+        btnSubAdd.addEventListener('click', () => this.subMenuEvent(this.grid.sub.prependRow));
         // 하위 메뉴 편집 버튼
-        btnSubEdit.addEventListener('click', () => this.grid.sub.modifyStateCheckedElement('check'));
+        btnSubEdit.addEventListener('click', () => this.subMenuEvent(this.grid.sub.modifyStateCheckedElement, 'check'));
         // 하위 메뉴 삭제 버튼
-        btnSubRemove.addEventListener('click', () => this.grid.sub.removeStateCheckedElement('check'));
+        btnSubRemove.addEventListener('click', () => this.subMenuEvent(this.grid.sub.removeStateCheckedElement, 'check'));
         // 하위 메뉴 취소 버튼
-        btnSubCancel.addEventListener('click', () => this.grid.sub.cancelStateCheckedElement('check'));        
+        btnSubCancel.addEventListener('click', () => this.subMenuEvent(this.grid.sub.cancelStateCheckedElement, 'check'));        
         // 하위 메뉴 저장 버튼
-        btnSubSave.addEventListener('click', () => this.applySubMenu(this.grid.sub.getApplyData()));
+        btnSubSave.addEventListener('click', () => this.subMenuEvent(this.applySubMenu, this.grid.sub.getApplyData));
+    },
+
+    /**
+     * 하위메뉴 메뉴 이벤트 공통 실행
+     */
+    subMenuEvent(callFunction, value){
+        callFunction(value);
+        if(this.grid.sub.getApplyData().length > 0){
+            this.data.isSubMenuApply = true;
+            this.grid.top.chageOption('option.row.chose', false);
+        }else{
+            this.data.isSubMenuApply = false;
+            this.grid.top.chageOption('option.row.chose', true);
+        }
     },
 
     /**

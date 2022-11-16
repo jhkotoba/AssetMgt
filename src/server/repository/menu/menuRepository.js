@@ -36,7 +36,7 @@ exports.insertMenuList = async (params, conn) => {
     let query = `
     /* menuRepository.insertMenuList */
     INSERT INTO MENU (
-        ${params.level == 1 ? 'MENU_NM' : 'MENU_URL'}
+        ${params.level == 1 ? 'MENU_NM' : 'MENU_NM, MENU_URL'}
         , MENU_LV
         , MENU_SEQ
         , GROUP_NO
@@ -53,7 +53,8 @@ exports.insertMenuList = async (params, conn) => {
         if(params.level == 1){
             query += `'${list[i].menuNm}'`;
         }else{
-            query += `'${list[i].menuUrl}'`;
+            query += `'${list[i].menuNm}'`;
+            query += `, '${list[i].menuUrl}'`;
         }
         query += `, '${params.level}'`;
         query += `, ${list[i].menuSeq}`;
@@ -87,7 +88,7 @@ exports.updateMenuList = async (params, conn) => {
     UPDATE MENU M JOIN (
         SELECT
             M.MENU_NO
-            , ${params.level == 1 ? 'IFNULL(A.MENU_NM, M.MENU_NM) AS MENU_NM' : 'IFNULL(A.MENU_URL, M.MENU_URL) AS MENU_URL'}
+            , ${params.level == 1 ? 'IFNULL(A.MENU_NM, M.MENU_NM) AS MENU_NM' : 'IFNULL(A.MENU_NM, M.MENU_NM) AS MENU_NM, IFNULL(A.MENU_URL, M.MENU_URL) AS MENU_URL'}
             , IFNULL(A.MENU_LV, M.MENU_LV) AS MENU_LV
             , IFNULL(A.MENU_SEQ, M.MENU_SEQ) AS MENU_SEQ
             , IFNULL(A.GROUP_NO, M.GROUP_NO) AS GROUP_NO
@@ -110,7 +111,7 @@ exports.updateMenuList = async (params, conn) => {
     ) U
     ON U.MENU_NO = M.MENU_NO
     SET
-    ${params.level == 1 ? 'M.MENU_NM = U.MENU_NM' : 'M.MENU_URL = U.MENU_URL'}
+    ${params.level == 1 ? 'M.MENU_NM = U.MENU_NM' : 'M.MENU_NM = U.MENU_NM, M.MENU_URL = U.MENU_URL'}
     , M.MENU_LV = U.MENU_LV 
     , M.MENU_SEQ = U.MENU_SEQ
     , M.GROUP_NO = U.GROUP_NO
