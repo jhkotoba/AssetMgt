@@ -5,7 +5,7 @@ import { construct } from "./plugin/construct.js";
 /**
  * wGrid
  * @author JeHoon 
- * @version 0.10.12
+ * @version 0.10.13
  */
  export class wGrid {
 
@@ -180,7 +180,6 @@ import { construct } from "./plugin/construct.js";
      * @param {number} idx 
      */
     createRow = function(row, idx){
-        console.log(idx, row);
 
         // ROW 생성
         let tr = document.createElement("tr");
@@ -191,7 +190,6 @@ import { construct } from "./plugin/construct.js";
 		this.setIdxSequence(idx, row._rowSeq);
 
         // 행 엘리먼트 인덱싱
-        console.log('row._rowSeq:', row._rowSeq);
         this.setSeqRowElement(row._rowSeq, tr);
 
         // CELL 생성        
@@ -468,24 +466,27 @@ import { construct } from "./plugin/construct.js";
             _state: this.constant.STATE.INSERT
         };
 
+        // 신규행 기본값 설정되어있으면 세팅
+        if(this.option.data.insert){
+            for(let key in this.option.data.insert){
+                row[key] = this.option.data.insert[key];
+            }
+        }
+
         // 필드값 세팅
         for(let field of this.fields){
             
             // 신규행 추가시 기본값 세팅
-            if(field.data?.value){
-                row[field.name] = field.data.value;
-            }else{
-                switch(field.element){
-                case 'text': case 'select': default:
-                    row[field.name] = "";
-                    break;
-                case 'number':
-                    row[field.name] = 0;
-                    break;
-                case 'checkbox': 
-                    row[field.name] = this.option.checkbox.check;
-                    break;
-                }
+            switch(field.element){
+            case 'text': case 'select': default:
+                row[field.name] = "";
+                break;
+            case 'number':
+                row[field.name] = 0;
+                break;
+            case 'checkbox':
+                row[field.name] = this.option.checkbox.check;
+                break;
             }
 
             // 해당 행에 셀렉트박스 데이터가 있는 경우, 셀렉트박스 empty값이 없거나 false일 경우
@@ -748,6 +749,14 @@ import { construct } from "./plugin/construct.js";
             });
         return Object.assign([], itemList);
     }
+
+    /**
+     * 옵션변경
+     * @param {*} optionName 
+     * @param {*} value 
+     * @returns 
+     */
+    chageOption = (optionName, value) => eval(`this.${optionName}=` + value);
 
     /**
      * 행의 변경상태를 체크 (index)

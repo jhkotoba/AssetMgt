@@ -100,6 +100,9 @@
             checkbox: {
                 check: true,
                 uncheck: false
+            },
+            data: {
+                insert: null
             }
         }
 
@@ -157,6 +160,11 @@
                 }
                 if(param.option.row.chose == true){
                     option.row.chose = param.option.row.chose;
+                }
+            }
+            if(param?.option?.data){
+                if(param.option.data.insert){
+                    option.data.insert = param.option.data.insert;
                 }
             }
         }
