@@ -54,7 +54,7 @@ exports.applyMenu = async (params) => {
             return Promise.reject(new Error('ISNERT_COUNT_DIFFERENT'));
         }else if(cnts.updateCnt != values[1]?.affectedRows ? values[1]?.affectedRows : 0){
             return Promise.reject(new Error('UPDATE_COUNT_DIFFERENT'));
-        }else if(cnts.deleteCnt != values[2]?.affectedRows ? values[2]?.affectedRows : 0){
+        }else if(cnts.deleteCnt > 0 && values[2]?.affectedRows == undefined){
             return Promise.reject(new Error('DELETE_COUNT_DIFFERENT'));
         }else{  
             return cnts;
@@ -65,6 +65,7 @@ exports.applyMenu = async (params) => {
             await conn.rollback();
             conn.release();
         }
+        return Promise.reject(error);
     }).finally(async () => {
         if(conn){
             await conn.commit();

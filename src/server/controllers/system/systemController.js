@@ -54,10 +54,19 @@ exports.applyMenu = async (request, response, next) => {
     }).catch(error => {
         // 예외 응답
         logger.error(`systemController.applyMenu catch ERROR::[${error}]`);
-        switch(error.message){        
+        switch(error.message){
+            case 'ISNERT_COUNT_DIFFERENT' :
+                response.status(200).json({resultCode: error.message, message: `등록 수량이 일치하지 않습니다.`});
+                break
+            case 'UPDATE_COUNT_DIFFERENT' :
+                response.status(200).json({resultCode: error.message, message: `수정 수량이 일치하지 않습니다.`});
+                break
+            case 'DELETE_COUNT_DIFFERENT' :
+                response.status(500).json({resultCode: error.message, message: `삭제 수량이 일치하지 않습니다.`});
+                break;
             default:
                 response.status(500).json({resultCode: 'SYSTEM_ERROR', message: `시스템 오류가 발생하였습니다.`});
-            break;
+                break;
         }
     });
 }

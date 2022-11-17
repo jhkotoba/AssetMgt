@@ -128,4 +128,13 @@ exports.updateMenuList = async (params, conn) => {
  * @param {*} params 
  * @param {*} conn 
  */
-exports.deleteMenuList = async (params, conn) => await repo.delete('DELETE FROM MENU WHERE 1=1 AND MENU_NO IN (' + params.deleteList.map(item => item.menuNo).join() + ')', conn);
+exports.deleteMenuList = async (params, conn) => {
+    const idxs = params.deleteList.map(item => item.menuNo).join();
+    return await repo.delete(`
+    DELETE FROM MENU
+    WHERE 1=1
+    AND MENU_NO IN (
+        SELECT MENU_NO FROM MENU WHERE MENU_NO IN (${idxs}) UNION ALL
+        SELECT MENU_NO FROM MENU WHERE GROUP_NO IN (${idxs})
+    )`, conn);
+}

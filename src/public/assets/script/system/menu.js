@@ -164,7 +164,7 @@ const menu = {
         // 하위 메뉴 취소 버튼
         btnSubCancel.addEventListener('click', () => this.subMenuEvent(this.grid.sub.cancelStateCheckedElement, 'check'));        
         // 하위 메뉴 저장 버튼
-        btnSubSave.addEventListener('click', () => this.subMenuEvent(this.applySubMenu, this.grid.sub.getApplyData));
+        btnSubSave.addEventListener('click', () => this.applySubMenu(this.grid.sub.getApplyData()));
     },
 
     /**
@@ -205,8 +205,13 @@ const menu = {
         // 작업내용 저장 호출
         postFetch({url: '/system/applyMenu', body: {menuLv: 1, applyList: list}})
             .then(response => {
+                console.log('response:', response);
                 if(response.resultCode == 'SUCCESS'){
                     alert('적용되었습니다.');
+
+                    this.data.isSubMenuApply = false;
+                    this.grid.top.chageOption('option.row.chose', true);
+
                     this.selectMenu();
                 }else{
                     alert(response.message);
@@ -239,7 +244,7 @@ const menu = {
                     alert(response.message);
                 }
             })
-            .catch(error => alert(error));
+            .catch(error => console.log(err)); //alert(error));
     },
 
     /**
