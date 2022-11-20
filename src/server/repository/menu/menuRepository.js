@@ -22,7 +22,7 @@ const repo = require(`${basePath}/config/repository.js`);
             , DATE_FORMAT(INS_DTTM, '%Y-%m-%d %H:%i:%S') AS insDttm
             , UPT_NO    AS uptNo
             , DATE_FORMAT(UPT_DTTM, '%Y-%m-%d %H:%i:%S') AS uptDttm
-        FROM MENU`, conn);
+        FROM SY_MENU`, conn);
 }
 
 /**
@@ -35,7 +35,7 @@ exports.insertMenuList = async (params, conn) => {
     logger.debug(`menuRepository.insertMenuList \n params:: [${JSON.stringify(params)}]`);
     let query = `
     /* menuRepository.insertMenuList */
-    INSERT INTO MENU (
+    INSERT INTO SY_MENU (
         ${params.level == 1 ? 'MENU_NM' : 'MENU_NM, MENU_URL'}
         , MENU_LV
         , MENU_SEQ
@@ -85,7 +85,7 @@ exports.updateMenuList = async (params, conn) => {
     logger.debug(`menuRepository.updateMenuList \n params:: [${JSON.stringify(params)}]`);
     let query = 
     ` /* menuRepository.updateMenuList */
-    UPDATE MENU M JOIN (
+    UPDATE SY_MENU M JOIN (
         SELECT
             M.MENU_NO
             , ${params.level == 1 ? 'IFNULL(A.MENU_NM, M.MENU_NM) AS MENU_NM' : 'IFNULL(A.MENU_NM, M.MENU_NM) AS MENU_NM, IFNULL(A.MENU_URL, M.MENU_URL) AS MENU_URL'}
@@ -105,7 +105,7 @@ exports.updateMenuList = async (params, conn) => {
     }
     query += `
         ) A
-        INNER JOIN MENU M
+        INNER JOIN SY_MENU M
         ON M.MENU_NO = A.MENU_NO
         AND M.MENU_NO IN (` + params.updateList.map(item => item.menuNo).join() + `)
     ) U
@@ -131,7 +131,7 @@ exports.updateMenuList = async (params, conn) => {
 exports.deleteMenuList = async (params, conn) => {
     const idxs = params.deleteList.map(item => item.menuNo).join();
     return await repo.delete(`
-    DELETE FROM MENU
+    DELETE FROM SY_MENU
     WHERE 1=1
     AND MENU_NO IN (
         SELECT MENU_NO FROM MENU WHERE MENU_NO IN (${idxs}) UNION ALL
