@@ -5,7 +5,6 @@ a{text-decoration: none; color: #cdcdcd;}
 
 
 /* text */
-.nav-title{font-size: 20px; font-weight: 700; padding-top: 7px; padding-left: 20px;}
 .title{font-size: 20px; font-weight: 700;}
 .sub-title{font-size: 17px; font-weight: 700; height: 30px;}
 .sub-title > .text{vertical-align: middle;}
@@ -13,6 +12,8 @@ a{text-decoration: none; color: #cdcdcd;}
 
 /* nav */
 nav{margin: 0 auto; max-width: 100%; min-height: 45px; background: #4C4C4C; box-shadow:0 3px 15px rgba(0,0,0,.35); font-size: 1.2em;}
+nav .title{font-size: 20px; font-weight: 700; padding-top: 7px; padding-left: 20px; display: inline-block;}
+nav .logout{float: right; font-size: 15px; padding-top: 10px; padding-right: 10px;}
 
 /* aside */
 aside {background: #4C4C4C; position:fixed; margin-top: 10px; box-shadow:0 3px 15px rgba(0,0,0,.35); height: calc(100% - 75px); width: 160px; float: left;}

@@ -69,19 +69,19 @@ app.use(sessionFilter);
 
 // 메인
 const main = require(`${basePath}/routes/main.js`);
-app.use("/", main);
+app.use('/', main);
 
 // 로그인
 const login = require(`${basePath}/routes/login.js`);
-app.use("/login", login);
+app.use('/login', login);
 
 // 시스템
 const system = require(`${basePath}/routes/system.js`);
 app.use("/system", system);
 
 // 계좌관리
-//const acctount = require("./routes/acctountRoute.js");
-//app.use("/acctount", acctount);
+const account = require(`${basePath}/routes/account.js`);
+app.use("/account", account);
 
 // 장부관리
 //const ledger = require("./routes/ledgerRoute.js");

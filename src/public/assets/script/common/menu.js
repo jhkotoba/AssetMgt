@@ -13,6 +13,7 @@
 			 	.sort((a, b) => a.menuSeq - b.menuSeq)
 		}else{
 			menuList.filter(menu => menu.menuLv === (i+1))
+				.sort((a, b) => b.menuSeq - a.menuSeq)
 				.forEach(menu => {
 					for(let j=0; j<resultList.length; j++){
 						if(resultList[j].menuNo == menu.groupNo){

@@ -205,13 +205,10 @@ const menu = {
         // 작업내용 저장 호출
         postFetch({url: '/system/applyMenu', body: {menuLv: 1, applyList: list}})
             .then(response => {
-                console.log('response:', response);
                 if(response.resultCode == 'SUCCESS'){
                     alert('적용되었습니다.');
-
                     this.data.isSubMenuApply = false;
                     this.grid.top.chageOption('option.row.chose', true);
-
                     this.selectMenu();
                 }else{
                     alert(response.message);
@@ -239,12 +236,14 @@ const menu = {
             .then(response => {
                 if(response.resultCode == 'SUCCESS'){
                     alert('적용되었습니다.');
+                    this.data.isSubMenuApply = false;
+                    this.grid.top.chageOption('option.row.chose', true);
                     this.selectMenu();
                 }else{
                     alert(response.message);
                 }
             })
-            .catch(error => console.log(err)); //alert(error));
+            .catch(error => alert(error));
     },
 
     /**
