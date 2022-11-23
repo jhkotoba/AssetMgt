@@ -38,7 +38,7 @@
          zippedArchive: true,
       }),
       new winston.transports.Console({
-        level: 'debug',
+        level: process.env.NODE_ENV === 'prd' ? 'info' : 'debug',
         handleExceptions: true,
         colorize: true
         })
@@ -53,6 +53,6 @@
          zippedArchive: true,
       }),
    ],
- });
+});
 
- module.exports = logger;
+module.exports = logger;
