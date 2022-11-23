@@ -61,7 +61,7 @@ app.use(
 );
 
 // 정적자원
-app.use(express.static(__dirname + "\\public\\assets"));
+app.use(express.static(__dirname + "/public/assets"));
 
 // 세션필터
 const sessionFilter = require(`${basePath}/config/sessionFilter.js`);
