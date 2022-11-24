@@ -72,7 +72,7 @@
         let option = {
             style:{
                 width: '100%', 
-                height: '500px',
+                height: '500vh',
                 overflow: {
                     x: null, y: null
                 }
@@ -113,7 +113,7 @@
                     option.style.width = param.option.style.width;
                 }
                 if(param.option.style.height){
-                    option.style.height = param.option.style.height;
+                    option.style.height = param.option.style.height + 'vh';
                 }
                 if(param.option.style.overflow){
                     if(param.option.style.overflow.x){
@@ -184,7 +184,7 @@
         }     
 
         if(param?.option?.style?.height){
-            el.body.style.height = param.option.style.height;
+            el.body.style.height = param.option.style.height + 'vh';
         }
 
         if(param?.option?.style?.overflow?.x == 'overlay' || param?.option?.style?.overflow?.x == 'scroll'){

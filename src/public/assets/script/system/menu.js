@@ -89,7 +89,7 @@ const menu = {
             ],
             option: { 
                 style: {
-                    height: '34.5vh', overflow: { y: 'scroll'}
+                    height: 34.5, overflow: { y: 'scroll'}
                 },
                 body: { state: true },
                 row: { style: {cursor: 'pointer'}, chose: true},
@@ -134,7 +134,7 @@ const menu = {
                 {title:'수정일시', element: 'text', name: 'uptDttm', width: '10%'},
             ],
             option: { 
-                style: { height: '34.5vh', overflow: { y: 'scroll'}},
+                style: { height: 34.5, overflow: { y: 'scroll'}},
                 data: { insert: this.data.newRow.sub }
             }
         });
