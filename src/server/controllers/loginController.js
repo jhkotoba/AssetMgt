@@ -1,4 +1,4 @@
-const userService = require(`${basePath}/services/user/userService.js`);
+const userService = require(`${basePath}/services/userService.js`);
 const jsencrypt = require('nodejs-jsencrypt');
 const logger = require(`${basePath}/config/logger.js`);
 

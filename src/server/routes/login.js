@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const loginController = require(`${basePath}/controllers/login/loginController.js`)
+const loginController = require(`${basePath}/controllers/loginController.js`)
 
 // 로그인 페이지
 router.get("/", async (request, response) => response.sendFile(`${public}/view/login/login.html`));

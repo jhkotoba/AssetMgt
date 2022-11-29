@@ -1,4 +1,5 @@
-const menuService = require(`${basePath}/services/system/menuService.js`);
+const menuService = require(`${basePath}/services/menuService.js`);
+const codeService = require(`${basePath}/services/codeService.js`);
 const logger = require(`${basePath}/config/logger.js`);
 
 /**
@@ -67,6 +68,34 @@ exports.applyMenu = async (request, response, next) => {
             default:
                 response.status(500).json({resultCode: 'SYSTEM_ERROR', message: `시스템 오류가 발생하였습니다.`});
                 break;
+        }
+    });
+}
+
+/**
+ * 공통코드 목록 조회
+ * @param {*} request 
+ * @param {*} response 
+ * @param {*} next 
+ */
+ exports.getCodeList = async (request, response, next) => {
+
+    // 메뉴목록 조회
+    await codeService.getCodeList().then(value => {
+        response.status(200).json({
+            message: 'SUCCESS',
+            resultCode: 'SUCCESS',
+            data: value
+        });
+    }).catch(error => {
+        // 예외 응답
+        switch(error.message){
+            case 'NO_SEARCH_MENU':
+                response.status(200).json({resultCode: error.message, message: `시스템 오류가 발생하였습니다. (${error.message})`});
+            break;
+            default:
+                response.status(500).json({resultCode: 'SYSTEM_ERROR', message: `시스템 오류가 발생하였습니다. (${error.message})`});
+            break;
         }
     });
 }

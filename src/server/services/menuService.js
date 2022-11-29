@@ -1,5 +1,5 @@
 const logger = require(`${basePath}/config/logger.js`);
-const menuRepository = require(`${basePath}/repository/menu/menuRepository.js`);
+const menuRepository = require(`${basePath}/repository/menuRepository.js`);
 const db = require(`${basePath}/config/database.js`);
 
 /**

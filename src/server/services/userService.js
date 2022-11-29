@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const jsencrypt = require(`nodejs-jsencrypt`);
-const userRepository = require(`${basePath}/repository/user/userRepository.js`);
+const userRepository = require(`${basePath}/repository/userRepository.js`);
 const validation = require(`${basePath}/util/validation.js`);
 const db = require(`${basePath}/config/database.js`);
 

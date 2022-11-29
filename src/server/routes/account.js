@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const model = require(`${basePath}/config/model.js`);
-const accountController = require(`${basePath}/controllers/account/accountController.js`)
+const accountController = require(`${basePath}/controllers/accountController.js`)
 
 // 계좌관리 페이지
 router.get("/account", async (request, response) => response.send(await model.modelAndView('account/account.html')));
