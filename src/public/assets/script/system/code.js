@@ -1,4 +1,4 @@
-import { postFetch } from "/script/common/fetch.js";
+import { sender } from "/script/common/sender.js";
 
 window.addEventListener('DOMContentLoaded', () => code.init());
 
@@ -18,7 +18,7 @@ code.init = async function(){
 
 // 공통코드 조회
 code.selectCode = async function(){
-    let response = await postFetch({url: '/system/getCodeList', body: {}});
+    let response = await sender.request({url: '/system/getCodeList', body: {}});
     if(response.resultCode == 'SUCCESS'){
         return response.data;
     }else{

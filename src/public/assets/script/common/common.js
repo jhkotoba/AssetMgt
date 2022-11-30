@@ -1,4 +1,4 @@
-import { postFetch } from "/script/common/fetch.js";
+import { sender } from "/script/common/sender.js";
 
 // 상수
 const constant = {
@@ -18,7 +18,7 @@ const common = {
 			if(codeList){
 				resolve(codeList);
 			}else{
-				postFetch({url: '/system/getCodeList', body: {code}})
+				sender.request({url: '/system/getCodeList', body: {code}})
 				.then(res => {
 					if(res.resultCode == 'SUCCESS'){
 						sessionStorage.setItem(res.data);

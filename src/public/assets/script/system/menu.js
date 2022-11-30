@@ -1,4 +1,4 @@
-import { postFetch } from "/script/common/fetch.js";
+import { sender } from "/script/common/send.js";
 import { isEmpty } from "/script/common/validation.js";
 
 window.addEventListener('DOMContentLoaded', function(event){
@@ -35,7 +35,7 @@ const menu = {
      * 메뉴목록 조회, 조회데이터 세팅
      */
     selectMenu(){
-        postFetch({url: '/system/getMenuList', body: {}})
+        sender.request({url: '/system/getMenuList', body: {}})
             .then(res => res.resultCode == 'SUCCESS' ? this.data.origin = res.data : Promise.reject(new Error(res.message)))
             .then(() => this.initGrid())
             .catch(error => alert(error));
@@ -203,7 +203,7 @@ const menu = {
         }
 
         // 작업내용 저장 호출
-        postFetch({url: '/system/applyMenu', body: {menuLv: 1, applyList: list}})
+        sender.request({url: '/system/applyMenu', body: {menuLv: 1, applyList: list}})
             .then(response => {
                 if(response.resultCode == 'SUCCESS'){
                     alert('적용되었습니다.');
@@ -232,7 +232,7 @@ const menu = {
         }
 
         // 작업내용 저장 호출
-        postFetch({url: '/system/applyMenu', body: {menuLv: 2, applyList: list}})
+        sender.request({url: '/system/applyMenu', body: {menuLv: 2, applyList: list}})
             .then(response => {
                 if(response.resultCode == 'SUCCESS'){
                     alert('적용되었습니다.');

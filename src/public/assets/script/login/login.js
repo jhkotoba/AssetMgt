@@ -1,5 +1,5 @@
 import { constant } from "/script/common/common.js";
-import { postFetch } from "/script/common/fetch.js";
+import { sender } from "/script/common/sender.js";
 import { createMenu } from "/script/common/menu.js";
 
 const crypt = new JSEncrypt();
@@ -21,13 +21,13 @@ window.addEventListener("DOMContentLoaded", event => {
  async function loginProcess(){
 	let userId = crypt.encrypt(document.getElementById("userId").value);
 	let password = crypt.encrypt(document.getElementById("password").value);
-	
 	// 로그인 처리
-	let loginRes = await postFetch({url: '/login/loginProcess', body: {userId, password}});
+	let loginRes = await sender.request({url: '/login/loginProcess', body: {userId, password}});
+	console.log('loginRes:', loginRes);
 	if(loginRes.resultCode === 'SUCCESS'){
 
 		// 사용자 메뉴조회
-		let menuRes = await postFetch({url: '/system/getMenuList', body: {}});
+		let menuRes = await sender.request({url: '/system/getMenuList', body: {}});
 		if(menuRes.resultCode === 'SUCCESS'){
 
 			// 세션스토로지 초기화

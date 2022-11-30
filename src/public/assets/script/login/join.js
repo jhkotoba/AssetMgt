@@ -1,6 +1,6 @@
 import { constant } from "/script/common/common.js";
 import { isEmpty, isPassword, isEmail } from "/script/common/validation.js";
-import { postFetch } from "/script/common/fetch.js";
+import { sender } from "/script/common/sender.js";
 
 const crypt = new JSEncrypt();
 window.addEventListener("DOMContentLoaded", event => {
@@ -77,7 +77,7 @@ function joinProcess(){
 	params.confirm = null;
 
     // 회원가입
-	postFetch({
+	sender.request({
 		url: '/login/joinProcess',
 		body: params
 	}).then(data => {

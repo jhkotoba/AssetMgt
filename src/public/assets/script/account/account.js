@@ -1,4 +1,4 @@
-import { postFetch } from "/script/common/fetch.js";
+import { sender } from "/script/common/sender.js";
 
 window.addEventListener('DOMContentLoaded', function(event){
     account.select();
@@ -11,7 +11,7 @@ const account = {
 
 // 계좌목록 조회
 account.select = async () => {
-    account.data.acctList = await postFetch({url: '/account/getAccountList', body: {}});
+    account.data.acctList = await sender.request({url: '/account/getAccountList', body: {}});
 };
 
 // 계좌목록 그리드 선언
