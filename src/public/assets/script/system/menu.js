@@ -1,4 +1,4 @@
-import { sender } from "/script/common/send.js";
+import { sender } from "/script/common/sender.js";
 import { isEmpty } from "/script/common/validation.js";
 
 window.addEventListener('DOMContentLoaded', function(event){

@@ -18,4 +18,7 @@ router.post("/applyMenu", systemController.applyMenu);
 // 코드목록 조회
 router.post('/getCodeList', systemController.getCodeList);
 
+// 코드 적용
+router.post('/applyCode', systemController.applyCode);
+
 module.exports = router;
