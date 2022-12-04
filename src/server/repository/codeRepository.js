@@ -18,11 +18,10 @@ const repo = require(`${basePath}/config/repository.js`);
             , DATE_FORMAT(INS_DTTM, '%Y-%m-%d %H:%i:%S') AS insDttm
             , UPT_NO    AS uptNo
             , DATE_FORMAT(UPT_DTTM, '%Y-%m-%d %H:%i:%S') AS uptDttm
-        FROM SY_CODE 
-        ORDER BY GROUP_CD 
+        FROM SY_CODE
         WHERE 1=1
-        ${params?.groupCd ? "AND GROUP_CD = '" + params.groupCd + "' AND CODE <> GROUP_CD" : ''}
-        `, conn);
+        ${params?.groupCd ? " AND GROUP_CD = '" + params.groupCd + "' AND CODE <> GROUP_CD " : ' '}
+        ORDER BY GROUP_CD`, conn);
 }
 
 /**

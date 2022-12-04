@@ -30,7 +30,7 @@ code.selectCode = async function(){
     if(response.resultCode == 'SUCCESS'){
         return response.data;
     }else{
-        throw new Error(res.message);
+        throw new Error(response.message);
     }
 };
 
@@ -38,12 +38,11 @@ code.selectCode = async function(){
 code.createGrid = function(){
     this.grid = new wGrid('commonCode', {
         fields: [
-            {title: null, element:'checkbox', name: 'check', edit: 'checkbox', width:'5%', align:'center'},
-            {title:'코드', element: 'text', name: 'code', edit: 'text', width: '20%', maxlength: 50},
-            {title:'코드명', element: 'text', name: 'codeNm', edit: 'text', width: '20%', maxlength: 100},
-            {title:'그룹코드', element: 'text', name: 'groupCd', edit: 'text', width: '20%', maxlength: 50},
-            {title:'사용여부', element: 'text', name: 'useYn', edit:'select', width: '5%', data: {
-                mapping: {Y: '사용', N: '미사용'},
+            {title: null, element:'checkbox', name: 'check', width:'5%', align:'center'},
+            {title:'코드', element: 'text-edit', name: 'code', width: '19%', maxlength: 50},
+            {title:'코드명', element: 'text-edit', name: 'codeNm', width: '19%', maxlength: 100},
+            {title:'그룹코드', element: 'text-edit', name: 'groupCd', width: '19%', maxlength: 50},
+            {title:'사용여부', element: 'select', name: 'useYn', width: '8%', data: {
                 select: {list: [{value:'Y', text:'사용'}, {value:'N', text:'미사용'}]}}
             },
             {title:'등록자', element: 'text', name: 'insNo', width: '5%'},
@@ -129,4 +128,4 @@ code.applyCode = function(){
         return isValidation;
     }
 }
-    
+window._code = code;
