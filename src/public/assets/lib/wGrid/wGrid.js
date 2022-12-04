@@ -5,7 +5,7 @@ import { construct } from "./plugin/construct.js";
 /**
  * wGrid
  * @author JeHoon 
- * @version 0.10.13
+ * @version 0.10.14
  */
  export class wGrid {
 
@@ -18,7 +18,10 @@ import { construct } from "./plugin/construct.js";
         this.data = [];
 
         // 그리드 편집시 데이터 변수
-        this.originData = {};
+        this.editData = {};
+
+        // setData 진행시 오리지널 데이터 저장
+        this.originData = {}
         
         // 필드저장
         this.fields = paramater.fields;
@@ -395,7 +398,7 @@ import { construct } from "./plugin/construct.js";
      * 데이터 추가
      * @param {object} paramater 
      */
-    setData = function(paramater){
+    setData = function(paramater, isOrigin){
 
         let list = [];
 
@@ -419,6 +422,9 @@ import { construct } from "./plugin/construct.js";
 
         // 데이터 저장
         this.data = list;
+
+        // 초기데이터 보존
+        this.data.forEach(item => this.originData[item._rowSeq] = JSON.parse(JSON.stringify(item)));
 
         // 필드 새로고침
         this.refresh();
@@ -845,10 +851,10 @@ import { construct } from "./plugin/construct.js";
         case this.constant.STATE.UPDATE:
             
             // 원본 데이터로 돌림
-            for(let key in this.originData[rowSeq]){
-                this.data[rowIdx][key] = this.originData[rowSeq][key];
+            for(let key in this.editData[rowSeq]){
+                this.data[rowIdx][key] = this.editData[rowSeq][key];
             }
-            delete this.originData[rowSeq];
+            delete this.editData[rowSeq];
 
             // 데이터 상태 조회로 변경
             this.data[rowIdx]._state = this.constant.STATE.SELECT;
@@ -930,9 +936,9 @@ import { construct } from "./plugin/construct.js";
         }
        
         // 편집모드 변경전 본래값 저장
-        this.originData[rowSeq] = {};
+        this.editData[rowSeq] = {};
         for(let key in this.data[rowIdx]){
-            this.originData[rowSeq][key] = this.data[rowIdx][key];
+            this.editData[rowSeq][key] = this.data[rowIdx][key];
         }        
 
         // 데이터 행상태 값 변경
