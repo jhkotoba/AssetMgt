@@ -5,7 +5,7 @@ import { construct } from "./plugin/construct.js";
 /**
  * wGrid
  * @author JeHoon 
- * @version 0.10.14
+ * @version 0.10.15
  */
  export class wGrid {
 

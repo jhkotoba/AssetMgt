@@ -260,7 +260,6 @@
         for(let i=0; i<evList.length; i++){
 
             self.element.body.addEventListener(evList[i], event => {
-                
                 // 체크박스 클릭이벤트 강제 종료
                 if(event.type == 'click' && event.target.dataset.sync == 'checkbox') return;
                 
@@ -269,6 +268,23 @@
                 
                 let sequence = row.dataset.rowSeq;
                 let index = self.getSeqIndex(sequence);
+
+                // 데이터 동기화
+                switch(event.target.dataset.sync){
+                case 'checkbox':
+                    self.data[index][event.target.name] = 
+                        event.target.checked == true ? self.option.checkbox.check : self.option.checkbox.uncheck;
+                    break;
+                case 'number':
+                    let number = Number(event.target.value.replace('/[^0-9]/g', ''));
+                    let value = Number.isNaN(number) ? self.data[index][event.target.name] : number;
+                    self.data[index][event.target.name] = value;
+                    event.target.value = value;
+                    break;
+                case 'text': case 'select': case 'date': case 'dateTime':
+                    self.data[index][event.target.name] = event.target.value;
+                    break;
+                }
 
                 // 연결할 이벤트 체크
                 if(innerEvent[evList[i]]
@@ -292,23 +308,6 @@
                         index,
                         sequence
                     );
-                }
-
-                // 데이터 동기화
-                switch(event.target.dataset.sync){
-                case 'checkbox':
-                    self.data[index][event.target.name] = 
-                        event.target.checked == true ? self.option.checkbox.check : self.option.checkbox.uncheck;
-                    break;
-                case 'number':
-                    let number = Number(event.target.value.replace('/[^0-9]/g', ''));
-                    let value = Number.isNaN(number) ? self.data[index][event.target.name] : number;
-                    self.data[index][event.target.name] = value;
-                    event.target.value = value;
-                    break;
-                case 'text': case 'select': case 'date': case 'dateTime':
-                    self.data[index][event.target.name] = event.target.value;
-                    break;
                 }
 
                 /**

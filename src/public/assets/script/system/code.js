@@ -20,6 +20,8 @@ code.init = async function(){
 
     // 추가버튼 클릭 이벤트
     btnAdd.addEventListener('click', e => this.grid.prependRow());
+    // 새로고침 클릭 이벤트
+    btnRefresh.addEventListener('click', e => this.grid.refresh(this.data.code));
     // 저장버튼 클릭 이벤트
     btnSave.addEventListener('click', this.applyCode);
 }
@@ -53,6 +55,10 @@ code.createGrid = function(){
         option: { 
             style: { height: 100, overflow: { y: 'scroll'}},
             data: { insert: {code: '', codeNm: '', groupCd:'', useYn: 'Y'} }
+        },
+        event: {
+            keyup: (event, item, index, sequence) => this.grid.applyModifyAndCancel(index, sequence),
+            change: (event, item, index, sequence) => this.grid.applyModifyAndCancel(index, sequence)
         }
     });
 }
