@@ -433,31 +433,40 @@ import { construct } from "./plugin/construct.js";
     /**
      * 그리드 새로고침 (필드부분 재생성)
      */
-    refresh = function(){
+    refresh = function(newData){
+        
+        // 신규데이터 기존데이터 분기처리
+        if(this.util.isNotEmpty(newData) == true && newData.length > 0){
+            this.setData(newData);
+        }else{
 
-        // 그리드 상태 초기화
-        this.state.seqIndex = {};
-        this.state.idxSequence = {};
-        this.state.seqRowElement = {};
-        this.state.seqCellElement = {};
+            // 그리드 상태 초기화
+            this.state.seqIndex = {};
+            this.state.idxSequence = {};
+            this.state.seqRowElement = {};
+            this.state.seqCellElement = {};
 
-        // 필드 비우기
-        while(this.element.bodyTb.hasChildNodes()){
-            this.element.bodyTb.removeChild(this.element.bodyTb.firstChild);
+            // 필드 비우기
+            while(this.element.bodyTb.hasChildNodes()){
+                this.element.bodyTb.removeChild(this.element.bodyTb.firstChild);
+            }
+
+            // 필드 재생성
+            this.data.forEach((row, rIdx) => this.element.bodyTb.appendChild(this.createRow(row, rIdx)));
+
+            // 조회목록 없을시 메시지 표시
+            this.emptyMessageDisply();
         }
-        // 필드 재생성
-        this.data.forEach((row, rIdx) => this.element.bodyTb.appendChild(this.createRow(row, rIdx)));
-
-        // 조회목록 없을시 메시지 표시
-        this.emptyMessageDisply();
     }
 
     /**
      * 그리드 초기화
      */
-    empty = function(){
+    empty = function(isRefresh){
         this.data = [];
-        this.refresh();
+        if(isRefresh != false){
+            this.refresh();
+        }
     }
 
     /**
@@ -765,39 +774,36 @@ import { construct } from "./plugin/construct.js";
     chageOption = (optionName, value) => eval(`this.${optionName}=` + value);
 
     /**
-     * 행의 변경상태를 체크 (index)
-     * @param {number} rowIdx 
-     * @returns 
+     * 수정/삭제 상태를 취소
+     * @param {*} rowSeq
      */
-    isModifyDataRowIdx(rowIdx){
-        return this.isModifyData(rowIdx, this.getIdxSequence(rowIdx));
-    }
+    cancelStateSeq = rowSeq => this.modifyState(this.getSeqIndex(rowSeq), rowSeq);
 
     /**
-     * 행의 변경상태를 체크 (sequence)
-     * @param {string/number} rowSeq 
-     * @returns 
+     * 수정/삭제 상태를 취소
+     * @param {*} rowIdx
      */
-    isModifyDataRowSeq(rowSeq){
-        return this.isModifyData(this.getSeqIndex(rowSeq), rowSeq);
-    }
-    
+    cancelStateIdx = rowIdx => this.modifyState(rowIdx, this.getIdxSequence(rowIdx));
+ 
     /**
-     * 행의 변경상태를 체크
-     * @param {number} rowIdx 
-     * @param {string/number} rowSeq 
-     * @returns 
+     * 수정/삭제 상태를 취소
+     * @param {*} rowIdx 
      */
-    isModifyData(rowIdx, rowSeq){
-        let result = false;
-        for(let key in this.data[rowIdx]){
-            if(key.indexOf("_") != 0 
-                && this.data[rowIdx][key] != this.originData[rowSeq][key]){
-                result = true;
-                break;
+    cancelState(rowIdx, rowSeq){
+        
+        // style class 삭제
+        if(this.option.body.state.use == true){
+            if(this.data[rowIdx]._state == this.constant.STATE.UPDATE){
+                this.getRowElementRowSeq(rowSeq)
+                    .classList.remove(this.constant.class.update);
+            }else if(this.data[rowIdx]._state == this.constant.STATE.REMOVE){
+                this.getRowElementRowSeq(rowSeq)
+                    .classList.remove(this.constant.class.remove);
             }
         }
-        return result;
+
+        // 데이터 행상태 값 변경
+        this.data[rowIdx]._state = this.constant.STATE.SELECT;
     }
 
     /**
@@ -889,6 +895,107 @@ import { construct } from "./plugin/construct.js";
     }
 
     /**
+     * 행의 변경상태를 체크 (index)
+     * @param {number} rowIdx 
+     * @returns 
+     */
+    isModifyDataRowIdx(rowIdx){
+        return this.isModifyData(rowIdx, this.getIdxSequence(rowIdx));
+    }
+
+    /**
+     * 행의 변경상태를 체크 (sequence)
+     * @param {string/number} rowSeq 
+     * @returns 
+     */
+    isModifyDataRowSeq(rowSeq){
+        return this.isModifyData(this.getSeqIndex(rowSeq), rowSeq);
+    }
+
+    /**
+     * 행의 변경상태를 체크
+     * @param {number} rowIdx 
+     * @param {string/number} rowSeq 
+     * @returns 
+     */
+    isModifyData(rowIdx, rowSeq){
+        let result = false;
+        for(let key in this.data[rowIdx]){
+            if(key.indexOf("_") != 0 
+                && this.data[rowIdx][key] != this.originData[rowSeq][key]){
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 데이터가 변경 되었을시 행 상태변경, 같은경우 취소(rowIdx)
+     * @param {*} rowIdx 
+     * @param {*} isRowEditMode 
+     * @returns 
+     */
+    applyModifyAndCancelRowIdx = (rowIdx, isRowEditMode) => this.ifModifyApply(rowIdx, this.getIdxSequence(rowIdx), isRowEditMode);
+
+    /**
+     * 데이터가 변경 되었을시 행 상태변경, 같은경우 취소(rowSeq)
+     * @param {*} rowSeq 
+     * @param {*} isRowEditMode 
+     * @returns 
+     */
+    applyModifyAndCancelRowSeq = (rowSeq, isRowEditMode) => this.ifModifyApply(this.getSeqIndex(rowSeq), rowSeq, isRowEditMode);
+
+    /**
+     * 데이터가 변경 되었을시 행 상태변경, 같은경우 취소
+     * @param {*} rowIdx 
+     * @param {*} rowSeq 
+     * @param {*} isRowEditMode 
+     */
+    applyModifyAndCancel(rowIdx, rowSeq, isRowEditMode){        
+        if(this.isModifyData(rowIdx, rowSeq)){
+            if(isRowEditMode == true){
+                this.modifyStateRow(rowIdx, rowSeq);
+            }else{
+                this.modifyState(rowIdx, rowSeq);
+            }
+        }else{
+            if(isRowEditMode == true){
+                this.cancelStateRow(rowIdx, rowSeq);
+            }else{
+                this.cancelState(rowIdx, rowSeq);
+            }
+        }
+    }
+
+    /**
+     * 수정 상태로 변경(sequence)
+     * @param {*} rowSeq
+     */
+    modifyStateSeq = rowSeq => this.modifyState(this.getSeqIndex(rowSeq), rowSeq);
+
+    /**
+     * 수정 상태로 변경(index)
+     * @param {*} rowIdx
+     */
+    modifyStateIdx = rowIdx => this.modifyState(rowIdx, this.getIdxSequence(rowIdx));
+
+    /**
+     * 수정 상태로 변경
+     * @param {*} rowIdx 
+     */
+    modifyState(rowIdx, rowSeq){
+
+        // 데이터 행상태 값 변경
+        this.data[rowIdx]._state = this.constant.STATE.UPDATE;
+
+        if(this.option.body.state.use == true){
+            this.getRowElementRowSeq(rowSeq)
+                .classList.add(this.constant.class.update);
+        }
+    }
+
+    /**
      * 선택한 체크박스의 행을 편집상태로 변환
      * @param {string} name 
      */
@@ -918,7 +1025,12 @@ import { construct } from "./plugin/construct.js";
      */
     modifyStateRowSeq = rowSeq => this.modifyStateRow(this.getSeqIndex(rowSeq), rowSeq);
 
-    // 행 편집상태로 변경   
+    /**
+     * 행 편집상태로 변경
+     * @param {*} rowIdx 
+     * @param {*} rowSeq 
+     * @returns 
+     */
     modifyStateRow(rowIdx, rowSeq){
 
         // 편집할 행 엘리먼트
@@ -956,6 +1068,33 @@ import { construct } from "./plugin/construct.js";
 
         if(this.option.body.state.use == true){
             tr.classList.add(this.constant.class.update);
+        }
+    }
+
+    /**
+     * 삭제 상태로 변경(sequence)
+     * @param {*} rowSeq
+     */
+    removeStateSeq = rowSeq => this.removeState(this.getSeqIndex(rowSeq), rowSeq);
+
+    /**
+     * 삭제 상태로 변경(index)
+     * @param {*} rowIdx
+     */
+    removeStateIdx = rowIdx => this.removeState(rowIdx, this.getIdxSequence(rowIdx));
+ 
+    /**
+     * 삭제 상태로 변경
+     * @param {*} rowIdx 
+     */
+    removeState(rowIdx, rowSeq){
+ 
+        // 데이터 행상태 값 변경
+        this.data[rowIdx]._state = this.constant.STATE.REMOVE;
+ 
+        if(this.option.body.state.use == true){
+            this.getRowElementRowSeq(rowSeq)
+                .classList.add(this.constant.class.remove);
         }
     }
 
