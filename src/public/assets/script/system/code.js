@@ -30,6 +30,7 @@ code.init = async function(){
 code.selectCode = async function(){
     let response = await sender.request({url: '/system/getCodeList', body: {}});
     if(response.resultCode == 'SUCCESS'){
+        response.data.forEach(item => item.check = false);
         return response.data;
     }else{
         throw new Error(response.message);
@@ -40,11 +41,12 @@ code.selectCode = async function(){
 code.createGrid = function(){
     this.grid = new wGrid('commonCode', {
         fields: [
-            {title: null, element:'checkbox', name: 'check', width:'5%', align:'center'},
-            {title:'코드', element: 'text-edit', name: 'code', width: '19%', maxlength: 50},
-            {title:'코드명', element: 'text-edit', name: 'codeNm', width: '19%', maxlength: 100},
-            {title:'그룹코드', element: 'text-edit', name: 'groupCd', width: '19%', maxlength: 50},
-            {title:'사용여부', element: 'select', name: 'useYn', width: '8%', data: {
+            {title:'삭제', element:'checkbox', name: 'check', width:'4%', align:'center'},
+            {title:'코드번호', element: 'text', name: 'codeNo', width: '5%'},
+            {title:'코드', element: 'text-edit', name: 'code', width: '18%', maxlength: 50},
+            {title:'코드명', element: 'text-edit', name: 'codeNm', width: '18%', maxlength: 100},
+            {title:'그룹코드', element: 'text-edit', name: 'groupCd', width: '18%', maxlength: 50},
+            {title:'사용여부', element: 'select', name: 'useYn', width: '7%', data: {
                 select: {list: [{value:'Y', text:'사용'}, {value:'N', text:'미사용'}]}}
             },
             {title:'등록자', element: 'text', name: 'insNo', width: '5%'},
@@ -53,12 +55,22 @@ code.createGrid = function(){
             {title:'수정일시', element: 'text', name: 'uptDttm', width: '10%'},
         ],
         option: { 
-            style: { height: 100, overflow: { y: 'scroll'}},
+            style: { height: 80, overflow: { y: 'scroll'}},
             data: { insert: {code: '', codeNm: '', groupCd:'', useYn: 'Y'} }
         },
         event: {
-            keyup: (event, item, index, sequence) => this.grid.applyModifyAndCancel(index, sequence),
-            change: (event, item, index, sequence) => this.grid.applyModifyAndCancel(index, sequence)
+            keyup: (event, item, index, sequence) => this.grid.applyModifyAndCancel(index, sequence, false, ['check']),
+            change: (event, item, index, sequence) => {
+                if(event.target.name == 'check'){
+                    if(event.target.checked){
+                        this.grid.removeState(index, sequence);
+                    }else{
+                        this.grid.cancelState(index, sequence);
+                    }
+                }else{
+                    this.grid.applyModifyAndCancel(index, sequence, false, ['check']);    
+                }
+            }
         }
     });
 }
@@ -122,6 +134,10 @@ code.applyCode = function(){
         .then(response => {
             if(response.resultCode == 'SUCCESS'){
                 alert('적용되었습니다.');
+                code.selectCode().then((data) => {
+                    code.data.code = data;
+                    code.grid.refresh(JSON.parse(JSON.stringify(data)));
+                });
             }else{
                 alert(response.message);
             }

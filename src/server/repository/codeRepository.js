@@ -10,7 +10,8 @@ const repo = require(`${basePath}/config/repository.js`);
     return await repo.selectList(
         `/* codeRepository.selectCodeList */
         SELECT
-            CODE        AS code
+            CODE_NO     AS codeNo
+            , CODE      AS code
             , CODE_NM   AS codeNm
             , GROUP_CD  AS groupCd
             , USE_YN    AS useYn
@@ -71,7 +72,7 @@ exports.updateCodeList = async (params, conn) => {
     `;
     for(let i=0; i<params.updateList.length; i++){
         let p = params.updateList[i];
-        query += `      SELECT ${repo.string(p.code)} AS CODE,  ${repo.string(p.codeNm)} AS CODE_NM, ${repo.string(p.groupCd)} AS GROUP_CD, ${repo.string(p.useYn)} AS USE_YN`
+        query += `      SELECT ${p.codeNo} AS CODE_NO, ${repo.string(p.code)} AS CODE,  ${repo.string(p.codeNm)} AS CODE_NM, ${repo.string(p.groupCd)} AS GROUP_CD, ${repo.string(p.useYn)} AS USE_YN`
         if(i+1 < params.updateList.length){
             query += ' UNION ALL \n';
         }
@@ -79,8 +80,8 @@ exports.updateCodeList = async (params, conn) => {
     query += `
         ) A
         INNER JOIN SY_CODE C
-        ON M.CODE = C.CODE
-        AND M.CODE IN (` + params.updateList.map(item => item.code).join() + `)
+        ON M.CODE_NO = C.CODE_NO
+        AND M.CODE_NO IN (` + params.updateList.map(item => item.codeNo).join() + `)
     ) U
     ON U.CODE = M.CODE
     SET
@@ -105,6 +106,6 @@ exports.deleteCodeList = async (params, conn) => {
     return await repo.delete(`
     DELETE FROM SY_CODE
     WHERE 1=1
-    AND CODE IN (${params.deleteList.map(item => repo.string(item.code)).join()})
+    AND CODE_NO IN (${params.deleteList.map(item => repo.string(item.codeNo)).join()})
     `, conn);
 }

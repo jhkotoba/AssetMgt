@@ -777,13 +777,13 @@ import { construct } from "./plugin/construct.js";
      * 수정/삭제 상태를 취소
      * @param {*} rowSeq
      */
-    cancelStateSeq = rowSeq => this.modifyState(this.getSeqIndex(rowSeq), rowSeq);
+    cancelStateSeq = rowSeq => this.cancelState(this.getSeqIndex(rowSeq), rowSeq);
 
     /**
      * 수정/삭제 상태를 취소
      * @param {*} rowIdx
      */
-    cancelStateIdx = rowIdx => this.modifyState(rowIdx, this.getIdxSequence(rowIdx));
+    cancelStateIdx = rowIdx => this.cancelState(rowIdx, this.getIdxSequence(rowIdx));
  
     /**
      * 수정/삭제 상태를 취소
@@ -897,31 +897,35 @@ import { construct } from "./plugin/construct.js";
     /**
      * 행의 변경상태를 체크 (index)
      * @param {number} rowIdx 
+     * @param {*} exceptList
      * @returns 
      */
-    isModifyDataRowIdx(rowIdx){
-        return this.isModifyData(rowIdx, this.getIdxSequence(rowIdx));
+    isModifyDataRowIdx(rowIdx, exceptList){
+        return this.isModifyData(rowIdx, this.getIdxSequence(rowIdx), exceptList);
     }
 
     /**
      * 행의 변경상태를 체크 (sequence)
      * @param {string/number} rowSeq 
+     * @param {*} exceptList
      * @returns 
      */
-    isModifyDataRowSeq(rowSeq){
-        return this.isModifyData(this.getSeqIndex(rowSeq), rowSeq);
+    isModifyDataRowSeq(rowSeq, exceptList){
+        return this.isModifyData(this.getSeqIndex(rowSeq), rowSeq, exceptList);
     }
 
     /**
      * 행의 변경상태를 체크
      * @param {number} rowIdx 
      * @param {string/number} rowSeq 
+     * @param {*} exceptList
      * @returns 
      */
-    isModifyData(rowIdx, rowSeq){
+    isModifyData(rowIdx, rowSeq, exceptList){
         let result = false;
         for(let key in this.data[rowIdx]){
             if(key.indexOf("_") != 0 
+                && (exceptList?.length > 0 ? exceptList : []).includes(key) == false
                 && this.data[rowIdx][key] != this.originData[rowSeq][key]){
                 result = true;
                 break;
@@ -934,26 +938,29 @@ import { construct } from "./plugin/construct.js";
      * 데이터가 변경 되었을시 행 상태변경, 같은경우 취소(rowIdx)
      * @param {*} rowIdx 
      * @param {*} isRowEditMode 
+     * @param {*} exceptList 
      * @returns 
      */
-    applyModifyAndCancelRowIdx = (rowIdx, isRowEditMode) => this.ifModifyApply(rowIdx, this.getIdxSequence(rowIdx), isRowEditMode);
+    applyModifyAndCancelRowIdx = (rowIdx, isRowEditMode, exceptList) => this.ifModifyApply(rowIdx, this.getIdxSequence(rowIdx), isRowEditMode, exceptList);
 
     /**
      * 데이터가 변경 되었을시 행 상태변경, 같은경우 취소(rowSeq)
      * @param {*} rowSeq 
      * @param {*} isRowEditMode 
+     * @param {*} exceptList 
      * @returns 
      */
-    applyModifyAndCancelRowSeq = (rowSeq, isRowEditMode) => this.ifModifyApply(this.getSeqIndex(rowSeq), rowSeq, isRowEditMode);
+    applyModifyAndCancelRowSeq = (rowSeq, isRowEditMode, exceptList) => this.ifModifyApply(this.getSeqIndex(rowSeq), rowSeq, isRowEditMode, exceptList);
 
     /**
      * 데이터가 변경 되었을시 행 상태변경, 같은경우 취소
      * @param {*} rowIdx 
      * @param {*} rowSeq 
      * @param {*} isRowEditMode 
+     * @param {*} exceptList 
      */
-    applyModifyAndCancel(rowIdx, rowSeq, isRowEditMode){        
-        if(this.isModifyData(rowIdx, rowSeq)){
+    applyModifyAndCancel(rowIdx, rowSeq, isRowEditMode, exceptList){        
+        if(this.isModifyData(rowIdx, rowSeq, exceptList)){
             if(isRowEditMode == true){
                 this.modifyStateRow(rowIdx, rowSeq);
             }else{
