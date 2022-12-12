@@ -5,7 +5,7 @@
  const winstonDaily = require('winston-daily-rotate-file');
  const { combine, timestamp, label, printf } = winston.format;
  // 로그파일 저장 경로
- const logDir = `${rootPath}\\logs`;
+ const logDir = `${rootPath}/logs`;
  
  /*
   * Log Level

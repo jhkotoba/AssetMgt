@@ -59,16 +59,16 @@ code.createGrid = function(){
             data: { insert: {code: '', codeNm: '', groupCd:'', useYn: 'Y'} }
         },
         event: {
-            keyup: (event, item, index, sequence) => this.grid.applyModifyAndCancel(index, sequence, false, ['check']),
+            keyup: (event, item, index, sequence) => this.grid.applyModifyAndCancel(index, sequence, {isRowEditMode: false, exceptList: ['check']}),
             change: (event, item, index, sequence) => {
                 if(event.target.name == 'check'){
                     if(event.target.checked){
-                        this.grid.removeState(index, sequence);
+                        this.grid.removeState(index, sequence, {exceptDisabledList: ['check']});
                     }else{
                         this.grid.cancelState(index, sequence);
                     }
                 }else{
-                    this.grid.applyModifyAndCancel(index, sequence, false, ['check']);    
+                    this.grid.applyModifyAndCancel(index, sequence, {isRowEditMode: false, exceptList: ['check']});    
                 }
             }
         }

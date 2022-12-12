@@ -5,7 +5,7 @@ import { construct } from "./plugin/construct.js";
 /**
  * wGrid
  * @author JeHoon 
- * @version 0.10.15
+ * @version 0.10.16
  */
  export class wGrid {
 
@@ -775,40 +775,48 @@ import { construct } from "./plugin/construct.js";
 
     /**
      * 수정/삭제 상태를 취소
-     * @param {*} rowSeq
+     * @param {number/string} rowSeq    행 시퀀스
      */
     cancelStateSeq = rowSeq => this.cancelState(this.getSeqIndex(rowSeq), rowSeq);
 
     /**
      * 수정/삭제 상태를 취소
-     * @param {*} rowIdx
+     * @param {number} rowIdx    행 IDX
      */
     cancelStateIdx = rowIdx => this.cancelState(rowIdx, this.getIdxSequence(rowIdx));
  
     /**
      * 수정/삭제 상태를 취소
-     * @param {*} rowIdx 
+     * @param {number} rowIdx 행 IDX
+     * @param {number/string} rowSeq 행 시퀀스
      */
     cancelState(rowIdx, rowSeq){
+
+        let rowElement = this.getRowElementRowSeq(rowSeq);
         
         // style class 삭제
         if(this.option.body.state.use == true){
             if(this.data[rowIdx]._state == this.constant.STATE.UPDATE){
-                this.getRowElementRowSeq(rowSeq)
-                    .classList.remove(this.constant.class.update);
+                rowElement.classList.remove(this.constant.class.update);
             }else if(this.data[rowIdx]._state == this.constant.STATE.REMOVE){
-                this.getRowElementRowSeq(rowSeq)
-                    .classList.remove(this.constant.class.remove);
+                rowElement.classList.remove(this.constant.class.remove);
             }
         }
 
+        // Disabled 해제
+        this.fields.forEach(field => this.getSeqCellElement(rowSeq, field.name).disabled = false);
+
         // 데이터 행상태 값 변경
-        this.data[rowIdx]._state = this.constant.STATE.SELECT;
+        if(rowElement.classList.contains(this.constant.class.update)){
+            this.data[rowIdx]._state = this.constant.STATE.UPDATE;
+        }else{
+            this.data[rowIdx]._state = this.constant.STATE.SELECT;
+        }
     }
 
     /**
      * 선택한 체크박스의 행을 편집,삭제 상태로 부터 복원
-     * @param {string} name 
+     * @param {string} name 필드명
      * @returns 
      */
     cancelStateCheckedElement = name => this.cancelStateRowSeqs(this.getNameCheckedSeqs(name));
@@ -897,35 +905,35 @@ import { construct } from "./plugin/construct.js";
     /**
      * 행의 변경상태를 체크 (index)
      * @param {number} rowIdx 
-     * @param {*} exceptList
+     * @param {*} option
      * @returns 
      */
-    isModifyDataRowIdx(rowIdx, exceptList){
-        return this.isModifyData(rowIdx, this.getIdxSequence(rowIdx), exceptList);
+    isModifyDataRowIdx(rowIdx, option){
+        return this.isModifyData(rowIdx, this.getIdxSequence(rowIdx), option);
     }
 
     /**
      * 행의 변경상태를 체크 (sequence)
      * @param {string/number} rowSeq 
-     * @param {*} exceptList
+     * @param {*} option
      * @returns 
      */
-    isModifyDataRowSeq(rowSeq, exceptList){
-        return this.isModifyData(this.getSeqIndex(rowSeq), rowSeq, exceptList);
+    isModifyDataRowSeq(rowSeq, option){
+        return this.isModifyData(this.getSeqIndex(rowSeq), rowSeq, option);
     }
 
     /**
      * 행의 변경상태를 체크
      * @param {number} rowIdx 
      * @param {string/number} rowSeq 
-     * @param {*} exceptList
+     * @param {*} option
      * @returns 
      */
-    isModifyData(rowIdx, rowSeq, exceptList){
+    isModifyData(rowIdx, rowSeq, option){
         let result = false;
         for(let key in this.data[rowIdx]){
             if(key.indexOf("_") != 0 
-                && (exceptList?.length > 0 ? exceptList : []).includes(key) == false
+                && (option?.exceptList?.length > 0 ? option.exceptList : []).includes(key) == false
                 && this.data[rowIdx][key] != this.originData[rowSeq][key]){
                 result = true;
                 break;
@@ -936,38 +944,35 @@ import { construct } from "./plugin/construct.js";
 
     /**
      * 데이터가 변경 되었을시 행 상태변경, 같은경우 취소(rowIdx)
-     * @param {*} rowIdx 
-     * @param {*} isRowEditMode 
-     * @param {*} exceptList 
+     * @param {number} rowIdx 
+     * @param {*} option
      * @returns 
      */
-    applyModifyAndCancelRowIdx = (rowIdx, isRowEditMode, exceptList) => this.ifModifyApply(rowIdx, this.getIdxSequence(rowIdx), isRowEditMode, exceptList);
+    applyModifyAndCancelRowIdx = (rowIdx, option) => this.applyModifyAndCancel(rowIdx, this.getIdxSequence(rowIdx), option);
 
     /**
      * 데이터가 변경 되었을시 행 상태변경, 같은경우 취소(rowSeq)
-     * @param {*} rowSeq 
-     * @param {*} isRowEditMode 
-     * @param {*} exceptList 
+     * @param {number} rowSeq 
+     * @param {object} option
      * @returns 
      */
-    applyModifyAndCancelRowSeq = (rowSeq, isRowEditMode, exceptList) => this.ifModifyApply(this.getSeqIndex(rowSeq), rowSeq, isRowEditMode, exceptList);
+    applyModifyAndCancelRowSeq = (rowSeq, option) => this.applyModifyAndCancel(this.getSeqIndex(rowSeq), rowSeq, option);
 
     /**
      * 데이터가 변경 되었을시 행 상태변경, 같은경우 취소
-     * @param {*} rowIdx 
-     * @param {*} rowSeq 
-     * @param {*} isRowEditMode 
-     * @param {*} exceptList 
+     * @param {number} rowIdx 
+     * @param {number/string} rowSeq 
+     * @param {object} option
      */
-    applyModifyAndCancel(rowIdx, rowSeq, isRowEditMode, exceptList){        
-        if(this.isModifyData(rowIdx, rowSeq, exceptList)){
-            if(isRowEditMode == true){
+    applyModifyAndCancel(rowIdx, rowSeq, option){
+        if(this.isModifyData(rowIdx, rowSeq, option)){
+            if(option?.isRowEditMode == true){
                 this.modifyStateRow(rowIdx, rowSeq);
             }else{
                 this.modifyState(rowIdx, rowSeq);
             }
         }else{
-            if(isRowEditMode == true){
+            if(option?.isRowEditMode == true){
                 this.cancelStateRow(rowIdx, rowSeq);
             }else{
                 this.cancelState(rowIdx, rowSeq);
@@ -1080,25 +1085,46 @@ import { construct } from "./plugin/construct.js";
 
     /**
      * 삭제 상태로 변경(sequence)
-     * @param {*} rowSeq
+     * @param {number/string}                   행 시퀀스
+     * @param {boolean} option.isDisabled       비활성화 여부(기본값 true)
+     * @param {array} option.exceptDisabledList 비활성화 제외 항목
      */
-    removeStateSeq = rowSeq => this.removeState(this.getSeqIndex(rowSeq), rowSeq);
+    removeStateSeq = rowSeq => this.removeState(this.getSeqIndex(rowSeq), rowSeq, option);
 
     /**
      * 삭제 상태로 변경(index)
-     * @param {*} rowIdx
+     * @param {number} rowIdx                   행IDX
+     * @param {boolean} option.isDisabled       비활성화 여부(기본값 true)
+     * @param {array} option.exceptDisabledList 비활성화 제외 항목
      */
-    removeStateIdx = rowIdx => this.removeState(rowIdx, this.getIdxSequence(rowIdx));
+    removeStateIdx = rowIdx => this.removeState(rowIdx, this.getIdxSequence(rowIdx), option);
  
     /**
      * 삭제 상태로 변경
-     * @param {*} rowIdx 
+     * @param {number} rowIdx                   행IDX
+     * @param {boolean} option.isDisabled       비활성화 여부(기본값 true)
+     * @param {array} option.exceptDisabledList 비활성화 제외 항목
      */
-    removeState(rowIdx, rowSeq){
+    removeState(rowIdx, rowSeq, option){
+        window.__option = option;
  
         // 데이터 행상태 값 변경
         this.data[rowIdx]._state = this.constant.STATE.REMOVE;
- 
+
+        // Disabled 여부 확인
+        if(option?.isDisabled !== false){
+
+            // Disabled 처리
+            for(let field of this.fields){
+
+                // Disabled 제외 항목이 아닌 경우만 비활성화 처리
+                if((option?.exceptDisabledList?.length > 0 ? option.exceptDisabledList : []).includes(field.name) == false){
+                    this.getSeqCellElement(rowSeq, field.name).disabled = true;
+                }
+            }
+        }
+        
+        // 행 삭제상태(색상) 변환
         if(this.option.body.state.use == true){
             this.getRowElementRowSeq(rowSeq)
                 .classList.add(this.constant.class.remove);
