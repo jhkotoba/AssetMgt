@@ -16,6 +16,7 @@ const repo = require(`${basePath}/config/repository.js`);
             , MENU_LV   AS menuLv
             , MENU_SEQ  AS menuSeq
             , GROUP_NO  AS groupNo
+            , AUTH_CD   AS authCd
             , DISP_YN   AS dispYn
             , USE_YN    AS useYn
             , INS_NO    AS insNo
@@ -40,6 +41,7 @@ exports.insertMenuList = async (params, conn) => {
         , MENU_LV
         , MENU_SEQ
         , GROUP_NO
+        , AUTH_CD
         , DISP_YN
         , USE_YN
         , INS_NO
@@ -63,6 +65,7 @@ exports.insertMenuList = async (params, conn) => {
         }else if(params.level == 2){
             query += `, ${list[i].groupNo}`;
         }
+        query += `, '${list[i].authCd}'`
         query += `, '${list[i].dispYn}'`
         query += `, '${list[i].useYn}'`
         query += `, '${params.userNo}'`;
@@ -77,7 +80,7 @@ exports.insertMenuList = async (params, conn) => {
 }
 
 /**
- * 
+ * 메뉴목록 수정
  * @param {*} params 
  * @param {*} conn 
  */
@@ -92,13 +95,14 @@ exports.updateMenuList = async (params, conn) => {
             , IFNULL(A.MENU_LV, M.MENU_LV) AS MENU_LV
             , IFNULL(A.MENU_SEQ, M.MENU_SEQ) AS MENU_SEQ
             , IFNULL(A.GROUP_NO, M.GROUP_NO) AS GROUP_NO
+            , IFNULL(A.AUTH_CD, M.AUTH_CD) AS AUTH_CD
             , IFNULL(A.DISP_YN, M.DISP_YN) AS DISP_YN
             , IFNULL(A.USE_YN, M.USE_YN) AS USE_YN
         FROM (
     `;
     for(let i=0; i<params.updateList.length; i++){
         let p = params.updateList[i];
-        query += `      SELECT ${p.menuNo} AS MENU_NO, ${repo.string(p.menuNm)} AS MENU_NM, ${repo.string(p.menuUrl)} AS MENU_URL, ${p.menuLv} AS MENU_LV, ${p.menuSeq} AS MENU_SEQ, ${p.groupNo} AS GROUP_NO, ${repo.string(p.dispYn)} AS DISP_YN, ${repo.string(p.useYn)} AS USE_YN`
+        query += `      SELECT ${p.menuNo} AS MENU_NO, ${repo.string(p.menuNm)} AS MENU_NM, ${repo.string(p.menuUrl)} AS MENU_URL, ${p.menuLv} AS MENU_LV, ${p.menuSeq} AS MENU_SEQ, ${p.groupNo} AS GROUP_NO, ${repo.string(p.authCd)} AS AUTH_CD, ${repo.string(p.dispYn)} AS DISP_YN, ${repo.string(p.useYn)} AS USE_YN`
         if(i+1 < params.updateList.length){
             query += ' UNION ALL \n';
         }
@@ -115,6 +119,7 @@ exports.updateMenuList = async (params, conn) => {
     , M.MENU_LV = U.MENU_LV 
     , M.MENU_SEQ = U.MENU_SEQ
     , M.GROUP_NO = U.GROUP_NO
+    , M.AUTH_CD = U.AUTH_CD
     , M.DISP_YN = U.DISP_YN
     , M.USE_YN = U.USE_YN
     , M.UPT_NO = ${params.userNo}
@@ -124,7 +129,7 @@ exports.updateMenuList = async (params, conn) => {
 }
 
 /**
- * 
+ * 메뉴 삭제
  * @param {*} params 
  * @param {*} conn 
  */

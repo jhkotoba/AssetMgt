@@ -3,11 +3,18 @@ const codeRepository = require(`${basePath}/repository/codeRepository.js`);
 const db = require(`${basePath}/config/database.js`);
 
 /**
+ * 코드목록 조회(view)
+ * @param {object} params 
+ * @returns 
+ */
+exports.getViewCodeList = params => codeRepository.selectViewCodeList(params)
+
+/**
  * 코드목록 조회
  * @param {object} params 
  * @returns 
  */
- exports.getCodeList = params => codeRepository.selectCodeList(params);
+exports.getCodeList = params => codeRepository.selectCodeList(params);
 
  /**
  * 코드 등록/수정/삭제 적용

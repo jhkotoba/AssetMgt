@@ -36,6 +36,7 @@ exports.insertUser = async (user, conn) => {
             , PASSWORD
             , SALT
             , EMAIL
+            , AUTH_CD
             , USE_YN
             , INS_NO
             , INS_DTTM
@@ -46,6 +47,7 @@ exports.insertUser = async (user, conn) => {
             , '${user.password}'
             , '${user.salt}'
             , '${user.email}'
+            , 'CD_AUTH_GUEST'
             , 'Y'
             , 0
             , NOW()

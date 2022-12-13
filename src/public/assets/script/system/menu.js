@@ -78,8 +78,9 @@ const menu = {
             fields: [
                 {title: null, element:'checkbox', name: 'check', edit: 'checkbox', width:'3%', align:'center'},
                 {title:'메뉴번호', element: 'text', name: 'menuNo', width: '5%'},
-                {title:'메뉴명', element: 'text', name: 'menuNm', edit: 'text', width: '38%'},
+                {title:'메뉴명', element: 'text', name: 'menuNm', edit: 'text', width: '30%'},
                 {title:'메뉴순번', element: 'number', name: 'menuSeq', edit: 'number', width: '5%'},
+                {title:'권한', element: 'text', name: 'authCd', edit: 'select', width: '8%'},
                 {title:'전시여부', element: 'text', name: 'dispYn', edit:'select', width: '7%', data: this.data.mapping},
                 {title:'사용여부', element: 'text', name: 'useYn', edit:'select', width: '7%', data: this.data.mapping},
                 {title:'등록자', element: 'text', name: 'insNo', width: '5%'},
@@ -123,9 +124,10 @@ const menu = {
             fields: [
                 {title: null, element:'checkbox', name: 'check', edit: 'checkbox', width:'3%', align:'center'},
                 {title:'메뉴번호', element: 'text', name: 'menuNo', width: '5%'},
-                {title:'메뉴명', element: 'text', name: 'menuNm', edit: 'text', width: '18%'},
-                {title:'메뉴URL', element: 'text', name: 'menuUrl', edit: 'text', width: '26%'},                
+                {title:'메뉴명', element: 'text', name: 'menuNm', edit: 'text', width: '16%'},
+                {title:'메뉴URL', element: 'text', name: 'menuUrl', edit: 'text', width: '20%'},                
                 {title:'메뉴순번', element: 'number', name: 'menuSeq', edit: 'number', width: '5%'},
+                {title:'권한', element: 'text', name: 'authCd', edit: 'select', width: '8%'},
                 {title:'전시여부', element: 'text', name: 'dispYn', edit:'select', width: '7%', data: this.data.mapping},
                 {title:'사용여부', element: 'text', name: 'useYn', edit:'select', width: '7%', data: this.data.mapping},
                 {title:'등록자', element: 'text', name: 'insNo', width: '5%'},
