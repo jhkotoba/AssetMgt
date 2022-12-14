@@ -32,7 +32,7 @@ exports.modelAndView = function(path, option){
     .then(values => {
         let html = values[0];
         if(values[2].length > 0){
-            html = html.replace("</body>", "</body>" + `<script>window.__code = JSON.parse('${JSON.stringify(values[2])}');</script>`);
+            html = html.replace("</body>", "</body>" + `<script>window._code = JSON.parse('${JSON.stringify(values[2])}');</script>`);
         }
         return html.replace("<main>", "<main>" + values[1]);
     })

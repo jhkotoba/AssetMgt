@@ -9,6 +9,9 @@ router.get("/menu", async (request, response) => response.send(await model.model
 // 코드관리 페이지
 router.get("/code", async (request, response) => response.send(await model.modelAndView('system/code.html')));
 
+// 사용자 메뉴목록 조회
+router.post('/getUserMenuList', systemController.getUserMenuList);
+
 // 메뉴목록 조회
 router.post("/getMenuList", systemController.getMenuList);
 

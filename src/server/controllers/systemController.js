@@ -3,6 +3,35 @@ const codeService = require(`${basePath}/services/codeService.js`);
 const logger = require(`${basePath}/config/logger.js`);
 
 /**
+ * 사용자 메뉴목록 조회
+ * @param {*} request 
+ * @param {*} response 
+ * @param {*} next 
+ */
+exports.getUserMenuList = async (request, response, next) => {
+
+    // 메뉴목록 조회
+    await menuService.getUserMenuList({authCd: request.session.user.authCd}).then(value => {
+        response.status(200).json({
+            message: 'SUCCESS',
+            resultCode: 'SUCCESS',
+            data: value
+        });
+    }).catch(error => {
+        logger.error('getUserMenuList:', error);
+        // 예외 응답
+        switch(error.message){
+            case 'NO_SEARCH_MENU':
+                response.status(200).json({resultCode: error.message, message: `시스템 오류가 발생하였습니다. (${error.message})`});
+            break;
+            default:
+                response.status(500).json({resultCode: 'SYSTEM_ERROR', message: `시스템 오류가 발생하였습니다. (${error.message})`});
+            break;
+        }
+    });
+}
+
+/**
  * 메뉴목록 조회
  * @param {*} request 
  * @param {*} response 

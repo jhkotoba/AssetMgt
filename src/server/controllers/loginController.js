@@ -11,7 +11,7 @@ exports.loginProcess = async (request, response, next) => {
             if(user == null){
                 response.status(200).json({message: '로그인에 실패하였습니다.', resultCode: 'FAIL'});
             }else{
-                request.session.user = {userNo: user.userNo, userId: user.userId, email: user.email}
+                request.session.user = {userNo: user.userNo, userId: user.userId, email: user.email, authCd: user.authCd}
                 response.status(200).json({message: 'SUCCESS', resultCode: 'SUCCESS'});
             }
         }).catch(error => {

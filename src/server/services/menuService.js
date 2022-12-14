@@ -3,6 +3,13 @@ const menuRepository = require(`${basePath}/repository/menuRepository.js`);
 const db = require(`${basePath}/config/database.js`);
 
 /**
+ * 사용자 메뉴목록 조회
+ * @param {object} params 
+ * @returns 
+ */
+exports.getUserMenuList = async params => await menuRepository.selectUserMenuList(params);
+
+/**
  * 메뉴목록 조회
  * @param {object} params 
  * @returns 

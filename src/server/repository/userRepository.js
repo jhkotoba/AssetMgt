@@ -16,6 +16,7 @@ exports.selectUser = async (userId, conn) => {
             , PASSWORD  AS password
             , SALT      AS salt
             , EMAIL     AS email
+            , AUTH_CD   AS authCd
         FROM UR_USER
         WHERE 1=1
         AND USER_ID = '${userId}'

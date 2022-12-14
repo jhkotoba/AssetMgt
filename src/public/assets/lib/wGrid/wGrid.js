@@ -292,18 +292,31 @@ import { construct } from "./plugin/construct.js";
             tag.dataset.sync = "select";
 
             // 초기 빈값이 존재할 경우 추가
-            if(cell.data && cell.data.select && cell.data.select.empty){
+            if(cell?.data?.select?.empty){
                 option = document.createElement("option");
                 option.textContent = cell.data.select.empty;
                 tag.appendChild(option);
             }
 
-            // 셀릭트박스 옵션태그 추가
-            if(cell.data && cell.data.select && cell.data.select.list){
+            // 셀릭트박스 옵션 태그 추가
+            if(cell?.data?.select?.list){
                 cell.data.select.list.forEach(item => {
                     option = document.createElement("option");
                     option.value = item[cell.data.select.value ? cell.data.select.value : "value"];
                     option.textContent = item[cell.data.select.text ? cell.data.select.text : "text"];
+
+                    if(option.value == row[cell.name]){
+                        option.selected = true;
+                    }
+
+                    tag.appendChild(option);
+                });
+            // 셀릭트박스 옵션 태그 추가(코드)
+            }else if(cell?.data?.select?.codeList){
+                cell.data.select.codeList.forEach(item => {
+                    option = document.createElement("option");
+                    option.value = item.code
+                    option.textContent = item.codeNm
 
                     if(option.value == row[cell.name]){
                         option.selected = true;

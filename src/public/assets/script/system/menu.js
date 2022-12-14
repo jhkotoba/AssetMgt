@@ -25,7 +25,14 @@ const menu = {
             top: {check: false, menuNm: '', menuLv: 1, menuSeq: 0, groupNo: 0, dispYn: 'Y', useYn: 'Y'},
             sub: {check: false, menuUrl: '', menuLv: 2, menuSeq: 0, groupNo: 0, dispYn: 'Y', useYn: 'Y'}
         },
-        optionRow: { style: {cursor: 'pointer'}, chose: true}
+        optionRow: { style: {cursor: 'pointer'}, chose: true},
+        code: {
+            mapping: _code.reduce((acc, curr) => {
+                acc[curr.code] = curr.codeNm;
+                return acc;
+            }, {}),
+            select: {codeList: _code}
+        }
     },
     grid: {
         top: null, sub: null,
@@ -44,7 +51,7 @@ const menu = {
     /**
      * 메뉴 데이터 초기화
      */
-     initGrid(){
+    initGrid(){
         this.data.topList = [];
         this.data.subList = [];
         this.grid.top.empty();
@@ -80,7 +87,7 @@ const menu = {
                 {title:'메뉴번호', element: 'text', name: 'menuNo', width: '5%'},
                 {title:'메뉴명', element: 'text', name: 'menuNm', edit: 'text', width: '30%'},
                 {title:'메뉴순번', element: 'number', name: 'menuSeq', edit: 'number', width: '5%'},
-                {title:'권한', element: 'text', name: 'authCd', edit: 'select', width: '8%'},
+                {title:'권한', element: 'text', name: 'authCd', edit: 'select', width: '8%', data: this.data.code},
                 {title:'전시여부', element: 'text', name: 'dispYn', edit:'select', width: '7%', data: this.data.mapping},
                 {title:'사용여부', element: 'text', name: 'useYn', edit:'select', width: '7%', data: this.data.mapping},
                 {title:'등록자', element: 'text', name: 'insNo', width: '5%'},
@@ -127,7 +134,7 @@ const menu = {
                 {title:'메뉴명', element: 'text', name: 'menuNm', edit: 'text', width: '16%'},
                 {title:'메뉴URL', element: 'text', name: 'menuUrl', edit: 'text', width: '20%'},                
                 {title:'메뉴순번', element: 'number', name: 'menuSeq', edit: 'number', width: '5%'},
-                {title:'권한', element: 'text', name: 'authCd', edit: 'select', width: '8%'},
+                {title:'권한', element: 'text', name: 'authCd', edit: 'select', width: '8%', data: this.data.code},
                 {title:'전시여부', element: 'text', name: 'dispYn', edit:'select', width: '7%', data: this.data.mapping},
                 {title:'사용여부', element: 'text', name: 'useYn', edit:'select', width: '7%', data: this.data.mapping},
                 {title:'등록자', element: 'text', name: 'insNo', width: '5%'},

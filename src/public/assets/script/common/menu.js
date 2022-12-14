@@ -1,6 +1,8 @@
 /** 메뉴 태그 생성
  */
  export const createMenu = menuList => {
+
+	if(menuList.length < 1) return '<ul></ul>';
 	
 	let levelList = [...new Set(menuList.map(menu => menu.menuLv))].sort();
 	let maxlevel = levelList[levelList.length-1];

@@ -23,11 +23,11 @@ window.addEventListener("DOMContentLoaded", event => {
 	let password = crypt.encrypt(document.getElementById("password").value);
 	// 로그인 처리
 	let loginRes = await sender.request({url: '/login/loginProcess', body: {userId, password}});
-	console.log('loginRes:', loginRes);
+	
 	if(loginRes.resultCode === 'SUCCESS'){
 
 		// 사용자 메뉴조회
-		let menuRes = await sender.request({url: '/system/getMenuList', body: {}});
+		let menuRes = await sender.request({url: '/system/getUserMenuList', body: {}});
 		if(menuRes.resultCode === 'SUCCESS'){
 
 			// 세션스토로지 초기화

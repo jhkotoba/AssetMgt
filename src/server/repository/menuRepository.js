@@ -5,6 +5,49 @@ const repo = require(`${basePath}/config/repository.js`);
  * 메뉴목록 조회
  * @returns 
  */
+exports.selectUserMenuList = async (params, conn) => {
+
+    let authCd = '';
+    switch(params.authCd){
+    case 'CD_AUTH_DEVELOPER':
+        authCd = `${repo.string('CD_AUTH_DEVELOPER')}, ${repo.string('CD_AUTH_ADMIN')}, ${repo.string('CD_AUTH_USER')}, ${repo.string('CD_AUTH_GUEST')}`;
+        break;
+    case 'CD_AUTH_ADMIN':
+        authCd = `${repo.string('CD_AUTH_ADMIN')}, ${repo.string('CD_AUTH_USER')}, ${repo.string('CD_AUTH_GUEST')}`;
+        break
+    case 'CD_AUTH_USER':
+        authCd = `${repo.string('CD_AUTH_USER')}, ${repo.string('CD_AUTH_GUEST')}`;
+        break
+    case 'CD_AUTH_GUEST':
+        authCd = repo.string('CD_AUTH_GUEST');
+        break;
+    }
+
+    return await repo.selectList(
+        `/* menuRepository.selectUserMenuList */
+        SELECT
+            MENU_NO     AS menuNo
+            , MENU_NM   AS menuNm
+            , MENU_URL  AS menuUrl
+            , MENU_LV   AS menuLv
+            , MENU_SEQ  AS menuSeq
+            , GROUP_NO  AS groupNo
+            , AUTH_CD   AS authCd
+            , DISP_YN   AS dispYn
+            , USE_YN    AS useYn
+        FROM SY_MENU
+        WHERE 1=1
+        AND DISP_YN = 'Y'
+        AND USE_YN = 'Y'
+        AND AUTH_CD IN (${authCd})
+        `, conn);
+}
+
+
+/**
+ * 메뉴목록 조회
+ * @returns 
+ */
  exports.selectMenuList = async conn => {
 
     return await repo.selectList(
