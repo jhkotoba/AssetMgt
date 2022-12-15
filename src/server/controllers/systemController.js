@@ -165,3 +165,29 @@ exports.applyMenu = async (request, response, next) => {
         }
     });
 }
+
+/**
+ * 사용자목록 조회
+ * @param {*} request 
+ * @param {*} response 
+ * @param {*} next 
+ */
+exports.getUserList = async (request, response, next) => {
+
+    // 메뉴목록 조회
+    await userService.getUserList({paging: request.body.paging}).then(value => {
+        response.status(200).json({
+            message: 'SUCCESS',
+            resultCode: 'SUCCESS',
+            data: value
+        });
+    }).catch(error => {
+        // 예외 응답
+        switch(error.message){
+            default:
+                response.status(500).json({resultCode: 'SYSTEM_ERROR', message: `시스템 오류가 발생하였습니다. (${error.message})`});
+            break;
+        }
+    });
+}
+

@@ -24,6 +24,29 @@ exports.selectUser = async (userId, conn) => {
 }
 
 /**
+ * 
+ * @param {*} params 
+ * @param {*} conn 
+ * @returns 
+ */
+exports.selectUserList = async (p, conn) => {
+
+    return await repo.selectList(
+        `/* userRepository.selectUserList */
+        SELECT
+            USER_NO
+            , USER_ID
+            , EMAIL
+            , AUTH_CD
+            , USE_YN
+            , INS_DTTM
+            , UPT_DTTM
+        FROM SY_USER
+        LIMIT ${p.paging.size} OFFSET ${p.paging.start}
+        `, conn);
+}
+
+/**
  * 회원등록
  * @param {*} user 
  * @returns 

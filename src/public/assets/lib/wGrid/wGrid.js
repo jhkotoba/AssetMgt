@@ -1,5 +1,6 @@
 import { util } from "./plugin/util.js";
 import { construct } from "./plugin/construct.js";
+import { search } from "./plugin/search.js";
 
 
 /**
@@ -47,6 +48,9 @@ import { construct } from "./plugin/construct.js";
 
         // 옵션세팅
         this.option = construct.createOption(paramater);
+
+        // http통신 세팅
+        this.search = search.createSearch(paramater?.search);
 
         // 그리드 스타일세팅
         construct.settingGrid(this.element, paramater);
@@ -411,7 +415,7 @@ import { construct } from "./plugin/construct.js";
      * 데이터 추가
      * @param {object} paramater 
      */
-    setData = function(paramater, isOrigin){
+    setData = function(paramater){
 
         let list = [];
 

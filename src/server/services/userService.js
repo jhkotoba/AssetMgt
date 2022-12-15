@@ -89,3 +89,10 @@ exports.getUser = userId => userRepository.selectUser(userId);
         conn.release();
     }
 }
+
+/**
+ * 
+ * @param {*} params 
+ * @returns 
+ */
+exports.getUserList = async params => await userRepository.selectUserList(params);

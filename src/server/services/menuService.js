@@ -3,6 +3,18 @@ const menuRepository = require(`${basePath}/repository/menuRepository.js`);
 const db = require(`${basePath}/config/database.js`);
 
 /**
+ * 사용자 메뉴 권한 체크
+ * @param {*} params 
+ * @returns 
+ */
+exports.isUserMenuAuth = async params => {
+    let path = '/' + params.path.substring(0, params.path.indexOf('.'));
+    let authCd = params.request.session.user.authCd;
+    let result =  await menuRepository.getUserMenuAuthCnt({path, authCd})
+    return result.count > 0;
+}
+
+/**
  * 사용자 메뉴목록 조회
  * @param {object} params 
  * @returns 

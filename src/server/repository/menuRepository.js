@@ -2,27 +2,30 @@ const logger = require(`${basePath}/config/logger.js`);
 const repo = require(`${basePath}/config/repository.js`);
 
 /**
+ * 메뉴권한 체크
+ * @param {*} params 
+ * @param {*} conn 
+ * @returns 
+ */
+exports.getUserMenuAuthCnt = async (params, conn) => {
+    // return {count:1};
+    return await repo.selectOne(`
+        /* menuRepository.getUserMenuAuthCnt */
+        SELECT COUNT(1) AS count FROM SY_MENU 
+        WHERE MENU_URL = ${repo.string(params.path)} 
+        AND AUTH_CD IN (${fnSettingAuth(params.authCd)}) 
+        AND USE_YN = 'Y' 
+        AND DISP_YN = 'Y'`
+        , conn);
+}
+
+/**
  * 메뉴목록 조회
+ * @param {*} params 
+ * @param {*} conn 
  * @returns 
  */
 exports.selectUserMenuList = async (params, conn) => {
-
-    let authCd = '';
-    switch(params.authCd){
-    case 'CD_AUTH_DEVELOPER':
-        authCd = `${repo.string('CD_AUTH_DEVELOPER')}, ${repo.string('CD_AUTH_ADMIN')}, ${repo.string('CD_AUTH_USER')}, ${repo.string('CD_AUTH_GUEST')}`;
-        break;
-    case 'CD_AUTH_ADMIN':
-        authCd = `${repo.string('CD_AUTH_ADMIN')}, ${repo.string('CD_AUTH_USER')}, ${repo.string('CD_AUTH_GUEST')}`;
-        break
-    case 'CD_AUTH_USER':
-        authCd = `${repo.string('CD_AUTH_USER')}, ${repo.string('CD_AUTH_GUEST')}`;
-        break
-    case 'CD_AUTH_GUEST':
-        authCd = repo.string('CD_AUTH_GUEST');
-        break;
-    }
-
     return await repo.selectList(
         `/* menuRepository.selectUserMenuList */
         SELECT
@@ -39,7 +42,8 @@ exports.selectUserMenuList = async (params, conn) => {
         WHERE 1=1
         AND DISP_YN = 'Y'
         AND USE_YN = 'Y'
-        AND AUTH_CD IN (${authCd})
+        AND MENU_LV <> 0
+        AND AUTH_CD IN (${fnSettingAuth(params.authCd)})
         `, conn);
 }
 
@@ -185,4 +189,29 @@ exports.deleteMenuList = async (params, conn) => {
         SELECT MENU_NO FROM MENU WHERE MENU_NO IN (${idxs}) UNION ALL
         SELECT MENU_NO FROM MENU WHERE GROUP_NO IN (${idxs})
     )`, conn);
+}
+
+/**
+ * 권한코드 세팅
+ * @param {} authCd 
+ * @returns 
+ */
+function fnSettingAuth(authCd){
+    let result = '';
+    switch(authCd){
+    case 'CD_AUTH_DEVELOPER':
+        result = `${repo.string('CD_AUTH_DEVELOPER')}, ${repo.string('CD_AUTH_ADMIN')}, ${repo.string('CD_AUTH_USER')}, ${repo.string('CD_AUTH_GUEST')}`;
+        break;
+    case 'CD_AUTH_ADMIN':
+        result = `${repo.string('CD_AUTH_ADMIN')}, ${repo.string('CD_AUTH_USER')}, ${repo.string('CD_AUTH_GUEST')}`;
+        break
+    case 'CD_AUTH_USER':
+        result = `${repo.string('CD_AUTH_USER')}, ${repo.string('CD_AUTH_GUEST')}`;
+        break
+    case 'CD_AUTH_GUEST':
+        result = repo.string('CD_AUTH_GUEST');
+        break;
+    }
+
+    return result;
 }

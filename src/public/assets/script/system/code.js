@@ -150,4 +150,3 @@ code.applyCode = function(){
         return isValidation;
     }
 }
-window._code = code;
