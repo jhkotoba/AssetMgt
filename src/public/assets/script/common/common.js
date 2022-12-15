@@ -12,24 +12,41 @@ const constant = {
 
 // 공통함수
 const common = {
-	getCodeList: code => {
-		return new Promise(resolve, reject => {
-			let codeList = sessionStorage.getItem(code);
-			if(codeList){
-				resolve(codeList);
-			}else{
-				sender.request({url: '/system/getCodeList', body: {code}})
-				.then(res => {
-					if(res.resultCode == 'SUCCESS'){
-						sessionStorage.setItem(res.data);
-						resolve(res.data);
-					}else{
-						reject(res.message);
-					}
-				})
-			}
-		});
-	}
+	// getCodeList: code => {
+	// 	return new Promise(resolve, reject => {
+	// 		let codeList = sessionStorage.getItem(code);
+	// 		if(codeList){
+	// 			resolve(codeList);
+	// 		}else{
+	// 			sender.request({url: '/system/getCodeList', body: {code}})
+	// 			.then(res => {
+	// 				if(res.resultCode == 'SUCCESS'){
+	// 					sessionStorage.setItem(res.data);
+	// 					resolve(res.data);
+	// 				}else{
+	// 					reject(res.message);
+	// 				}
+	// 			})
+	// 		}
+	// 	});
+	// }
+
+	/**
+	 * 
+	 */
+	paging(param){
+
+	},
+
+	/**
+	 * 자식 노드 비우기
+	 * @param {*} element 
+	 */
+	childElementEmpty(element){
+        while(element.hasChildNodes()){
+            element.removeChild(element.firstChild);
+        }
+    },
 }
 
 export { constant, common }

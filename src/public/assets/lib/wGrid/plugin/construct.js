@@ -23,15 +23,43 @@
      * @returns 
      */
     createElement(targetId){
+
+        if(false){
+            let target = document.getElementById(targetId);
+            let head = document.createElement('div');
+            let headTb = document.createElement('table');
+            let headTr = document.createElement('tr');
+            let body = document.createElement('div');
+            let bodyTb = document.createElement('table');
+            let bodyEmpty = document.createElement('div');
+            let pagination = document.createElement('div');
+            
+            pagination.classList.add("pagination");
+
+            head.appendChild(headTb);
+            head.appendChild(headTr);
+
+            body.appendChild(bodyTb);
+            body.appendChild(bodyEmpty);
+
+            target.appendChild(head);
+            target.appendChild(body);
+            target.appendChild(pagination);
+        }
+        
+        let pagination = document.createElement('div');
+        pagination.classList.add("pagination");
+
         return {
             id: targetId,
             target: document.getElementById(targetId),
-            head : document.createElement("div"),
-            headTb : document.createElement("table"),
-            headTr : document.createElement("tr"),
-            body: document.createElement("div"),
-            bodyTb : document.createElement("table"),
-            bodyEmpty: document.createElement("div")
+            head : document.createElement('div'),
+            headTb : document.createElement('table'),
+            headTr : document.createElement('tr'),
+            body: document.createElement('div'),
+            bodyTb : document.createElement('table'),
+            bodyEmpty: document.createElement('div'),
+            pagination: pagination
         }
     },
 
@@ -103,6 +131,9 @@
             },
             data: {
                 insert: null
+            },
+            paging: {
+                is: false
             }
         }
 
@@ -165,6 +196,13 @@
             if(param?.option?.data){
                 if(param.option.data.insert){
                     option.data.insert = param.option.data.insert;
+                }
+            }
+            if(param?.option?.paging){
+                if(param.option.paging.is === true){
+                    option.paging.is = true;
+                }else{
+                    option.paging.is = false;
                 }
             }
         }

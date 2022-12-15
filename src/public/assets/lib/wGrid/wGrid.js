@@ -1,7 +1,5 @@
 import { util } from "./plugin/util.js";
 import { construct } from "./plugin/construct.js";
-import { search } from "./plugin/search.js";
-
 
 /**
  * wGrid
@@ -49,9 +47,6 @@ import { search } from "./plugin/search.js";
         // 옵션세팅
         this.option = construct.createOption(paramater);
 
-        // http통신 세팅
-        this.search = search.createSearch(paramater?.search);
-
         // 그리드 스타일세팅
         construct.settingGrid(this.element, paramater);
 
@@ -63,6 +58,8 @@ import { search } from "./plugin/search.js";
 
         return this;
     }
+
+    
      
     /**
      * 데이터 인덱싱
@@ -101,6 +98,11 @@ import { search } from "./plugin/search.js";
         this.element.bodyEmpty.classList.add("wgrid-empty-message");
         this.emptyMessageDisply();
         this.element.body.appendChild(this.element.bodyEmpty);
+
+        // 페이징 영역 생성
+        if(this.option.paging.is === true){
+            this.createPagination();
+        }
     }
 
     /**
@@ -401,6 +403,21 @@ import { search } from "./plugin/search.js";
         cell.width ? td.style.width = cell.width : null;
         div.style.align = cell.align ? cell.align : "center";
         return td;
+    }
+
+    /**
+     * 
+     */
+    createPagination = function(){
+
+        this.util.childElementEmpty(this.element.pagination);
+        // TEST
+        for(let i=0; i<10; i++){
+            let btn = document.createElement('button');
+            btn.textContent = i;
+            this.element.pagination.appendChild(btn);
+        }
+        this.element.target.appendChild(this.element.pagination);
     }
 
     /**

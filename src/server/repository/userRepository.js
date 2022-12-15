@@ -1,4 +1,4 @@
-const repository = require(`${basePath}/config/repository.js`);
+const repo = require(`${basePath}/config/repository.js`);
 
 /**
  * 회원정보 조회
@@ -8,7 +8,7 @@ const repository = require(`${basePath}/config/repository.js`);
 exports.selectUser = async (userId, conn) => {
     
     // 회원정보 조회 쿼리
-    return await repository.selectOne(
+    return await repo.selectOne(
         `/* userRepository.selectUser */
         SELECT
             USER_NO     AS userNo
@@ -34,15 +34,15 @@ exports.selectUserList = async (p, conn) => {
     return await repo.selectList(
         `/* userRepository.selectUserList */
         SELECT
-            USER_NO
-            , USER_ID
-            , EMAIL
-            , AUTH_CD
-            , USE_YN
-            , INS_DTTM
-            , UPT_DTTM
-        FROM SY_USER
-        LIMIT ${p.paging.size} OFFSET ${p.paging.start}
+            USER_NO     AS userNo
+            , USER_ID   AS userId
+            , EMAIL     AS email
+            , AUTH_CD   AS authCd
+            , USE_YN    AS useYn
+            , DATE_FORMAT(INS_DTTM, '%Y-%m-%d %H:%i:%S') AS insDttm
+            , DATE_FORMAT(UPT_DTTM, '%Y-%m-%d %H:%i:%S') AS uptDttm
+        FROM UR_USER
+        LIMIT ${p.paging.size} OFFSET ${p.paging.no - 1}
         `, conn);
 }
 
@@ -54,7 +54,7 @@ exports.selectUserList = async (p, conn) => {
 exports.insertUser = async (user, conn) => {
 
     // 회원등록
-    return await repository.insert(
+    return await repo.insert(
         `INSERT INTO UR_USER (
             USER_ID
             , PASSWORD
