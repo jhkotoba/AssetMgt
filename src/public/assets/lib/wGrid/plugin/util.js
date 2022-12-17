@@ -1,4 +1,4 @@
-export const util = { getUtils(){ return {
+export const util = { 
     isEmpty(value){
         if(typeof value === "string"){
             if(value.trim() === "") return true;
@@ -69,6 +69,11 @@ export const util = { getUtils(){ return {
         }
     },
     //자식 노드 비우기
+    elementEmpty(element){
+        while(element.hasChildNodes()){
+            element.removeChild(element.firstChild);
+        }
+    },
     childElementEmpty(element){
         while(element.hasChildNodes()){
             element.removeChild(element.firstChild);
@@ -154,4 +159,4 @@ export const util = { getUtils(){ return {
         }
         return node;
     }
-}}}
+}

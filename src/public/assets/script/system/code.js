@@ -136,7 +136,7 @@ code.applyCode = function(){
                 alert('적용되었습니다.');
                 code.selectCode().then((data) => {
                     code.data.code = data;
-                    code.grid.refresh(JSON.parse(JSON.stringify(data)));
+                    code.grid.setData(JSON.parse(JSON.stringify(data)))
                 });
             }else{
                 alert(response.message);

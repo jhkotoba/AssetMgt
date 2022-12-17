@@ -1,21 +1,19 @@
 import { sender } from "/script/common/sender.js";
-import { common } from "/script/common/common.js";
 
 window.addEventListener('DOMContentLoaded', () => user.init());
 const user = {
     data: {
-        paging: {
-            no: 1,
-            size: 10,
-            block: 10,
-            element: document.getElementById('paging')
-        }
+        list: [],
+        totalCount: 0,
+        pageNo: 1,
+        pageSize: 10,
+        pageBlock: 10
     },
     grid: null
 };
 
 user.init = async function(){
-    user.grid = new wGrid('userList', {
+    this.grid = new wGrid('userList', {
         fields: [
             {title:'사용자번호', element: 'text', name: 'userNo', width: '5%'},
             {title:'사용자 아이디', element: 'text', name: 'userId', width: '18%'},
@@ -26,33 +24,28 @@ user.init = async function(){
         ],
         option: {
             paging: {
-                is: true
+                is: true, size: this.data.pageSize, block: this.data.pageBlock
             }
         }
     });
 
-    user.grid.setData(await user.select());
+    await this.select();
+    this.grid.setData(this.data.list);
 }
 
 user.select = async function(){
     let response = await sender.request({
         url: '/system/getUserList',
         body: {
-            paging: user.data.paging
+            paging: {no: this.data.pageNo, size: this.data.pageSize}
         }
     });
     if(response.resultCode == 'SUCCESS'){
-        return response.data
+        this.data.totalCount = response.data.totalCount;
+        this.data.list = response.data.list;
     }else{
         alert(response.message);
     }
 }
-
-// user.paging = function(){
-//     common.childElementEmpty(this.data.paging.element);
-
-
-
-// }
 
 window._user = user;

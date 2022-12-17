@@ -1,16 +1,20 @@
 import { util } from "./plugin/util.js";
 import { construct } from "./plugin/construct.js";
+// import { service } from "./plugin/service.js";
+// import { event } from "./plugin/event.js";
+import { create } from "./plugin/create.js";
 
 /**
  * wGrid
  * @author JeHoon 
- * @version 0.10.16
+ * @version 0.11.0
  */
  export class wGrid {
 
     // 생성자
     constructor(target, paramater){
 
+        // 자신 값 저장
         this.self = this;
 
         // 데이터 변수 생성 
@@ -26,7 +30,7 @@ import { construct } from "./plugin/construct.js";
         this.fields = paramater.fields;
 
         // 유틸저장
-        this.util = util.getUtils();
+        this.util = util; //util.getUtils();
 
         // 외부 이벤트 연결
         this.outerEvent = paramater.event;
@@ -54,7 +58,7 @@ import { construct } from "./plugin/construct.js";
         this.innerEvent = construct.createEvent(this, paramater);
 
         // 그리드 생성
-        this.create();
+        create.init(this.self);
 
         return this;
     }
@@ -81,36 +85,37 @@ import { construct } from "./plugin/construct.js";
     }
 
     /**
+     * @deprecated
      * 그리드 생성
      */
     create = function(){
+
         // 헤더 생성
-        if(this.option.head.show){
-            this.createHead();
-        }
+        if(this.option.head.is === true) this.createHead();
+
         // 바디 생성
         this.createBody();
         
-        // 데이터 없을 경우 표시 메시지 영역
-        if(this.option.empty.message) {
-            this.element.bodyEmpty.textContent = this.option.empty.message;
-        }
-        this.element.bodyEmpty.classList.add("wgrid-empty-message");
-        this.emptyMessageDisply();
-        this.element.body.appendChild(this.element.bodyEmpty);
+        // // 데이터 없을 경우 표시 메시지 영역
+        // if(this.option.empty.message) {
+        //     this.element.bodyEmpty.textContent = this.option.empty.message;
+        // }
+        // this.element.bodyEmpty.classList.add("wgrid-empty-message");
+        // this.emptyMessageDisply();
+        // this.element.body.appendChild(this.element.bodyEmpty);
 
         // 페이징 영역 생성
-        if(this.option.paging.is === true){
-            this.createPagination();
-        }
+        if(this.option.paging.is === true) this.createPagination();
     }
 
     /**
+     * @deprecated
      * 그리드 헤더 생성
      */
     createHead = function(){
         // 변수 정의
         let th = null, div = null, tag = null;
+        this.util.childElementEmpty(this.element.headTr);
 
         // 헤드영역 생성
         for(let i=0; i<this.fields.length; i++){
@@ -155,88 +160,98 @@ import { construct } from "./plugin/construct.js";
         }
 
         // 헤드 클래스 적용
-        this.element.head.classList.add(this.constant.class.header);
+        // this.element.head.classList.add(this.constant.class.header);
         
         // 헤드 태그연결
-        this.element.headTb.appendChild(this.element.headTr);
-        this.element.head.appendChild(this.element.headTb);
-        this.element.target.appendChild(this.element.head);
+        //  this.element.headTb.appendChild(this.element.headTr);
+        //  this.element.head.appendChild(this.element.headTb);
+        //  this.element.target.appendChild(this.element.head);
     }
 
     /**
+     * @deprecated
      * 그리드 바디 생성
      */
     createBody = function(){
 
+        // body 초기화
+        this.util.childElementEmpty(this.element.bodyTb);
+
         // ROW 생성
-        for(let i=0; i<this.data.length; i++){
-            this.element.bodyTb.appendChild(
-                this.createRow(this.data[i], i)
-            );
-        }
+        this.data.forEach((item, idx) => this.element.bodyTb.appendChild(this.createRow(item, idx)));
+
+        // ROW 생성
+        // for(let i=0; i<this.data.length; i++){
+        //     this.element.bodyTb.appendChild(this.createRow(this.data[i], i));
+        // }
 
         // 바디 클래스 적용
-        this.element.body.classList.add(this.constant.class.body);
+        // this.element.body.classList.add(this.constant.class.body);
 
         // 태그 연결
-        this.element.body.appendChild(this.element.bodyTb);
-        this.element.target.appendChild(this.element.body);
+        // this.element.body.appendChild(this.element.bodyTb);
+        // this.element.target.appendChild(this.element.body);
     }
 
     /**
+     * @deprecated
      * 그리드 바디 행 생성
      * @param {object} row 
-     * @param {number} idx 
+     * @param {number} rIdx 
      */
-    createRow = function(row, idx){
+    createRow = function(row, rIdx){
 
         // ROW 생성
-        let tr = document.createElement("tr");
+        let tr = document.createElement('tr');
         tr.dataset.rowSeq = row._rowSeq;
 
         // 앞키 뒤값
-        this.setSeqIndex(row._rowSeq, idx);
-		this.setIdxSequence(idx, row._rowSeq);
+        this.setSeqIndex(row._rowSeq, rIdx);
+		this.setIdxSequence(rIdx, row._rowSeq);
 
         // 행 엘리먼트 인덱싱
         this.setSeqRowElement(row._rowSeq, tr);
 
         // CELL 생성        
         let loaded = [];
-        for(let i=0; i<this.fields.length; i++){
+        this.fields.forEach((field, cIdx) => tr.appendChild(this.createCell(row, rIdx, field, cIdx, loaded)));
 
-            // 행마다 세팅할 데이터 변수
-            if(this.fields[i].element == "data"){
-                switch(this.fields[i].type){
-                case "array":
-                    this.data[idx][this.fields[i].name] = new Array();
-                    break;
-                case "objcet":
-                default:
-                    this.data[idx][this.fields[i].name] = new Object();
-                    break;
-                }
-            // 태그 행인 경우
-            }else{
-                tr.appendChild(this.createCell(row, idx, this.fields[i], i, loaded));
-            }
-        }
+        // for(let i=0; i<this.fields.length; i++){
+
+        //     // 행마다 세팅할 데이터 변수
+        //     if(this.fields[i].element == "data"){
+        //         switch(this.fields[i].type){
+        //         case "array":
+        //             this.data[idx][this.fields[i].name] = new Array();
+        //             break;
+        //         case "objcet":
+        //         default:
+        //             this.data[idx][this.fields[i].name] = new Object();
+        //             break;
+        //         }
+        //     // 태그 행인 경우
+        //     }else{
+        //         tr.appendChild(this.createCell(row, idx, this.fields[i], i, loaded));
+        //     }
+        // }
 
         // ROW 커서 옵션 적용
-        if(this.option?.row?.style?.cursor){                
-            tr.style.cursor = this.option.row.style.cursor;
-        }
+        tr.style.cursor = this.option.row.style.cursor
+        // if(this.option?.row?.style?.cursor){                
+        //     tr.style.cursor = this.option.row.style.cursor;
+        // }
 
         // ROW 생성후 loaded함수 호출
         loaded.forEach(item => item.loaded(item.element, item.row));
 
         // 조회목록 없을시 메시지 표시
-        this.emptyMessageDisply();
+        // this.emptyMessageDisply();
 
         return tr;
     }
 
     /**
+     * @deprecated
      * 그리드 바디 행 셀 생성
      * @param {object} row 
      * @param {number} rIdx 
@@ -406,18 +421,18 @@ import { construct } from "./plugin/construct.js";
     }
 
     /**
-     * 
+     * @deprecated
      */
     createPagination = function(){
 
         this.util.childElementEmpty(this.element.pagination);
+        
         // TEST
         for(let i=0; i<10; i++){
             let btn = document.createElement('button');
             btn.textContent = i;
             this.element.pagination.appendChild(btn);
         }
-        this.element.target.appendChild(this.element.pagination);
     }
 
     /**
@@ -430,21 +445,20 @@ import { construct } from "./plugin/construct.js";
 
     /**
      * 데이터 추가
-     * @param {object} paramater 
+     * @param {object} params 
      */
-    setData = function(paramater){
+    setData = function(params){
 
-        let list = [];
+        let list = null;
 
         // 배열
-        if(typeof paramater == 'object' && typeof paramater.length == 'number'){
-            list = paramater;
+        if(typeof params == 'object' && typeof params.length == 'number'){
+            list = params;
         // 객체
-        }else if(typeof paramater == 'object' && typeof paramater.length == 'undefined'){
-            list = paramater.list;
-            isRefresh = paramater.isRefresh;
+        }else if(typeof params == 'object' && typeof params.length == 'undefined'){
+            list = params.list;
         }else {
-            console.error('setData paramater error:', typeof paramater, paramater);
+            console.error('setData paramater error:', typeof params, params);
         }
 
         // 데이터를 그리드에 삽입
@@ -469,10 +483,10 @@ import { construct } from "./plugin/construct.js";
      */
     refresh = function(newData){
         
-        // 신규데이터 기존데이터 분기처리
-        if(this.util.isNotEmpty(newData) == true && newData.length > 0){
-            this.setData(newData);
-        }else{
+        // // 신규데이터 기존데이터 분기처리
+        // if(this.util.isNotEmpty(newData) == true && newData.length > 0){
+        //     this.setData(newData);
+        // }else{
 
             // 그리드 상태 초기화
             this.state.seqIndex = {};
@@ -489,8 +503,9 @@ import { construct } from "./plugin/construct.js";
             this.data.forEach((row, rIdx) => this.element.bodyTb.appendChild(this.createRow(row, rIdx)));
 
             // 조회목록 없을시 메시지 표시
-            this.emptyMessageDisply();
-        }
+            // this.emptyMessageDisply();    
+
+        // }
     }
 
     /**
@@ -1228,7 +1243,7 @@ import { construct } from "./plugin/construct.js";
         this.data[rowIdx]._state = this.constant.STATE.REMOVE;
 
         // 조회목록 없을시 메시지 표시
-        this.emptyMessageDisply();
+        // this.emptyMessageDisply();
     }
 
     /**
@@ -1260,7 +1275,7 @@ import { construct } from "./plugin/construct.js";
         this.dataReIndexing(rowSeq);
 
         // 조회목록 없을시 메시지 표시
-        this.emptyMessageDisply();
+        // this.emptyMessageDisply();
     }
 
     /**

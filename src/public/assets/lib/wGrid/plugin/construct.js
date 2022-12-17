@@ -1,7 +1,28 @@
 /**
  * wGird 초기생성
  */
- export const construct = {
+const constant = {
+    STATE: {
+        SELECT: 'SELECT',
+        INSERT: 'INSERT',
+        UPDATE: 'UPDATE',
+        REMOVE: 'REMOVE'
+    },
+    class:{
+        select: '',
+        insert: 'insert',
+        update: 'update',
+        remove: 'remove',
+        choose: 'choose',
+        header: 'header',
+        body: 'body',
+        pagination: 'pagination',
+        button: 'wgrid-btn'
+    },
+    EMPTY: "EMPTY"
+}
+
+export const construct = {
 
     /**
      * 그리드 상태값 생성
@@ -22,45 +43,74 @@
      * @param {string} targetId 
      * @returns 
      */
-    createElement(targetId){
+    createElement(id){
 
-        if(false){
-            let target = document.getElementById(targetId);
-            let head = document.createElement('div');
-            let headTb = document.createElement('table');
-            let headTr = document.createElement('tr');
-            let body = document.createElement('div');
-            let bodyTb = document.createElement('table');
-            let bodyEmpty = document.createElement('div');
-            let pagination = document.createElement('div');
-            
-            pagination.classList.add("pagination");
-
-            head.appendChild(headTb);
-            head.appendChild(headTr);
-
-            body.appendChild(bodyTb);
-            body.appendChild(bodyEmpty);
-
-            target.appendChild(head);
-            target.appendChild(body);
-            target.appendChild(pagination);
-        }
-        
+        let target = document.getElementById(id);
+        let head = document.createElement('div');
+        let headTb = document.createElement('table');
+        let headTr = document.createElement('tr');
+        let body = document.createElement('div');
+        let bodyTb = document.createElement('table');
+        let bodyEmpty = document.createElement('div');
         let pagination = document.createElement('div');
-        pagination.classList.add("pagination");
+        
+        head.classList.add(constant.class.header);
+        body.classList.add(constant.class.body);
+        pagination.classList.add(constant.class.pagination);
 
-        return {
-            id: targetId,
-            target: document.getElementById(targetId),
-            head : document.createElement('div'),
-            headTb : document.createElement('table'),
-            headTr : document.createElement('tr'),
-            body: document.createElement('div'),
-            bodyTb : document.createElement('table'),
-            bodyEmpty: document.createElement('div'),
-            pagination: pagination
-        }
+        headTb.appendChild(headTr);
+        head.appendChild(headTb);
+
+        body.appendChild(bodyTb);
+        body.appendChild(bodyEmpty);
+
+        target.appendChild(head);
+        target.appendChild(body);
+        target.appendChild(pagination);
+
+        return {id, target, head, headTb, headTr, body, bodyTb, bodyEmpty, pagination}
+
+        // if(false){
+        //     let target = document.getElementById(targetId);
+        //     let head = document.createElement('div');
+        //     let headTb = document.createElement('table');
+        //     let headTr = document.createElement('tr');
+        //     let body = document.createElement('div');
+        //     let bodyTb = document.createElement('table');
+        //     let bodyEmpty = document.createElement('div');
+        //     let pagination = document.createElement('div');
+            
+        //     pagination.classList.add("pagination");
+
+        //     head.appendChild(headTb);
+        //     head.appendChild(headTr);
+
+        //     body.appendChild(bodyTb);
+        //     body.appendChild(bodyEmpty);
+
+        //     target.appendChild(head);
+        //     target.appendChild(body);
+        //     target.appendChild(pagination);
+        // }
+
+        // let target = document.getElementById(targetId);
+        
+        // let pagination = document.createElement('div');
+        // pagination.classList.add("pagination");
+
+        // target.appendChild(pagination);
+
+        // return {
+        //     id: targetId,
+        //     target: target,
+        //     head : document.createElement('div'),
+        //     headTb : document.createElement('table'),
+        //     headTr : document.createElement('tr'),
+        //     body: document.createElement('div'),
+        //     bodyTb : document.createElement('table'),
+        //     bodyEmpty: document.createElement('div'),
+        //     pagination: pagination
+        // }
     },
 
     /**
@@ -68,25 +118,7 @@
      * @returns 
      */
     createConstant(){
-        return {
-            STATE: {
-                SELECT: 'SELECT',
-                INSERT: 'INSERT',
-                UPDATE: 'UPDATE',
-                REMOVE: 'REMOVE'
-            },
-            class:{
-                select: '',
-                insert: 'insert',
-                update: 'update',
-                remove: 'remove',
-                choose: 'choose',
-                header: 'header',
-                body: 'body'
-            },
-            EMPTY: "EMPTY"
-        }
-
+        return constant;
     },
 
     /**
@@ -112,7 +144,7 @@
                 message: "no data"
             },
             head:{
-                show: true
+                is: true
             },
             body: {
                 state:{
@@ -167,10 +199,10 @@
                 }
             }
             if(param.option.head){
-                if(param.option.head.show == false){
-                    option.head.show = false;
+                if(param.option.head.is == false){
+                    option.head.is = false;
                 }else{
-                    option.head.show = true;
+                    option.head.is = true;
                 }
             }
             option.body.state.use = true;

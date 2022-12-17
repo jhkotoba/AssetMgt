@@ -183,6 +183,7 @@ exports.getUserList = async (request, response, next) => {
             data: value
         });
     }).catch(error => {
+        console.log(error);
         // 예외 응답
         switch(error.message){
             default:

@@ -91,8 +91,21 @@ exports.getUser = userId => userRepository.selectUser(userId);
 }
 
 /**
- * 
- * @param {*} params 
- * @returns 
+ * 사용자 목록 조회
+ * @param {*} params.paging.size    페이지사이즈
+ * @param {*} params.paging.no      페이지번호
+ * @returns
  */
-exports.getUserList = async params => await userRepository.selectUserList(params);
+exports.getUserList = async params => {
+    return Promise.all([
+        await userRepository.selectUserTotolCount(params),
+        await userRepository.selectUserList(params),
+    ])
+    .then(values => {
+        return{
+            totalCount: Number(values[0].totalCount),
+            list: values[1]
+        }
+    })
+    .catch(error => logger.error(error));    
+}    

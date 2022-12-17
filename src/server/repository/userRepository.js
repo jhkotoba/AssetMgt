@@ -1,5 +1,6 @@
 const repo = require(`${basePath}/config/repository.js`);
 
+
 /**
  * 회원정보 조회
  * @param {string} userId 
@@ -27,9 +28,17 @@ exports.selectUser = async (userId, conn) => {
  * 
  * @param {*} params 
  * @param {*} conn 
- * @returns 
  */
-exports.selectUserList = async (p, conn) => {
+exports.selectUserTotolCount = async(params, conn) => {
+    return await repo.selectOne(`/* userRepository.selectUserTotolCount */ SELECT COUNT(1) AS totalCount FROM UR_USER`, conn);
+}
+
+/**
+ * 
+ * @param {*} params 
+ * @param {*} conn 
+ */
+exports.selectUserList = async (params, conn) => {
 
     return await repo.selectList(
         `/* userRepository.selectUserList */
@@ -42,7 +51,7 @@ exports.selectUserList = async (p, conn) => {
             , DATE_FORMAT(INS_DTTM, '%Y-%m-%d %H:%i:%S') AS insDttm
             , DATE_FORMAT(UPT_DTTM, '%Y-%m-%d %H:%i:%S') AS uptDttm
         FROM UR_USER
-        LIMIT ${p.paging.size} OFFSET ${p.paging.no - 1}
+        LIMIT ${params.paging.size} OFFSET ${params.paging.no - 1}
         `, conn);
 }
 
