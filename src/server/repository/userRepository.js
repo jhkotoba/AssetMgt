@@ -51,7 +51,7 @@ exports.selectUserList = async (params, conn) => {
             , DATE_FORMAT(INS_DTTM, '%Y-%m-%d %H:%i:%S') AS insDttm
             , DATE_FORMAT(UPT_DTTM, '%Y-%m-%d %H:%i:%S') AS uptDttm
         FROM UR_USER
-        LIMIT ${params.paging.size} OFFSET ${params.paging.no - 1}
+        LIMIT ${params.pageSize} OFFSET ${params.pageNo - 1}
         `, conn);
 }
 

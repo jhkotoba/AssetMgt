@@ -2,13 +2,6 @@ import { sender } from "/script/common/sender.js";
 
 window.addEventListener('DOMContentLoaded', () => user.init());
 const user = {
-    data: {
-        list: [],
-        totalCount: 0,
-        pageNo: 1,
-        pageSize: 10,
-        pageBlock: 10
-    },
     grid: null
 };
 
@@ -24,25 +17,22 @@ user.init = async function(){
         ],
         option: {
             paging: {
-                is: true, size: this.data.pageSize, block: this.data.pageBlock
+                is: true
             }
         }
     });
 
-    await this.select();
-    this.grid.setData(this.data.list);
+    let data = await this.select({pageNo: 1, pageSize: 10});
+    this.grid.setData({list: data.list});
 }
 
-user.select = async function(){
+user.select = async function(params){
     let response = await sender.request({
         url: '/system/getUserList',
-        body: {
-            paging: {no: this.data.pageNo, size: this.data.pageSize}
-        }
+        body: params
     });
     if(response.resultCode == 'SUCCESS'){
-        this.data.totalCount = response.data.totalCount;
-        this.data.list = response.data.list;
+        return response.data;
     }else{
         alert(response.message);
     }

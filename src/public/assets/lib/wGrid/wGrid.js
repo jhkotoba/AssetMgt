@@ -1,13 +1,14 @@
 import { util } from "./plugin/util.js";
 import { construct } from "./plugin/construct.js";
+import { status } from "./plugin/status.js";
 // import { service } from "./plugin/service.js";
 // import { event } from "./plugin/event.js";
-import { create } from "./plugin/create.js";
+import { creator } from "./plugin/creator.js";
 
 /**
  * wGrid
  * @author JeHoon 
- * @version 0.11.0
+ * @version 0.11.1
  */
  export class wGrid {
 
@@ -20,6 +21,9 @@ import { create } from "./plugin/create.js";
         // 데이터 변수 생성 
         this.data = [];
 
+        // 페이징 관련 변수
+        this.paging = {pageNo: 1, pageSize: 10, pageBlock: 10, totolCount: 0};
+
         // 그리드 편집시 데이터 변수
         this.editData = {};
 
@@ -28,9 +32,6 @@ import { create } from "./plugin/create.js";
         
         // 필드저장
         this.fields = paramater.fields;
-
-        // 유틸저장
-        this.util = util; //util.getUtils();
 
         // 외부 이벤트 연결
         this.outerEvent = paramater.event;
@@ -57,8 +58,12 @@ import { create } from "./plugin/create.js";
         // 내부 이벤트 생성        
         this.innerEvent = construct.createEvent(this, paramater);
 
+        // 그리드 상태 객체 생성
+        status.init(this.self);
+
         // 그리드 생성
-        create.init(this.self);
+        creator.init(this.self);
+        creator.create();
 
         return this;
     }
@@ -88,110 +93,110 @@ import { create } from "./plugin/create.js";
      * @deprecated
      * 그리드 생성
      */
-    create = function(){
+    // create = function(){
 
-        // 헤더 생성
-        if(this.option.head.is === true) this.createHead();
+    //     // 헤더 생성
+    //     if(this.option.head.is === true) this.createHead();
 
-        // 바디 생성
-        this.createBody();
+    //     // 바디 생성
+    //     this.createBody();
         
-        // // 데이터 없을 경우 표시 메시지 영역
-        // if(this.option.empty.message) {
-        //     this.element.bodyEmpty.textContent = this.option.empty.message;
-        // }
-        // this.element.bodyEmpty.classList.add("wgrid-empty-message");
-        // this.emptyMessageDisply();
-        // this.element.body.appendChild(this.element.bodyEmpty);
+    //     // // 데이터 없을 경우 표시 메시지 영역
+    //     // if(this.option.empty.message) {
+    //     //     this.element.bodyEmpty.textContent = this.option.empty.message;
+    //     // }
+    //     // this.element.bodyEmpty.classList.add("wgrid-empty-message");
+    //     // this.emptyMessageDisply();
+    //     // this.element.body.appendChild(this.element.bodyEmpty);
 
-        // 페이징 영역 생성
-        if(this.option.paging.is === true) this.createPagination();
-    }
+    //     // 페이징 영역 생성
+    //     if(this.option.paging.is === true) this.createPagination();
+    // }
 
     /**
      * @deprecated
      * 그리드 헤더 생성
      */
-    createHead = function(){
-        // 변수 정의
-        let th = null, div = null, tag = null;
-        this.util.childElementEmpty(this.element.headTr);
+    // createHead = function(){
+    //     // 변수 정의
+    //     let th = null, div = null, tag = null;
+    //     util.elementEmpty(this.element.headTr);
 
-        // 헤드영역 생성
-        for(let i=0; i<this.fields.length; i++){
+    //     // 헤드영역 생성
+    //     for(let i=0; i<this.fields.length; i++){
 
-            let field = this.fields[i];
+    //         let field = this.fields[i];
 
-            // 태그생성
-            th = document.createElement("th");
-            div = document.createElement("div");
+    //         // 태그생성
+    //         th = document.createElement("th");
+    //         div = document.createElement("div");
 
-            // 헤더 테이블 내용 생성
-            if(field.title){
-                // 제목이 있는 경우 태그타입을 무시하고 제목 표시
-                div.textContent = field.title;           
-            }else if(field.element == "checkbox"){
-                // 체크박스 생성
-                tag = document.createElement("input");
-                tag.setAttribute("type", "checkbox");
-                tag.setAttribute("name", field.name);
-                div.appendChild(tag);
-            }else if(field.element == "button"){
-                // 버튼생성
-                tag = document.createElement("button");
-                tag.classList.add("wgrid-btn");
-                tag.setAttribute("name", field.name);
-                tag.textContent = field.button.title;
-                div.appendChild(tag);
-            }else{
-                // 제목적용
-                tag = document.createElement("span");
-                tag.textContent = field.title;
-                div.appendChild(tag);
-            }
+    //         // 헤더 테이블 내용 생성
+    //         if(field.title){
+    //             // 제목이 있는 경우 태그타입을 무시하고 제목 표시
+    //             div.textContent = field.title;           
+    //         }else if(field.element == "checkbox"){
+    //             // 체크박스 생성
+    //             tag = document.createElement("input");
+    //             tag.setAttribute("type", "checkbox");
+    //             tag.setAttribute("name", field.name);
+    //             div.appendChild(tag);
+    //         }else if(field.element == "button"){
+    //             // 버튼생성
+    //             tag = document.createElement("button");
+    //             tag.classList.add("wgrid-btn");
+    //             tag.setAttribute("name", field.name);
+    //             tag.textContent = field.button.title;
+    //             div.appendChild(tag);
+    //         }else{
+    //             // 제목적용
+    //             tag = document.createElement("span");
+    //             tag.textContent = field.title;
+    //             div.appendChild(tag);
+    //         }
 
-            // 스타일 적용
-            field.width ? th.style.width = field.width : null;
-            div.style.textAlign = "center";
+    //         // 스타일 적용
+    //         field.width ? th.style.width = field.width : null;
+    //         div.style.textAlign = "center";
 
-            // 태그연결
-            th.appendChild(div);
-            this.element.headTr.appendChild(th);
-        }
+    //         // 태그연결
+    //         th.appendChild(div);
+    //         this.element.headTr.appendChild(th);
+    //     }
 
-        // 헤드 클래스 적용
-        // this.element.head.classList.add(this.constant.class.header);
+    //     // 헤드 클래스 적용
+    //     // this.element.head.classList.add(this.constant.class.header);
         
-        // 헤드 태그연결
-        //  this.element.headTb.appendChild(this.element.headTr);
-        //  this.element.head.appendChild(this.element.headTb);
-        //  this.element.target.appendChild(this.element.head);
-    }
+    //     // 헤드 태그연결
+    //     //  this.element.headTb.appendChild(this.element.headTr);
+    //     //  this.element.head.appendChild(this.element.headTb);
+    //     //  this.element.target.appendChild(this.element.head);
+    // }
 
     /**
      * @deprecated
      * 그리드 바디 생성
      */
-    createBody = function(){
+    // createBody = function(){
 
-        // body 초기화
-        this.util.childElementEmpty(this.element.bodyTb);
+    //     // body 초기화
+    //     util.elementEmpty(this.element.bodyTb);
 
-        // ROW 생성
-        this.data.forEach((item, idx) => this.element.bodyTb.appendChild(this.createRow(item, idx)));
+    //     // ROW 생성
+    //     this.data.forEach((item, idx) => this.element.bodyTb.appendChild(this.createRow(item, idx)));
 
-        // ROW 생성
-        // for(let i=0; i<this.data.length; i++){
-        //     this.element.bodyTb.appendChild(this.createRow(this.data[i], i));
-        // }
+    //     // ROW 생성
+    //     // for(let i=0; i<this.data.length; i++){
+    //     //     this.element.bodyTb.appendChild(this.createRow(this.data[i], i));
+    //     // }
 
-        // 바디 클래스 적용
-        // this.element.body.classList.add(this.constant.class.body);
+    //     // 바디 클래스 적용
+    //     // this.element.body.classList.add(this.constant.class.body);
 
-        // 태그 연결
-        // this.element.body.appendChild(this.element.bodyTb);
-        // this.element.target.appendChild(this.element.body);
-    }
+    //     // 태그 연결
+    //     // this.element.body.appendChild(this.element.bodyTb);
+    //     // this.element.target.appendChild(this.element.body);
+    // }
 
     /**
      * @deprecated
@@ -199,56 +204,56 @@ import { create } from "./plugin/create.js";
      * @param {object} row 
      * @param {number} rIdx 
      */
-    createRow = function(row, rIdx){
+    // createRow = function(row, rIdx){
 
-        // ROW 생성
-        let tr = document.createElement('tr');
-        tr.dataset.rowSeq = row._rowSeq;
+    //     // ROW 생성
+    //     let tr = document.createElement('tr');
+    //     tr.dataset.rowSeq = row._rowSeq;
 
-        // 앞키 뒤값
-        this.setSeqIndex(row._rowSeq, rIdx);
-		this.setIdxSequence(rIdx, row._rowSeq);
+    //     // 앞키 뒤값
+    //     this.setSeqIndex(row._rowSeq, rIdx);
+	// 	this.setIdxSequence(rIdx, row._rowSeq);
 
-        // 행 엘리먼트 인덱싱
-        this.setSeqRowElement(row._rowSeq, tr);
+    //     // 행 엘리먼트 인덱싱
+    //     this.setSeqRowElement(row._rowSeq, tr);
 
-        // CELL 생성        
-        let loaded = [];
-        this.fields.forEach((field, cIdx) => tr.appendChild(this.createCell(row, rIdx, field, cIdx, loaded)));
+    //     // CELL 생성        
+    //     let loaded = [];
+    //     this.fields.forEach((field, cIdx) => tr.appendChild(this.createCell(row, rIdx, field, cIdx, loaded)));
 
-        // for(let i=0; i<this.fields.length; i++){
+    //     // for(let i=0; i<this.fields.length; i++){
 
-        //     // 행마다 세팅할 데이터 변수
-        //     if(this.fields[i].element == "data"){
-        //         switch(this.fields[i].type){
-        //         case "array":
-        //             this.data[idx][this.fields[i].name] = new Array();
-        //             break;
-        //         case "objcet":
-        //         default:
-        //             this.data[idx][this.fields[i].name] = new Object();
-        //             break;
-        //         }
-        //     // 태그 행인 경우
-        //     }else{
-        //         tr.appendChild(this.createCell(row, idx, this.fields[i], i, loaded));
-        //     }
-        // }
+    //     //     // 행마다 세팅할 데이터 변수
+    //     //     if(this.fields[i].element == "data"){
+    //     //         switch(this.fields[i].type){
+    //     //         case "array":
+    //     //             this.data[idx][this.fields[i].name] = new Array();
+    //     //             break;
+    //     //         case "objcet":
+    //     //         default:
+    //     //             this.data[idx][this.fields[i].name] = new Object();
+    //     //             break;
+    //     //         }
+    //     //     // 태그 행인 경우
+    //     //     }else{
+    //     //         tr.appendChild(this.createCell(row, idx, this.fields[i], i, loaded));
+    //     //     }
+    //     // }
 
-        // ROW 커서 옵션 적용
-        tr.style.cursor = this.option.row.style.cursor
-        // if(this.option?.row?.style?.cursor){                
-        //     tr.style.cursor = this.option.row.style.cursor;
-        // }
+    //     // ROW 커서 옵션 적용
+    //     tr.style.cursor = this.option.row.style.cursor
+    //     // if(this.option?.row?.style?.cursor){                
+    //     //     tr.style.cursor = this.option.row.style.cursor;
+    //     // }
 
-        // ROW 생성후 loaded함수 호출
-        loaded.forEach(item => item.loaded(item.element, item.row));
+    //     // ROW 생성후 loaded함수 호출
+    //     loaded.forEach(item => item.loaded(item.element, item.row));
 
-        // 조회목록 없을시 메시지 표시
-        // this.emptyMessageDisply();
+    //     // 조회목록 없을시 메시지 표시
+    //     // this.emptyMessageDisply();
 
-        return tr;
-    }
+    //     return tr;
+    // }
 
     /**
      * @deprecated
@@ -260,180 +265,180 @@ import { create } from "./plugin/create.js";
      * @param {object} loaded 그리드 하나의 생성이 진행이 완료된 후 콜백함수 저장 리스트
      * @returns 
      */
-    createCell = function(row, rIdx, cell, cIdx, loaded){
+    // createCell = function(row, rIdx, cell, cIdx, loaded){
 
-        // 생성할 태그 타입, 생성할 태그 변수들
-        let type = null, tag = null, td = null, div = null, option = null; 
+    //     // 생성할 태그 타입, 생성할 태그 변수들
+    //     let type = null, tag = null, td = null, div = null, option = null; 
 
-        // 태그생성
-        td = document.createElement("td");
-        div = document.createElement("div");
+    //     // 태그생성
+    //     td = document.createElement("td");
+    //     div = document.createElement("div");
 
-        // 태그 생성전 엘리먼트 타입 구분
-        if(row._state == this.constant.STATE.INSERT || row._state == this.constant.STATE.UPDATE){
-            if(cell.edit){
-                if(cell.edit == 'text') type = 'text-edit';
-                else if(cell.edit == 'number') type = 'number-edit';
-                else if(cell.edit == 'date') type = 'date-edit';
-                else if(cell.edit == 'dateTime') type = 'dateTime-edit';
-                else type = cell.edit;
-            }else{
-                type = cell.element;
-            }
-        }else{
-            type = cell.element;
-        }
+    //     // 태그 생성전 엘리먼트 타입 구분
+    //     if(row._state == this.constant.STATE.INSERT || row._state == this.constant.STATE.UPDATE){
+    //         if(cell.edit){
+    //             if(cell.edit == 'text') type = 'text-edit';
+    //             else if(cell.edit == 'number') type = 'number-edit';
+    //             else if(cell.edit == 'date') type = 'date-edit';
+    //             else if(cell.edit == 'dateTime') type = 'dateTime-edit';
+    //             else type = cell.edit;
+    //         }else{
+    //             type = cell.element;
+    //         }
+    //     }else{
+    //         type = cell.element;
+    //     }
 
-        // 태그 생성
-        if(type == "checkbox"){
-            // 체크박스 생성
-            tag = document.createElement("input");
-            tag.setAttribute("type", "checkbox");
-            tag.setAttribute("name", cell.name);
-            if(this.option.checkbox.check == row[cell.name]){
-                tag.checked = true;
-            }else{
-                tag.checked = false;
-            }
-            tag.dataset.sync = "checkbox";
-            div.appendChild(tag);
-        }else if(type == "button"){            
-            // 버튼 생성
-            tag = document.createElement("button");
-            tag.classList.add("wgrid-btn");
-            tag.setAttribute("name", cell.name);
-            tag.textContent = cell.text;
-            div.appendChild(tag);
-        }else if(type == "select"){
-            // 셀릭트박스 생성
-            tag = document.createElement("select");
-            tag.classList.add("wgrid-select");            
-            tag.classList.add("wgrid-wth100p");
-            tag.setAttribute("name", cell.name);
-            tag.dataset.sync = "select";
+    //     // 태그 생성
+    //     if(type == "checkbox"){
+    //         // 체크박스 생성
+    //         tag = document.createElement("input");
+    //         tag.setAttribute("type", "checkbox");
+    //         tag.setAttribute("name", cell.name);
+    //         if(this.option.checkbox.check == row[cell.name]){
+    //             tag.checked = true;
+    //         }else{
+    //             tag.checked = false;
+    //         }
+    //         tag.dataset.sync = "checkbox";
+    //         div.appendChild(tag);
+    //     }else if(type == "button"){            
+    //         // 버튼 생성
+    //         tag = document.createElement("button");
+    //         tag.classList.add("wgrid-btn");
+    //         tag.setAttribute("name", cell.name);
+    //         tag.textContent = cell.text;
+    //         div.appendChild(tag);
+    //     }else if(type == "select"){
+    //         // 셀릭트박스 생성
+    //         tag = document.createElement("select");
+    //         tag.classList.add("wgrid-select");            
+    //         tag.classList.add("wgrid-wth100p");
+    //         tag.setAttribute("name", cell.name);
+    //         tag.dataset.sync = "select";
 
-            // 초기 빈값이 존재할 경우 추가
-            if(cell?.data?.select?.empty){
-                option = document.createElement("option");
-                option.textContent = cell.data.select.empty;
-                tag.appendChild(option);
-            }
+    //         // 초기 빈값이 존재할 경우 추가
+    //         if(cell?.data?.select?.empty){
+    //             option = document.createElement("option");
+    //             option.textContent = cell.data.select.empty;
+    //             tag.appendChild(option);
+    //         }
 
-            // 셀릭트박스 옵션 태그 추가
-            if(cell?.data?.select?.list){
-                cell.data.select.list.forEach(item => {
-                    option = document.createElement("option");
-                    option.value = item[cell.data.select.value ? cell.data.select.value : "value"];
-                    option.textContent = item[cell.data.select.text ? cell.data.select.text : "text"];
+    //         // 셀릭트박스 옵션 태그 추가
+    //         if(cell?.data?.select?.list){
+    //             cell.data.select.list.forEach(item => {
+    //                 option = document.createElement("option");
+    //                 option.value = item[cell.data.select.value ? cell.data.select.value : "value"];
+    //                 option.textContent = item[cell.data.select.text ? cell.data.select.text : "text"];
 
-                    if(option.value == row[cell.name]){
-                        option.selected = true;
-                    }
+    //                 if(option.value == row[cell.name]){
+    //                     option.selected = true;
+    //                 }
 
-                    tag.appendChild(option);
-                });
-            // 셀릭트박스 옵션 태그 추가(코드)
-            }else if(cell?.data?.select?.codeList){
-                cell.data.select.codeList.forEach(item => {
-                    option = document.createElement("option");
-                    option.value = item.code
-                    option.textContent = item.codeNm
+    //                 tag.appendChild(option);
+    //             });
+    //         // 셀릭트박스 옵션 태그 추가(코드)
+    //         }else if(cell?.data?.select?.codeList){
+    //             cell.data.select.codeList.forEach(item => {
+    //                 option = document.createElement("option");
+    //                 option.value = item.code
+    //                 option.textContent = item.codeNm
 
-                    if(option.value == row[cell.name]){
-                        option.selected = true;
-                    }
+    //                 if(option.value == row[cell.name]){
+    //                     option.selected = true;
+    //                 }
 
-                    tag.appendChild(option);
-                });
-            }
-            div.appendChild(tag);
-        // 날짜표시
-        }else if(type == "date"){
-            tag = document.createElement("span");
-            tag.textContent = row[cell.name];
-            div.appendChild(tag);
-        }else if(type == "date-edit"){
-            // 날짜 입력박스 표시
-            tag = document.createElement("input");
-            tag.classList.add("wgrid-input");
-            tag.classList.add("wgrid-wth");
-            tag.setAttribute("maxlength", 10);
-            tag.setAttribute("name", cell.name);
-            tag.dataset.sync = "date";
-            tag.value = row[cell.name];
-            div.appendChild(tag);
-        }else if(type == "dateTime"){
-            /* 개발중 */
-        }else if(type == "dateTime-edit"){
-            /* 개발중 */
-        }else if(type == 'text' || type == 'number' || !type){
-            tag = document.createElement("span");
-            tag.setAttribute("name", cell.name);
-            // 코드맵핑
-            if(cell.data && cell.data.mapping){
-                tag.textContent = cell.data.mapping[row[cell.name]];
-            }else{
-                tag.textContent = row[cell.name];
-            }
-            div.appendChild(tag);
-        }else if(type == "text-edit"){
-            // 입력내용 표시
-            tag = document.createElement("input");
-            tag.classList.add("wgrid-input");
-            tag.classList.add("wgrid-wth-edit");
-            tag.setAttribute("name", cell.name);
-            tag.dataset.sync = "text";
-            tag.value = row[cell.name];
-            div.appendChild(tag);
-        }else if(type == 'number-edit'){
-            tag = document.createElement("input");
-            tag.classList.add("wgrid-input");
-            tag.classList.add("wgrid-wth-edit");
-            tag.setAttribute("name", cell.name);
-            tag.setAttribute("maxlength", cell.maxlength ? cell.maxlength : 3);
-            tag.dataset.sync = "number";
-            tag.value = row[cell.name];
-            div.appendChild(tag);
-        }
+    //                 tag.appendChild(option);
+    //             });
+    //         }
+    //         div.appendChild(tag);
+    //     // 날짜표시
+    //     }else if(type == "date"){
+    //         tag = document.createElement("span");
+    //         tag.textContent = row[cell.name];
+    //         div.appendChild(tag);
+    //     }else if(type == "date-edit"){
+    //         // 날짜 입력박스 표시
+    //         tag = document.createElement("input");
+    //         tag.classList.add("wgrid-input");
+    //         tag.classList.add("wgrid-wth");
+    //         tag.setAttribute("maxlength", 10);
+    //         tag.setAttribute("name", cell.name);
+    //         tag.dataset.sync = "date";
+    //         tag.value = row[cell.name];
+    //         div.appendChild(tag);
+    //     }else if(type == "dateTime"){
+    //         /* 개발중 */
+    //     }else if(type == "dateTime-edit"){
+    //         /* 개발중 */
+    //     }else if(type == 'text' || type == 'number' || !type){
+    //         tag = document.createElement("span");
+    //         tag.setAttribute("name", cell.name);
+    //         // 코드맵핑
+    //         if(cell.data && cell.data.mapping){
+    //             tag.textContent = cell.data.mapping[row[cell.name]];
+    //         }else{
+    //             tag.textContent = row[cell.name];
+    //         }
+    //         div.appendChild(tag);
+    //     }else if(type == "text-edit"){
+    //         // 입력내용 표시
+    //         tag = document.createElement("input");
+    //         tag.classList.add("wgrid-input");
+    //         tag.classList.add("wgrid-wth-edit");
+    //         tag.setAttribute("name", cell.name);
+    //         tag.dataset.sync = "text";
+    //         tag.value = row[cell.name];
+    //         div.appendChild(tag);
+    //     }else if(type == 'number-edit'){
+    //         tag = document.createElement("input");
+    //         tag.classList.add("wgrid-input");
+    //         tag.classList.add("wgrid-wth-edit");
+    //         tag.setAttribute("name", cell.name);
+    //         tag.setAttribute("maxlength", cell.maxlength ? cell.maxlength : 3);
+    //         tag.dataset.sync = "number";
+    //         tag.value = row[cell.name];
+    //         div.appendChild(tag);
+    //     }
 
-        // 텍스트, 날짜데이터가 비어있고 비어있을경우 표시하는 값이 정해지면 표시
-        if((cell.emptyText && type == "text" || type == "dateTime" || type == "date") 
-            && !row[cell.name]){                    
-            // 정의된 빈값 표시
-            div.textContent = cell.emptyText;
-        }
+    //     // 텍스트, 날짜데이터가 비어있고 비어있을경우 표시하는 값이 정해지면 표시
+    //     if((cell.emptyText && type == "text" || type == "dateTime" || type == "date") 
+    //         && !row[cell.name]){                    
+    //         // 정의된 빈값 표시
+    //         div.textContent = cell.emptyText;
+    //     }
         
-        // 셀 엘리먼트 인덱싱
-        this.setSeqCellElement(row._rowSeq, cell.name, tag);
+    //     // 셀 엘리먼트 인덱싱
+    //     this.setSeqCellElement(row._rowSeq, cell.name, tag);
 
-        // 태그연결
-        td.appendChild(div);
+    //     // 태그연결
+    //     td.appendChild(div);
 
-        // 행 직후 콜백함수 호출 세팅
-        if(cell.loaded){
-            loaded.push({loaded: cell.loaded, element: tag, row: Object.assign({}, row)});
-        } 
+    //     // 행 직후 콜백함수 호출 세팅
+    //     if(cell.loaded){
+    //         loaded.push({loaded: cell.loaded, element: tag, row: Object.assign({}, row)});
+    //     } 
 
-        // 스타일 적용
-        cell.width ? td.style.width = cell.width : null;
-        div.style.align = cell.align ? cell.align : "center";
-        return td;
-    }
+    //     // 스타일 적용
+    //     cell.width ? td.style.width = cell.width : null;
+    //     div.style.align = cell.align ? cell.align : "center";
+    //     return td;
+    // }
 
     /**
      * @deprecated
      */
-    createPagination = function(){
+    // createPagination = function(){
 
-        this.util.childElementEmpty(this.element.pagination);
+    //     util.elementEmpty(this.element.pagination);
         
-        // TEST
-        for(let i=0; i<10; i++){
-            let btn = document.createElement('button');
-            btn.textContent = i;
-            this.element.pagination.appendChild(btn);
-        }
-    }
+    //     // TEST
+    //     for(let i=0; i<10; i++){
+    //         let btn = document.createElement('button');
+    //         btn.textContent = i;
+    //         this.element.pagination.appendChild(btn);
+    //     }
+    // }
 
     /**
      * 그리드 데이터 가져오기
@@ -457,8 +462,12 @@ import { create } from "./plugin/create.js";
         // 객체
         }else if(typeof params == 'object' && typeof params.length == 'undefined'){
             list = params.list;
+            if(this.option.paging.is === true && params.paging){
+                this.setPaging(params.paging);
+            }
         }else {
             console.error('setData paramater error:', typeof params, params);
+            return;
         }
 
         // 데이터를 그리드에 삽입
@@ -475,48 +484,49 @@ import { create } from "./plugin/create.js";
         this.data.forEach(item => this.originData[item._rowSeq] = JSON.parse(JSON.stringify(item)));
 
         // 필드 새로고침
-        this.refresh();
+        creator.refresh();
+    }
+
+    /**
+     * 
+     * @param {*} params 
+     */
+    setPaging = function(params){
+        if(params.paging?.no) this.paging.no = params.paging.no;
+        if(params.paging?.size) this.paging.size = params.paging.size;
+        if(params.paging?.block) this.paging.block = params.paging.block;
+        if(params.paging?.totolCount) this.paging.totolCount = params.paging.totolCount;
     }
 
     /**
      * 그리드 새로고침 (필드부분 재생성)
      */
-    refresh = function(newData){
+    // refresh = function(newData){
         
-        // // 신규데이터 기존데이터 분기처리
-        // if(this.util.isNotEmpty(newData) == true && newData.length > 0){
-        //     this.setData(newData);
-        // }else{
+    //     // // 신규데이터 기존데이터 분기처리
+    //     // if(util.isNotEmpty(newData) == true && newData.length > 0){
+    //     //     this.setData(newData);
+    //     // }else{
 
-            // 그리드 상태 초기화
-            this.state.seqIndex = {};
-            this.state.idxSequence = {};
-            this.state.seqRowElement = {};
-            this.state.seqCellElement = {};
+    //         // 그리드 상태 초기화
+    //         this.state.seqIndex = {};
+    //         this.state.idxSequence = {};
+    //         this.state.seqRowElement = {};
+    //         this.state.seqCellElement = {};
 
-            // 필드 비우기
-            while(this.element.bodyTb.hasChildNodes()){
-                this.element.bodyTb.removeChild(this.element.bodyTb.firstChild);
-            }
+    //         // 필드 비우기
+    //         while(this.element.bodyTb.hasChildNodes()){
+    //             this.element.bodyTb.removeChild(this.element.bodyTb.firstChild);
+    //         }
 
-            // 필드 재생성
-            this.data.forEach((row, rIdx) => this.element.bodyTb.appendChild(this.createRow(row, rIdx)));
+    //         // 필드 재생성
+    //         this.data.forEach((row, rIdx) => this.element.bodyTb.appendChild(creator.createBodyRow(row, rIdx)));
 
-            // 조회목록 없을시 메시지 표시
-            // this.emptyMessageDisply();    
+    //         // 조회목록 없을시 메시지 표시
+    //         // this.emptyMessageDisply();    
 
-        // }
-    }
-
-    /**
-     * 그리드 초기화
-     */
-    empty = function(isRefresh){
-        this.data = [];
-        if(isRefresh != false){
-            this.refresh();
-        }
-    }
+    //     // }
+    // }
 
     /**
      * 신규행 추가
@@ -570,7 +580,7 @@ import { create } from "./plugin/create.js";
         this.data.push(row);
 
         // 신규행 추가
-        let tr = this.createRow(row, this.data.length-1);
+        let tr = creator.createBodyRow(row, this.data.length-1);
 
         if(this.option.body.state.use == true){
             tr.classList.add(this.constant.class.insert);
@@ -795,7 +805,7 @@ import { create } from "./plugin/create.js";
         let seqList = [];
         this.getCheckedElement(name)
             .forEach(check => {
-                seqList.push(Number(this.util.getTrNode(check).dataset.rowSeq));
+                seqList.push(Number(util.getTrNode(check).dataset.rowSeq));
             });
         return seqList;
     }
@@ -809,7 +819,7 @@ import { create } from "./plugin/create.js";
         let itemList = [];
         this.getCheckedElement(name)
             .forEach(check => {
-                itemList.push(this.getDataIndex(this.getSeqIndex(this.util.getTrNode(check).dataset.rowSeq)));
+                itemList.push(this.getDataIndex(this.getSeqIndex(util.getTrNode(check).dataset.rowSeq)));
             });
         return Object.assign([], itemList);
     }
@@ -923,7 +933,7 @@ import { create } from "./plugin/create.js";
             this.data[rowIdx]._state = this.constant.STATE.SELECT;
 
             // 자식노드 비우기
-            this.util.childElementEmpty(tr);
+            util.elementEmpty(tr);
 
             // cell 생성후 태그 연결
             let loaded = [];
@@ -1118,7 +1128,7 @@ import { create } from "./plugin/create.js";
         this.data[rowIdx]._state = this.constant.STATE.UPDATE;
 
         // 자식노드 비우기
-        this.util.childElementEmpty(tr);
+        util.elementEmpty(tr);
 
         // CELL 생성        
         let loaded = [];

@@ -176,7 +176,7 @@ exports.applyMenu = async (request, response, next) => {
 exports.getUserList = async (request, response, next) => {
 
     // 메뉴목록 조회
-    await userService.getUserList({paging: request.body.paging}).then(value => {
+    await userService.getUserList(request.body).then(value => {
         response.status(200).json({
             message: 'SUCCESS',
             resultCode: 'SUCCESS',

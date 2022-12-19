@@ -1,28 +1,41 @@
 import { util } from './util.js';
+import { status } from "./status.js";
 
 // 그리드 객체
 let self = null;
+
+// 객체 생성 시각
+let isCreated = false;
 
 /**
  * 그리드 최초 생성
  * @param {*} self 
  */
-export const create = {
+export const creator = {
 
     // 그리드 생성
     init: _self => {
         // grid객체 저장
         self = _self;
+    },
 
-        // 그리드 생성 함수 호출
-        createGrid();
-    }
+    /**
+     * 그리드 생성(최초 1회 실행)
+     */
+    create: () => isCreated === true ? refresh() : createGrid(),
+
+    /**
+     * 그리드 목록 재 생성
+     */
+    refresh: () => refresh()
 }
 
 /**
  * 그리드 생성
  */
 const createGrid = () => {
+
+    isCreated = true;
 
     // 헤더 생성
     if(self.option.head.is === true) createHead();
@@ -40,6 +53,27 @@ const createGrid = () => {
 
     // 페이징 영역 생성
     if(self.option.paging.is === true) createPagination();
+}
+
+/**
+ * 
+ */
+const refresh = () => {
+
+    // 그리드 상태 초기화
+    self.state.seqIndex = {};
+    self.state.idxSequence = {};
+    self.state.seqRowElement = {};
+    self.state.seqCellElement = {};
+    // self.status.refresh();
+
+    // 필드 비우기
+    while(self.element.bodyTb.hasChildNodes()){
+        self.element.bodyTb.removeChild(self.element.bodyTb.firstChild);
+    }
+
+    // 필드 재생성
+    self.data.forEach((row, rIdx) => self.element.bodyTb.appendChild(createBodyRow(row, rIdx)));
 }
 
 /**
@@ -100,7 +134,7 @@ const createHead = () => {
 const createBody = () => {
 
     // body 초기화
-    util.childElementEmpty(self.element.bodyTb);
+    util.elementEmpty(self.element.bodyTb);
 
     // ROW 생성
     self.data.forEach((item, idx) => self.element.bodyTb.appendChild(createBodyRow(item, idx)));
@@ -311,7 +345,9 @@ const createBodyRowCell = (row, rIdx, cell, cIdx, loaded) => {
  */
 const createPagination = () => {
 
-    util.childElementEmpty(self.element.pagination);
+    util.elementEmpty(self.element.pagination);
+
+    self
 
     // TEST
     for(let i=0; i<10; i++){
