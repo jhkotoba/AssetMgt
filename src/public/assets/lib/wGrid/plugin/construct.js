@@ -1,26 +1,31 @@
+import { util } from "./util.js";
+import { constant } from "./constant.js";
+
+ 
+
 /**
  * wGird 초기생성
  */
-const constant = {
-    STATE: {
-        SELECT: 'SELECT',
-        INSERT: 'INSERT',
-        UPDATE: 'UPDATE',
-        REMOVE: 'REMOVE'
-    },
-    class:{
-        select: '',
-        insert: 'insert',
-        update: 'update',
-        remove: 'remove',
-        choose: 'choose',
-        header: 'header',
-        body: 'body',
-        pagination: 'pagination',
-        button: 'wgrid-btn'
-    },
-    EMPTY: "EMPTY"
-}
+// const constant = {
+//     STATE: {
+//         SELECT: 'SELECT',
+//         INSERT: 'INSERT',
+//         UPDATE: 'UPDATE',
+//         REMOVE: 'REMOVE'
+//     },
+//     class:{
+//         select: '',
+//         insert: 'insert',
+//         update: 'update',
+//         remove: 'remove',
+//         choose: 'choose',
+//         header: 'header',
+//         body: 'body',
+//         pagination: 'pagination',
+//         button: 'wgrid-btn'
+//     },
+//     EMPTY: "EMPTY"
+// }
 
 export const construct = {
 
@@ -28,15 +33,15 @@ export const construct = {
      * 그리드 상태값 생성
      * @returns 
      */   
-    createState(){
-        return {
-            curSeq: 0,      // 현재 시퀀스
-            seqIndex: {},   // 데이터 맵 key sequence value index
-            idxSequence: {}, // 데이터 맵 key index value sequence
-            seqRowElement: {}, // 테이터 맵 key sequence value name element
-            seqCellElement: {} // 테이터 맵 key sequence value name element
-        }
-    },
+    // createState(){
+    //     return {
+    //         curSeq: 0,      // 현재 시퀀스
+    //         seqIndex: {},   // 데이터 맵 key sequence value index
+    //         idxSequence: {}, // 데이터 맵 key index value sequence
+    //         seqRowElement: {}, // 테이터 맵 key sequence value name element
+    //         seqCellElement: {} // 테이터 맵 key sequence value name element
+    //     }
+    // },
 
     /**
      * wGrid 생성시 엘리먼트 값 저장
@@ -333,7 +338,7 @@ export const construct = {
                 // 체크박스 클릭이벤트 강제 종료
                 if(event.type == 'click' && event.target.dataset.sync == 'checkbox') return;
                 
-                let row = self.util.closest("TR", event.target);
+                let row = util.closest("TR", event.target);
                 if(!row)return;
                 
                 let sequence = row.dataset.rowSeq;

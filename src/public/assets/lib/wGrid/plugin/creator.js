@@ -1,47 +1,44 @@
+import { constant } from "./constant.js";
 import { util } from './util.js';
-import { status } from "./status.js";
-
-// 그리드 객체
-let self = null;
-
-// 객체 생성 시각
-let isCreated = false;
+import { watcher } from "./watcher.js";
 
 /**
- * 그리드 최초 생성
- * @param {*} self 
+ * 그리드 생성 객체
  */
 export const creator = {
 
-    // 그리드 생성
-    init: _self => {
-        // grid객체 저장
-        self = _self;
-    },
-
     /**
      * 그리드 생성(최초 1회 실행)
+     * @param {*} self 
+     * @returns 
      */
-    create: () => isCreated === true ? refresh() : createGrid(),
-
+    create: (self) => createGrid(self),
+   
     /**
      * 그리드 목록 재 생성
+     * @param {*} self 
+     * @returns 
      */
-    refresh: () => refresh()
+    refresh: (self) => refresh(self),
+
+    /**
+     * 그리드 열 생성
+     * @param {*} self 
+     * @returns 
+     */
+    createCell: (self) => createBodyRowCell(self)
 }
 
 /**
  * 그리드 생성
  */
-const createGrid = () => {
-
-    isCreated = true;
+const createGrid = (self) => {
 
     // 헤더 생성
-    if(self.option.head.is === true) createHead();
+    if(self.option.head.is === true) createHead(self);
 
     // 바디 생성
-    createBody();
+    createBody(self);
     
     // // 데이터 없을 경우 표시 메시지 영역
     // if(this.option.empty.message) {
@@ -52,20 +49,16 @@ const createGrid = () => {
     // this.element.body.appendChild(this.element.bodyEmpty);
 
     // 페이징 영역 생성
-    if(self.option.paging.is === true) createPagination();
+    if(self.option.paging.is === true) createPagination(self);
 }
 
 /**
- * 
+ * 그리드 새로고침
  */
-const refresh = () => {
+const refresh = (self) => {
 
     // 그리드 상태 초기화
-    self.state.seqIndex = {};
-    self.state.idxSequence = {};
-    self.state.seqRowElement = {};
-    self.state.seqCellElement = {};
-    // self.status.refresh();
+    watcher.clean(self);
 
     // 필드 비우기
     while(self.element.bodyTb.hasChildNodes()){
@@ -73,13 +66,13 @@ const refresh = () => {
     }
 
     // 필드 재생성
-    self.data.forEach((row, rIdx) => self.element.bodyTb.appendChild(createBodyRow(row, rIdx)));
+    self.data.forEach((row, rIdx) => self.element.bodyTb.appendChild(createBodyRow(self, row, rIdx)));
 }
 
 /**
  * 그리드 생성 - 해더
  */
-const createHead = () => {
+const createHead = (self) => {
 
     // 변수 정의
     let th = null, div = null, tag = null;
@@ -131,13 +124,13 @@ const createHead = () => {
 /**
  * 그리드 생성 - 바디
  */
-const createBody = () => {
+const createBody = (self) => {
 
     // body 초기화
     util.elementEmpty(self.element.bodyTb);
 
     // ROW 생성
-    self.data.forEach((item, idx) => self.element.bodyTb.appendChild(createBodyRow(item, idx)));
+    self.data.forEach((item, idx) => self.element.bodyTb.appendChild(createBodyRow(self, item, idx)));
 }
 
 /**
@@ -145,7 +138,7 @@ const createBody = () => {
  * @param {*} row       행 엘리먼트
  * @param {*} rIdx      행 IDX
  */
-const createBodyRow = (row, rIdx) => {
+const createBodyRow = (self, row, rIdx) => {
 
     // ROW 생성
     let tr = document.createElement('tr');
@@ -160,7 +153,7 @@ const createBodyRow = (row, rIdx) => {
 
     // CELL 생성        
     let loaded = [];
-    self.fields.forEach((field, cIdx) => tr.appendChild(createBodyRowCell(row, rIdx, field, cIdx, loaded)));
+    self.fields.forEach((field, cIdx) => tr.appendChild(createBodyRowCell(self, row, rIdx, field, cIdx, loaded)));
 
     // ROW 커서 옵션 적용
     tr.style.cursor = self.option.row.style.cursor;
@@ -180,7 +173,7 @@ const createBodyRow = (row, rIdx) => {
  * @param {*} cIdx 
  * @param {*} loaded 
  */
-const createBodyRowCell = (row, rIdx, cell, cIdx, loaded) => {
+const createBodyRowCell = (self, row, rIdx, cell, cIdx, loaded) => {
 
     // 생성할 태그 타입, 생성할 태그 변수들
     let type = null, tag = null, td = null, div = null, option = null; 
@@ -190,7 +183,7 @@ const createBodyRowCell = (row, rIdx, cell, cIdx, loaded) => {
     div = document.createElement('div');
 
     // 태그 생성전 엘리먼트 타입 구분
-    if(row._state == self.constant.STATE.INSERT || row._state == self.constant.STATE.UPDATE){
+    if(row._state == constant.row.status.insert || row._state == constant.row.status.update){
         if(cell.edit){
             if(cell.edit == 'text') type = 'text-edit';
             else if(cell.edit == 'number') type = 'number-edit';
@@ -343,11 +336,9 @@ const createBodyRowCell = (row, rIdx, cell, cIdx, loaded) => {
 /**
  * 그리드 생성 - 페이징
  */
-const createPagination = () => {
+const createPagination = (self) => {
 
     util.elementEmpty(self.element.pagination);
-
-    self
 
     // TEST
     for(let i=0; i<10; i++){

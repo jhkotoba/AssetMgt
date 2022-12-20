@@ -54,8 +54,8 @@ const menu = {
     initGrid(){
         this.data.topList = [];
         this.data.subList = [];
-        this.grid.top.empty();
-        this.grid.sub.empty();
+        this.grid.top.setData([]);
+        this.grid.sub.setData([]);
 
         // 상위메뉴 하위메뉴 분리
         this.data.origin.forEach(item => {
@@ -301,5 +301,3 @@ const menu = {
         return isValidation;
     }
 }
-
-window.menu2 = menu;
