@@ -3,8 +3,18 @@
  */
 export const watcher = {
 
+    /**
+     * 그리드 상태 객체 초기설정
+     * @param {*} self 
+     * @returns 
+     */
     init: (self) => init(self),
 
+    /**
+     * 그리드 상태 초기화
+     * @param {*} self 
+     * @returns 
+     */
     clean: (self) => clean(self)
 }
 
@@ -17,7 +27,7 @@ const init = (self) => {
     self.state = {
         // 현재 시퀀스
         curSeq: 0,
-        // 데이터 맵 key sequence value index       
+        // 데이터 맵 key sequence value index
         seqIndex: {},
         // 데이터 맵 key index value sequence
         idxSequence: {},

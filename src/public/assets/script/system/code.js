@@ -55,8 +55,11 @@ code.createGrid = function(){
             {title:'수정일시', element: 'text', name: 'uptDttm', width: '10%'},
         ],
         option: { 
-            style: { height: 80, overflow: { y: 'scroll'}},
-            data: { insert: {code: '', codeNm: '', groupCd:'', useYn: 'Y'} }
+            style: { height: 50, overflow: { y: 'scroll'}},
+            data: { insert: {code: '', codeNm: '', groupCd:'', useYn: 'Y'}},
+            paging: {
+                is: true
+            }
         },
         event: {
             keyup: (event, item, index, sequence) => this.grid.applyModifyAndCancel(index, sequence, {isRowEditMode: false, exceptList: ['check']}),

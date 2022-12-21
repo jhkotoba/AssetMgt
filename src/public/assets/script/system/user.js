@@ -17,7 +17,7 @@ user.init = async function(){
         ],
         option: {
             paging: {
-                is: true
+                is: false
             }
         }
     });

@@ -39,7 +39,8 @@ import { creator } from "./plugin/creator.js";
         // this.originData = {}
         
         // 필드저장
-        this.fields = paramater.fields;
+        // this.fields = paramater.fields;
+        
 
         // 외부 이벤트 연결
         this.outerEvent = paramater.event;
@@ -74,6 +75,7 @@ import { creator } from "./plugin/creator.js";
     
      
     /**
+     * @deprecated
      * 데이터 인덱싱
      * @param {string/number} rowSeq
      */
@@ -445,10 +447,9 @@ import { creator } from "./plugin/creator.js";
 
     /**
      * 그리드 데이터 가져오기
-     * @param {*} option.isShallow 앝은복사 여부 (기본값 깊은복사)
      * @returns 
      */
-    getData = (option) => reposit.getData(this, option);
+    getData = () => reposit.getDeepData(this);
 
     /**
      * 그리드 데이터 추가
@@ -534,6 +535,7 @@ import { creator } from "./plugin/creator.js";
     // }
 
     /**
+     * @deprecated
      * 신규행 추가
      * @returns 
      */
@@ -553,7 +555,8 @@ import { creator } from "./plugin/creator.js";
         }
 
         // 필드값 세팅
-        for(let field of this.fields){
+        let fields = reposit.getFields(this);
+        for(let field of fields){
             
             // 신규행 추가시 기본값 세팅
             switch(field.element){
@@ -582,10 +585,10 @@ import { creator } from "./plugin/creator.js";
         }
 
         // 신규 데이터 추가
-        this.data.push(row);
+        reposit.appendData(this, row);
 
         // 신규행 추가
-        let tr = creator.createBodyRow(this.self, row, this.data.length-1);
+        let tr = creator.createRow(this, row, reposit.getDataSize(this)-1);
 
         if(this.option.body.state.use == true){
             tr.classList.add(constant.class.insert);
@@ -752,12 +755,12 @@ import { creator } from "./plugin/creator.js";
     /**
      * 신규행 추가(위에서)
      */
-    prependRow = () => this.element.bodyTb.insertBefore(this.createNewRow(), this.element.bodyTb.firstChild);
+    prependRow = () => this.element.bodyTb.insertBefore(creator.createNewRow(this), this.element.bodyTb.firstChild);
 
     /**
      * 신규행 추가(아래에서)
      */
-    appendRow = () => this.element.bodyTb.appendChild(this.createNewRow());
+    appendRow = () => this.element.bodyTb.appendChild(creator.createNewRow(this));
 
     /**
      * 최상위 rowElement 반환
@@ -942,7 +945,7 @@ import { creator } from "./plugin/creator.js";
 
             // cell 생성후 태그 연결
             let loaded = [];
-            this.fields.forEach((field, idx) => tr.appendChild(creator.createCell(this, this.data[rowIdx], rowIdx, field, idx, loaded)));
+            reposit.getFields(this).forEach((field, idx) => tr.appendChild(creator.createCell(this, this.data[rowIdx], rowIdx, field, idx, loaded)));
             // 행생성후 loaded함수 호출
             loaded.forEach(item => item.fn(item.tag, item.row));
 
@@ -1179,7 +1182,7 @@ import { creator } from "./plugin/creator.js";
         if(option?.isDisabled !== false){
 
             // Disabled 처리
-            for(let field of this.fields){
+            for(let field of reposit.getFields(this)){
 
                 // Disabled 제외 항목이 아닌 경우만 비활성화 처리
                 if((option?.exceptDisabledList?.length > 0 ? option.exceptDisabledList : []).includes(field.name) == false){
@@ -1287,7 +1290,7 @@ import { creator } from "./plugin/creator.js";
         this.getRowElementRowSeq(rowSeq).remove();
 
         // 데이터 재 인덱싱
-        this.dataReIndexing(rowSeq);
+        reposit.dataReIndexing(this, rowSeq);
 
         // 조회목록 없을시 메시지 표시
         // this.emptyMessageDisply();

@@ -1,5 +1,6 @@
 import { constant } from "./constant.js";
 import { util } from './util.js';
+import { reposit } from "./reposit.js";
 import { watcher } from "./watcher.js";
 
 /**
@@ -22,11 +23,27 @@ export const creator = {
     refresh: (self) => refresh(self),
 
     /**
+     * 그리드 행 생성
+     * @param {*} self 
+     * @param {*} row 
+     * @param {*} rowIdx 
+     * @returns 
+     */
+    createRow: (self, row, rowIdx) => createBodyRow(self, row, rowIdx),
+
+    /**
+     * 그리드 신규행 생성
+     * @param {*} self 
+     * @returns 
+     */
+    createNewRow: (self) => createBodyNewRow(self),
+
+    /**
      * 그리드 열 생성
      * @param {*} self 
      * @returns 
      */
-    createCell: (self) => createBodyRowCell(self)
+    createCell: (self, rowIdx, cell, cellIdx, loaded) => createBodyRowCell(self, rowIdx, cell, cellIdx, loaded)
 }
 
 /**
@@ -66,7 +83,7 @@ const refresh = (self) => {
     }
 
     // 필드 재생성
-    self.data.forEach((row, rIdx) => self.element.bodyTb.appendChild(createBodyRow(self, row, rIdx)));
+    reposit.getShallowData(self).forEach((row, rIdx) => self.element.bodyTb.appendChild(createBodyRow(self, row, rIdx)));
 }
 
 /**
@@ -79,9 +96,10 @@ const createHead = (self) => {
     util.elementEmpty(self.element.headTr);
 
     // 헤드영역 생성
-    for(let i=0; i<self.fields.length; i++){
+    let fields = reposit.getFields(self);
+    for(let i=0; i<fields.length; i++){
 
-        let field = self.fields[i];
+        let field = fields[i];
 
         // 태그생성
         th = document.createElement('th');
@@ -130,7 +148,69 @@ const createBody = (self) => {
     util.elementEmpty(self.element.bodyTb);
 
     // ROW 생성
-    self.data.forEach((item, idx) => self.element.bodyTb.appendChild(createBodyRow(self, item, idx)));
+    reposit.getShallowData(self).forEach((item, idx) => self.element.bodyTb.appendChild(createBodyRow(self, item, idx)));
+}
+
+/**
+ * 그리드 신규행 생성
+ * @param {*} self 
+ */
+const createBodyNewRow = (self) => {
+
+    // 신규행 ROW 데이터 세팅
+    let row = {
+        _rowSeq: self.getNextSeq(),
+        _state: constant.row.status.insert
+    };
+
+    // 신규행 기본값 설정되어있으면 세팅
+    if(self.option.data.insert){
+        for(let key in self.option.data.insert){
+            row[key] = self.option.data.insert[key];
+        }
+    }
+
+    // 필드값 세팅
+    let fields = reposit.getFields(self);
+    for(let field of fields){
+        
+        // 신규행 추가시 기본값 세팅
+        switch(field.element){
+        case 'text': case 'select': default:
+            row[field.name] = "";
+            break;
+        case 'number':
+            row[field.name] = 0;
+            break;
+        case 'checkbox':
+            row[field.name] = self.option.checkbox.check;
+            break;
+        }
+
+        // 해당 행에 셀렉트박스 데이터가 있는 경우, 셀렉트박스 empty값이 없거나 false일 경우
+        if(field.data && field.data.select 
+            && (!field.data.select.empty || field.data.select === false)
+            && field.data.select.list.length > 0){
+
+            if(field.data.select.value){
+                row[field.name] = field.data.select.list[0][field.data.select.value];
+            }else{
+                row[field.name] = field.data.select.list[0].value;
+            }
+        }
+    }
+
+    // 신규 데이터 추가
+    reposit.appendData(self, row);
+
+    // 신규행 추가
+    let tr = creator.createRow(self, row, reposit.getDataSize(self)-1);
+
+    if(self.option.body.state.use == true){
+        tr.classList.add(constant.class.insert);
+    }
+    
+    return tr;
 }
 
 /**
@@ -153,7 +233,7 @@ const createBodyRow = (self, row, rIdx) => {
 
     // CELL 생성        
     let loaded = [];
-    self.fields.forEach((field, cIdx) => tr.appendChild(createBodyRowCell(self, row, rIdx, field, cIdx, loaded)));
+    reposit.getFields(self).forEach((field, cIdx) => tr.appendChild(createBodyRowCell(self, row, rIdx, field, cIdx, loaded)));
 
     // ROW 커서 옵션 적용
     tr.style.cursor = self.option.row.style.cursor;
@@ -336,7 +416,7 @@ const createBodyRowCell = (self, row, rIdx, cell, cIdx, loaded) => {
 /**
  * 그리드 생성 - 페이징
  */
-const createPagination = (self) => {
+const createPagination = (self, params) => {
 
     util.elementEmpty(self.element.pagination);
 
