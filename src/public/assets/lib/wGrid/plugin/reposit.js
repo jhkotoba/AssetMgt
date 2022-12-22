@@ -84,7 +84,6 @@ export const reposit = {
 const init = (self, params) => {
 
     // 그리드 순번
-    console.log('sequence:', sequence);
     self.sequence = sequence++;
 
     // 기본 데이터 생성
