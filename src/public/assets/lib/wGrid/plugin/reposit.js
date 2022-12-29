@@ -1,5 +1,6 @@
 import { util } from './util.js';
 import { constant } from "./constant.js";
+import { status } from "./status.js";
 
 // 그리드 번호
 let sequence = 1;
@@ -7,10 +8,13 @@ let sequence = 1;
 // 데이터
 let data = {};
 
+// 옵션 데이터
+let option = {};
+
 // 페이징 데이터
 let paging = {};
 
-// 그리드 필드 데이터
+// 필드 데이터
 let fields = {};
 
 /**
@@ -28,16 +32,18 @@ export const reposit = {
     /**
      * 그리드 데이터 가져오기(깊은복사)
      * @param {*} self 
+     * @param {*} index 
      * @returns 
      */
-    getDeepData: (self) => getDeepData(self),
+    getDeepData: (self, index) => getDeepData(self, index),
 
     /**
      * 그리드 데이터 가져오기(얕은복사)
      * @param {*} self 
+     * @param {*} index 
      * @returns 
      */
-    getShallowData: (self) => getShallowData(self),
+    getData: (self, index) => getData(self, index),
 
     /**
      * 그리드 데이터 길이 가져오기
@@ -59,22 +65,22 @@ export const reposit = {
      * @param {*} data 
      * @returns 
      */
-    appendData: (self, row) => appendData(self, row),
+    appendData: (self, row) => data[self.sequence].data.push(row),
 
     /**
      * 그리드 필드 데이터 가져오기
      * @param {*} self 
      * @returns 
      */
-    getFields: (self) => getFields(self),
+    getFields: (self) => fields[self.sequence],
 
-    /**
-     * 데이터 재 인덱싱
-     * @param {*} self 
-     * @param {*} rowSequence 
-     * @returns 
-     */
-    dataReIndexing: (self, rowSequence) => reIndexing(self, rowSequence)
+    // /**
+    //  * 데이터 재 인덱싱
+    //  * @param {*} self 
+    //  * @param {*} rowSequence 
+    //  * @returns 
+    //  */
+    // dataReIndexing: (self, rowSequence) => reIndexing(self, rowSequence)
 }
 
 /**
@@ -106,41 +112,53 @@ const init = (self, params) => {
     if(util.isNotEmpty(params.data)) setData(self, params);
 }
 
+// /**
+//  * 데이터 재 인덱싱
+//  * @param {*} self 
+//  * @param {*} rowSequence 
+//  */
+// const reIndexing = (self, rowSequence) => {
+
+//     // seqIndex 재 인덱싱
+//     self.state.seqIndex = [];
+//     data[self.sequence].forEach((item, index) => {
+//         self.state.seqIndex[item._rowSeq] = index;
+//     });
+
+//     // sequence가 키인 데이터 삭제
+//     if(rowSequence){
+//         delete self.state.seqRowElement[rowSequence];
+//         delete self.state.seqCellElement[rowSequence];
+//     }
+// }
+
 /**
- * 데이터 재 인덱싱
- * @param {*} self 
- * @param {*} rowSequence 
+ * 그리드 데이터 가져오기(깊은복사)
+ * @param {*} self  그리드 객체
+ * @param {*} index 데이터 인덱스 값 - 해당값 존재시 해당 인덱스 데이터만 반환
+ * @returns 
  */
-const reIndexing = (self, rowSequence) => {
-
-    // seqIndex 재 인덱싱
-    self.state.seqIndex = [];
-    self.data.forEach((item, index) => {
-        self.state.seqIndex[item._rowSeq] = index;
-    });
-
-    // sequence가 키인 데이터 삭제
-    if(rowSequence){
-        delete self.state.seqRowElement[rowSequence];
-        delete self.state.seqCellElement[rowSequence];
+const getDeepData = (self, index) => {
+    if(util.isEmpty(index)){
+        return JSON.parse(JSON.stringify(data[self.sequence].data));
+    }else{
+        return JSON.parse(JSON.stringify(data[self.sequence].data[index]));
     }
 }
 
 /**
- * 그리드 데이터 가져오기(깊은복사)
- * @param {*} self 
- * @param {*} option 
- * @returns 
- */
-const getDeepData = (self) => JSON.parse(JSON.stringify(data[self.sequence].data));
-
-/**
  * 그리드 데이터 가져오기(얕은복사)
- * @param {*} self 
- * @param {*} option 
+ * @param {*} self  그리드 객체
+ * @param {*} index 데이터 인덱스 값 - 해당값 존재시 해당 인덱스 데이터만 반환
  * @returns 
  */
-const getShallowData = (self) => data[self.sequence].data;
+const getData = (self, index) => {
+    if(util.isEmpty(index)){
+        return data[self.sequence].data;
+    }else{
+        return data[self.sequence].data[index];
+    }
+}
 
 /**
  * 그리드 데이터 세팅
@@ -169,7 +187,8 @@ const setData = (self, params) => {
     // 데이터를 그리드에 삽입
     for(let item of list){
         // 기본 데이터 세팅
-        item._rowSeq = self.getNextSeq();
+        // item._rowSeq = self.getNextSeq();
+        item._rowSeq = status.getNextSeq(self);
         item._state = constant.row.status.select;
     }
 
@@ -179,21 +198,6 @@ const setData = (self, params) => {
     // 초기데이터 보존
     data[self.sequence].data.forEach(item => data[self.sequence].originData[item._rowSeq] = JSON.parse(JSON.stringify(item)));
 }
-
-/**
- * 그리드 데이터 추가
- * @param {*} self 
- * @param {*} data 
- * @returns 
- */
-const appendData = (self, row) => data[self.sequence].data.push(row);
-
-/**
- * 그리드 필드 데이터 가져오기
- * @param {*} self 
- * @returns 
- */
-const getFields = (self) => fields[self.sequence];
 
 /**
  * 페이징 변수 세팅

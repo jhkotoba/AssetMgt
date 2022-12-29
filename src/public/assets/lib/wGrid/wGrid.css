@@ -71,7 +71,7 @@
 .wgrid .body table tr td span{font-size: 1em;}
 
 .wgrid .pagination {
-    background: #4e4e4e;
+    background: #383838;
     padding-top: 5px;
     padding-bottom: 5px;
     text-align: center;
@@ -88,7 +88,7 @@
     border-right-width: 1px;
     border-right-color: #363636;
 }
-.wgrid .pagination button {margin: 0px 5px 0px 5px; background: #4e4e4e; border: 1px solid #747474; border-radius: 2px; color: #C6C6C6; display: inline-block; overflow: visible; text-align: center; white-space: nowrap; user-select: none; cursor: pointer; font-weight: 500; padding: 0.25rem 0.5rem; height: 30px; vertical-align: middle;}
+.wgrid .pagination button {margin: 0px 5px 0px 5px; background: #424242; border: 1px solid #747474; border-radius: 2px; color: #C6C6C6; display: inline-block; overflow: visible; text-align: center; white-space: nowrap; user-select: none; cursor: pointer; font-weight: 500; padding: 0.25rem 0.5rem; height: 30px; vertical-align: middle;}
 .wgrid .pagination button:hover{background: #565656}
 .wgrid .pagination button:active{background: #5E5E5E;}
 

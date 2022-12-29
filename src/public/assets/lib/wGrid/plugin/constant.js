@@ -5,15 +5,30 @@ export const constant = {
     
     // HTML class 상수
     class: {
-        select: '',
-        insert: 'insert',
-        update: 'update',
-        remove: 'remove',
-        choose: 'choose',
-        header: 'header',
-        body: 'body',
-        button: 'wgrid-btn',
-        pagination: 'pagination'
+        row: {
+            select: '',
+            insert: 'insert',
+            update: 'update',
+            remove: 'remove',
+            choose: 'choose'
+        },
+        area: {
+            target: 'wgrid',
+            header: 'header',
+            body: 'body',
+            pagination: 'pagination'
+        },
+        button: 'wgrid-btn'
+        // select: '',
+        // insert: 'insert',
+        // update: 'update',
+        // remove: 'remove',
+        // choose: 'choose',
+        // header: 'header',
+        // body: 'body',
+        // button: 'wgrid-btn',
+        // pagination: 'pagination',
+        // target: 'wgrid'
     },
 
     // 그리드 행 상태 상수

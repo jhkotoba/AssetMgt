@@ -1,5 +1,6 @@
 import { util } from "./util.js";
 import { constant } from "./constant.js";
+import { reposit } from "./reposit.js";
 
  
 
@@ -48,75 +49,35 @@ export const construct = {
      * @param {string} targetId 
      * @returns 
      */
-    createElement(id){
+    // createElement(id){
 
-        let target = document.getElementById(id);
-        let head = document.createElement('div');
-        let headTb = document.createElement('table');
-        let headTr = document.createElement('tr');
-        let body = document.createElement('div');
-        let bodyTb = document.createElement('table');
-        let bodyEmpty = document.createElement('div');
-        let pagination = document.createElement('div');
+    //     let target = document.getElementById(id);
+    //     let head = document.createElement('div');
+    //     let headTb = document.createElement('table');
+    //     let headTr = document.createElement('tr');
+    //     let body = document.createElement('div');
+    //     let bodyTb = document.createElement('table');
+    //     let bodyEmpty = document.createElement('div');
+    //     let pagination = document.createElement('div');
         
-        head.classList.add(constant.class.header);
-        body.classList.add(constant.class.body);
-        pagination.classList.add(constant.class.pagination);
+    //     head.classList.add(constant.class.header);
+    //     body.classList.add(constant.class.body);
+    //     pagination.classList.add(constant.class.pagination);
 
-        headTb.appendChild(headTr);
-        head.appendChild(headTb);
+    //     headTb.appendChild(headTr);
+    //     head.appendChild(headTb);
 
-        body.appendChild(bodyTb);
-        body.appendChild(bodyEmpty);
+    //     body.appendChild(bodyTb);
+    //     body.appendChild(bodyEmpty);
 
-        target.appendChild(head);
-        target.appendChild(body);
-        target.appendChild(pagination);
+    //     target.appendChild(head);
+    //     target.appendChild(body);
+    //     target.appendChild(pagination);
 
-        return {id, target, head, headTb, headTr, body, bodyTb, bodyEmpty, pagination}
+    //     return {id, target, head, headTb, headTr, body, bodyTb, bodyEmpty, pagination}
 
-        // if(false){
-        //     let target = document.getElementById(targetId);
-        //     let head = document.createElement('div');
-        //     let headTb = document.createElement('table');
-        //     let headTr = document.createElement('tr');
-        //     let body = document.createElement('div');
-        //     let bodyTb = document.createElement('table');
-        //     let bodyEmpty = document.createElement('div');
-        //     let pagination = document.createElement('div');
-            
-        //     pagination.classList.add("pagination");
-
-        //     head.appendChild(headTb);
-        //     head.appendChild(headTr);
-
-        //     body.appendChild(bodyTb);
-        //     body.appendChild(bodyEmpty);
-
-        //     target.appendChild(head);
-        //     target.appendChild(body);
-        //     target.appendChild(pagination);
-        // }
-
-        // let target = document.getElementById(targetId);
         
-        // let pagination = document.createElement('div');
-        // pagination.classList.add("pagination");
-
-        // target.appendChild(pagination);
-
-        // return {
-        //     id: targetId,
-        //     target: target,
-        //     head : document.createElement('div'),
-        //     headTb : document.createElement('table'),
-        //     headTr : document.createElement('tr'),
-        //     body: document.createElement('div'),
-        //     bodyTb : document.createElement('table'),
-        //     bodyEmpty: document.createElement('div'),
-        //     pagination: pagination
-        // }
-    },
+    // },
 
     /**
      * wGrid 생성시 그리드 내부 상수 세팅
@@ -343,21 +304,22 @@ export const construct = {
                 
                 let sequence = row.dataset.rowSeq;
                 let index = self.getSeqIndex(sequence);
+                let data = reposit.getData(self, index);
 
                 // 데이터 동기화
                 switch(event.target.dataset.sync){
                 case 'checkbox':
-                    self.data[index][event.target.name] = 
+                    data[event.target.name] = 
                         event.target.checked == true ? self.option.checkbox.check : self.option.checkbox.uncheck;
                     break;
                 case 'number':
                     let number = Number(event.target.value.replace('/[^0-9]/g', ''));
-                    let value = Number.isNaN(number) ? self.data[index][event.target.name] : number;
-                    self.data[index][event.target.name] = value;
+                    let value = Number.isNaN(number) ? data[event.target.name] : number;
+                    data[event.target.name] = value;
                     event.target.value = value;
                     break;
                 case 'text': case 'select': case 'date': case 'dateTime':
-                    self.data[index][event.target.name] = event.target.value;
+                    data[event.target.name] = event.target.value;
                     break;
                 }
 
@@ -368,7 +330,7 @@ export const construct = {
                     // 연결된 이벤트 호출
                     innerEvent[evList[i]][event.target.name].body(
                         event,
-                        self.data[index],
+                        reposit.getDeepData(self, index),
                         index,
                         sequence
                     );
@@ -379,7 +341,7 @@ export const construct = {
                     // 정의된 외부 이벤트 호출
                     self.outerEvent[evList[i]](
                         event,
-                        self.data[index],
+                        reposit.getDeepData(self, index),
                         index,
                         sequence
                     );
@@ -392,8 +354,8 @@ export const construct = {
                 if(evList[i] == 'click' 
                 && ['INPUT', 'SELECT', 'BUTTON'].includes(event.target.tagName) == false
                 && self.option.row.chose == true){
-                    self.element.bodyTb.childNodes.forEach(item => item.classList.remove(self.constant.class.choose));
-                    row.classList.add(self.constant.class.choose);
+                    self.element.bodyTb.childNodes.forEach(item => item.classList.remove(constant.class.row.choose));
+                    row.classList.add(constant.class.row.choose);
                 }
 
                 event.stopPropagation();

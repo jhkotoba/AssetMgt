@@ -1,10 +1,12 @@
 import { util } from "./plugin/util.js";
 import { construct } from "./plugin/construct.js";
 import { constant } from "./plugin/constant.js";
+import { status } from "./plugin/status.js";
 import { reposit } from "./plugin/reposit.js";
-import { element } from "./plugin/element.js";
 import { watcher } from "./plugin/watcher.js";
-// import { event } from "./plugin/event.js";
+// import { element } from "./plugin/element.js";
+
+
 import { creator } from "./plugin/creator.js";
 
 /**
@@ -17,14 +19,24 @@ import { creator } from "./plugin/creator.js";
     // 생성자
     constructor(target, paramater){
 
+         // 그리드 아이디 저장
+        this.id = target;
+
         // 자신 값 저장
         this.self = this;
 
-        // 그리드 상태 객체 생성
-        watcher.init(this);
-
         // 데이터 관리 객체 생성
         reposit.init(this, paramater);
+
+        // 상태 관리 객체 생성
+        status.init(this);
+
+        // 제작 관리 객체 생성
+        // element.init(this);
+        creator.init(this);
+
+        // 이벤트 관리 객체 생성
+        watcher.init(this);
 
         // // 데이터 변수 생성 
         // this.data = [];
@@ -46,11 +58,11 @@ import { creator } from "./plugin/creator.js";
         this.outerEvent = paramater.event;
 
         // 엘리멘트 생성
-        if(typeof target == 'string'){
-            this.element = construct.createElement(target);
-        }else{
-            this.element = target;
-        }
+        // if(typeof target == 'string'){
+        //     this.element = construct.createElement(target);
+        // }else{
+        //     this.element = target;
+        // }
 
         
 
@@ -61,10 +73,10 @@ import { creator } from "./plugin/creator.js";
         this.option = construct.createOption(paramater);
 
         // 그리드 스타일세팅
-        construct.settingGrid(this.element, paramater);
+        //construct.settingGrid(this.element, paramater);
 
         // 내부 이벤트 생성        
-        this.innerEvent = construct.createEvent(this, paramater);
+        // this.innerEvent = construct.createEvent(this, paramater);
 
         // 그리드 생성
         creator.create(this);
@@ -79,20 +91,20 @@ import { creator } from "./plugin/creator.js";
      * 데이터 인덱싱
      * @param {string/number} rowSeq
      */
-    dataReIndexing(rowSeq){
+    // dataReIndexing(rowSeq){
 
-        // seqIndex 재 인덱싱
-        this.state.seqIndex = [];
-        this.data.forEach((item, index) => {
-            this.state.seqIndex[item._rowSeq] = index;
-        });
+    //     // seqIndex 재 인덱싱
+    //     this.state.seqIndex = [];
+    //     this.data.forEach((item, index) => {
+    //         this.state.seqIndex[item._rowSeq] = index;
+    //     });
 
-        // sequence가 키인 데이터 삭제
-        if(rowSeq){
-            delete this.state.seqRowElement[rowSeq];
-            delete this.state.seqCellElement[rowSeq];
-        }
-    }
+    //     // sequence가 키인 데이터 삭제
+    //     if(rowSeq){
+    //         delete this.state.seqRowElement[rowSeq];
+    //         delete this.state.seqCellElement[rowSeq];
+    //     }
+    // }
 
     /**
      * @deprecated
@@ -539,63 +551,63 @@ import { creator } from "./plugin/creator.js";
      * 신규행 추가
      * @returns 
      */
-    createNewRow = function(){
+    // createNewRow = function(){
 
-        // 신규행 ROW 데이터 세팅
-        let row = {
-            _rowSeq: this.getNextSeq(),
-            _state: constant.row.status.insert
-        };
+    //     // 신규행 ROW 데이터 세팅
+    //     let row = {
+    //         _rowSeq: this.getNextSeq(),
+    //         _state: constant.row.status.insert
+    //     };
 
-        // 신규행 기본값 설정되어있으면 세팅
-        if(this.option.data.insert){
-            for(let key in this.option.data.insert){
-                row[key] = this.option.data.insert[key];
-            }
-        }
+    //     // 신규행 기본값 설정되어있으면 세팅
+    //     if(this.option.data.insert){
+    //         for(let key in this.option.data.insert){
+    //             row[key] = this.option.data.insert[key];
+    //         }
+    //     }
 
-        // 필드값 세팅
-        let fields = reposit.getFields(this);
-        for(let field of fields){
+    //     // 필드값 세팅
+    //     let fields = reposit.getFields(this);
+    //     for(let field of fields){
             
-            // 신규행 추가시 기본값 세팅
-            switch(field.element){
-            case 'text': case 'select': default:
-                row[field.name] = "";
-                break;
-            case 'number':
-                row[field.name] = 0;
-                break;
-            case 'checkbox':
-                row[field.name] = this.option.checkbox.check;
-                break;
-            }
+    //         // 신규행 추가시 기본값 세팅
+    //         switch(field.element){
+    //         case 'text': case 'select': default:
+    //             row[field.name] = "";
+    //             break;
+    //         case 'number':
+    //             row[field.name] = 0;
+    //             break;
+    //         case 'checkbox':
+    //             row[field.name] = this.option.checkbox.check;
+    //             break;
+    //         }
 
-            // 해당 행에 셀렉트박스 데이터가 있는 경우, 셀렉트박스 empty값이 없거나 false일 경우
-            if(field.data && field.data.select 
-                && (!field.data.select.empty || field.data.select === false)
-                && field.data.select.list.length > 0){
+    //         // 해당 행에 셀렉트박스 데이터가 있는 경우, 셀렉트박스 empty값이 없거나 false일 경우
+    //         if(field.data && field.data.select 
+    //             && (!field.data.select.empty || field.data.select === false)
+    //             && field.data.select.list.length > 0){
 
-                if(field.data.select.value){
-                    row[field.name] = field.data.select.list[0][field.data.select.value];
-                }else{
-                    row[field.name] = field.data.select.list[0].value;
-                }
-            }
-        }
+    //             if(field.data.select.value){
+    //                 row[field.name] = field.data.select.list[0][field.data.select.value];
+    //             }else{
+    //                 row[field.name] = field.data.select.list[0].value;
+    //             }
+    //         }
+    //     }
 
-        // 신규 데이터 추가
-        reposit.appendData(this, row);
+    //     // 신규 데이터 추가
+    //     reposit.appendData(this, row);
 
-        // 신규행 추가
-        let tr = creator.createRow(this, row, reposit.getDataSize(this)-1);
+    //     // 신규행 추가
+    //     let tr = creator.createRow(this, row, reposit.getDataSize(this)-1);
 
-        if(this.option.body.state.use == true){
-            tr.classList.add(constant.class.insert);
-        }
+    //     if(this.option.body.state.use == true){
+    //         tr.classList.add(constant.class.insert);
+    //     }
         
-        return tr;
-    }
+    //     return tr;
+    // }
 
     /**
      * 그리드 시퀀스 값으로 데이터 인덱스 구하기
@@ -645,13 +657,13 @@ import { creator } from "./plugin/creator.js";
      * 현재 시퀀스 가져오기
      * @returns 
      */
-    getCurSeq = () => this.state.curSeq;
+    // getCurSeq = () => this.state.curSeq;
 
     /**
      * 다음시퀀스 가져오기(시퀀스 증가)
      * @returns 
      */
-    getNextSeq = () => ++this.state.curSeq;
+    // getNextSeq = () => ++this.state.curSeq;
 
     /**
      * 그리드 타켓 엘리멘트 가져오기
@@ -689,68 +701,68 @@ import { creator } from "./plugin/creator.js";
      */
     getElementBodyTable = () => this.element.bodyTb;
     
-    /**
-     * key:sequence value: index 인덱싱 push
-     * @param {string} sequence 
-     * @param {string} index 
-     */
-	setSeqIndex = (sequence, index) => this.state.seqIndex[sequence] = index;
+    // /**
+    //  * key:sequence value: index 인덱싱 push
+    //  * @param {string} sequence 
+    //  * @param {string} index 
+    //  */
+	// setSeqIndex = (sequence, index) => this.state.seqIndex[sequence] = index;
 		
-    /**
-     * 시퀀스번호로 데이터의 index 가져오기
-     * @param {string} sequence 
-     * @returns 
-     */
-	getSeqIndex = sequence => this.state.seqIndex[sequence];
+    // /**
+    //  * 시퀀스번호로 데이터의 index 가져오기
+    //  * @param {string} sequence 
+    //  * @returns 
+    //  */
+	// getSeqIndex = sequence => this.state.seqIndex[sequence];
 		
-    /**
-     * key:index value: sequence 인덱싱 push
-     * @param {string} index 
-     * @param {string} sequence 
-     */
-	setIdxSequence = (index, sequence) => this.state.idxSequence[index] = sequence;
+    // /**
+    //  * key:index value: sequence 인덱싱 push
+    //  * @param {string} index 
+    //  * @param {string} sequence 
+    //  */
+	// setIdxSequence = (index, sequence) => this.state.idxSequence[index] = sequence;
 		
-    /**
-     * index로 시퀀스번호 가져오기
-     * @param {string} index 
-     * @returns 
-     */
-	getIdxSequence = (index) => this.state.idxSequence[index];
+    // /**
+    //  * index로 시퀀스번호 가져오기
+    //  * @param {string} index 
+    //  * @returns 
+    //  */
+	// getIdxSequence = (index) => this.state.idxSequence[index];
 
-    /**
-     * 그리드 행 엘리먼트 인덱싱
-     * @param {string} sequence 
-     * @param {element} element 
-     * @returns 
-     */
-    setSeqRowElement = (sequence, element) => this.state.seqRowElement[sequence] = element;
+    // /**
+    //  * 그리드 행 엘리먼트 인덱싱
+    //  * @param {string} sequence 
+    //  * @param {element} element 
+    //  * @returns 
+    //  */
+    // setSeqRowElement = (sequence, element) => this.state.seqRowElement[sequence] = element;
 
-    /**
-     * 그리드 행 엘리먼트 가져오기
-     * @param {*} sequence 
-     * @returns 
-     */
-    getSeqRowElement = sequence => this.state.seqRowElement[sequence];
+    // /**
+    //  * 그리드 행 엘리먼트 가져오기
+    //  * @param {*} sequence 
+    //  * @returns 
+    //  */
+    // getSeqRowElement = sequence => this.state.seqRowElement[sequence];
 
-    /**
-     * 그리드 셀 엘리먼트 인덱싱
-     * @param {string} sequence 
-     * @param {string} name 
-     * @param {element} element 
-     * @returns 
-     */
-    setSeqCellElement(sequence, name, element) {
-        if(!this.state.seqCellElement[sequence]) this.state.seqCellElement[sequence] = {};
-        this.state.seqCellElement[sequence][name] = element;
-    }
+    // /**
+    //  * 그리드 셀 엘리먼트 인덱싱
+    //  * @param {string} sequence 
+    //  * @param {string} name 
+    //  * @param {element} element 
+    //  * @returns 
+    //  */
+    // setSeqCellElement(sequence, name, element) {
+    //     if(!this.state.seqCellElement[sequence]) this.state.seqCellElement[sequence] = {};
+    //     this.state.seqCellElement[sequence][name] = element;
+    // }
 
-    /**
-     * 그리드 셀 엘리먼트 가져오기
-     * @param {string/number} sequence 
-     * @param {string} name 
-     * @returns 
-     */
-    getSeqCellElement = (sequence, name) => this.state.seqCellElement[sequence][name];
+    // /**
+    //  * 그리드 셀 엘리먼트 가져오기
+    //  * @param {string/number} sequence 
+    //  * @param {string} name 
+    //  * @returns 
+    //  */
+    // getSeqCellElement = (sequence, name) => this.state.seqCellElement[sequence][name];
    
     /**
      * 신규행 추가(위에서)
@@ -766,13 +778,13 @@ import { creator } from "./plugin/creator.js";
      * 최상위 rowElement 반환
      * @returns
      */
-    getFirstRowElement = () => this.getSeqRowElement(this.getIdxSequence(0));
+    getFirstRowElement = () => status.getFirstRowElement(this);
 
     /**
      * 최상위 rowSeq 반환
      * @returns
      */
-    getFirstRowSeq = () => this.getFirstRowElement().dataset.rowSeq;
+    getFirstRowSeq = () => status.getFirstRowElement(this).dataset.rowSeq;
 
     /**
      * rowSeq 값으로 행 엘리먼트 가져오기
@@ -874,7 +886,7 @@ import { creator } from "./plugin/creator.js";
         this.fields.forEach(field => this.getSeqCellElement(rowSeq, field.name).disabled = false);
 
         // 데이터 행상태 값 변경
-        if(rowElement.classList.contains(constant.class.update)){
+        if(rowElement.classList.contains(constant.class.row.update)){
             this.data[rowIdx]._state = constant.row.status.update;
         }else{
             this.data[rowIdx]._state = constant.row.status.select;
@@ -950,7 +962,7 @@ import { creator } from "./plugin/creator.js";
             loaded.forEach(item => item.fn(item.tag, item.row));
 
             // 취소할 상태값 저장
-            cancelTr = constant.class.update;
+            cancelTr = constant.class.row.update;
             break;
         // 삭제상태 취소
         case constant.row.status.remove:
@@ -959,7 +971,7 @@ import { creator } from "./plugin/creator.js";
             this.data[rowIdx]._state = constant.row.status.select;
             
             // 취소할 상태값 저장
-            cancelTr = constant.class.remove;
+            cancelTr = constant.class.row.remove;
             break;
         }
 
@@ -1070,7 +1082,7 @@ import { creator } from "./plugin/creator.js";
 
         if(this.option.body.state.use == true){
             this.getRowElementRowSeq(rowSeq)
-                .classList.add(constant.class.update);
+                .classList.add(constant.class.row.update);
         }
     }
 
@@ -1146,7 +1158,7 @@ import { creator } from "./plugin/creator.js";
         loaded.forEach(item => item.fn(item.tag, item.row));
 
         if(this.option.body.state.use == true){
-            tr.classList.add(constant.class.update);
+            tr.classList.add(constant.class.row.update);
         }
     }
 
@@ -1194,7 +1206,7 @@ import { creator } from "./plugin/creator.js";
         // 행 삭제상태(색상) 변환
         if(this.option.body.state.use == true){
             this.getRowElementRowSeq(rowSeq)
-                .classList.add(constant.class.remove);
+                .classList.add(constant.class.row.remove);
         }
     }
 
@@ -1255,7 +1267,7 @@ import { creator } from "./plugin/creator.js";
         }
 
         if(this.option.body.state.use == true){
-            tr.classList.add(constant.class.remove);
+            tr.classList.add(constant.class.row.remove);
         }
 
         this.data[rowIdx]._state = constant.row.status.remove;
@@ -1290,7 +1302,7 @@ import { creator } from "./plugin/creator.js";
         this.getRowElementRowSeq(rowSeq).remove();
 
         // 데이터 재 인덱싱
-        reposit.dataReIndexing(this, rowSeq);
+        status.dataReIndexing(this, rowSeq);
 
         // 조회목록 없을시 메시지 표시
         // this.emptyMessageDisply();

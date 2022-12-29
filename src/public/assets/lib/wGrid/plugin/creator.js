@@ -1,12 +1,22 @@
 import { constant } from "./constant.js";
 import { util } from './util.js';
 import { reposit } from "./reposit.js";
-import { watcher } from "./watcher.js";
+import { status } from "./status.js";
+
+// 엘리먼트 데이터
+let elements = {};
 
 /**
- * 그리드 생성 객체
+ * 그리드 제작 객체
  */
 export const creator = {
+
+    /**
+     * 그리드 
+     * @param {*} self 
+     * @returns 
+     */
+    init: (self) => init(self),
 
     /**
      * 그리드 생성(최초 1회 실행)
@@ -43,7 +53,86 @@ export const creator = {
      * @param {*} self 
      * @returns 
      */
-    createCell: (self, rowIdx, cell, cellIdx, loaded) => createBodyRowCell(self, rowIdx, cell, cellIdx, loaded)
+    createCell: (self, rowIdx, cell, cellIdx, loaded) => createBodyRowCell(self, rowIdx, cell, cellIdx, loaded),
+
+    /**
+     * 
+     * @param {*} self 
+     * @returns 
+     */
+    getHeadElement: (self) => elements[self.sequence].head,
+
+    /**
+     * 
+     * @param {*} self 
+     * @returns 
+     */
+    getBodyElement: (self) => elements[self.sequence].body,
+    
+    /**
+     * 
+     * @param {*} self 
+     * @returns 
+     */
+    getBodyTbElement: (self) => elements[self.sequence].bodyTb
+}
+
+/**
+ * 
+ * @param {*} self 
+ */
+const init = (self) => {
+    
+    // 그리드에 사용되는 엘리먼트 생성
+    let id = self.id;
+    let target = document.getElementById(id);
+    let head = document.createElement('div');
+    let headTb = document.createElement('table');
+    let headTr = document.createElement('tr');
+    let body = document.createElement('div');
+    let bodyTb = document.createElement('table');
+    let bodyEmpty = document.createElement('div');
+    let pagination = document.createElement('div');
+    
+    // 그리드 CSS 적용
+    target.classList.add(constant.class.area.target);
+    head.classList.add(constant.class.area.header);
+    body.classList.add(constant.class.area.body);
+    pagination.classList.add(constant.class.area.pagination);
+
+    // 그리드 Style 적용
+
+    // 엘리먼트 연결
+    headTb.appendChild(headTr);
+    head.appendChild(headTb);
+
+    body.appendChild(bodyTb);
+    body.appendChild(bodyEmpty);
+
+    target.appendChild(head);
+    target.appendChild(body);
+    target.appendChild(pagination);
+
+    // 그리드 css 세팅
+    // el.target.classList.add("wgrid");
+    // if(param?.option?.style?.width){
+    //     el.target.style.width = param.option.style.width;
+    // }     
+
+    // if(param?.option?.style?.height){
+    //     el.body.style.height = param.option.style.height + 'vh';
+    // }
+
+    // if(param?.option?.style?.overflow?.x == 'overlay' || param?.option?.style?.overflow?.x == 'scroll'){
+    //     el.head.style.overflowX = param.option.style.overflow.x;
+    //     el.body.style.overflowX = param.option.style.overflow.x;
+    // }
+    // if(param?.option?.style?.overflow?.y == 'overlay' || param?.option?.style?.overflow?.y == 'scroll'){
+    //     el.head.style.overflowY = param.option.style.overflow.y;
+    //     el.body.style.overflowY = param.option.style.overflow.y;
+    // }
+
+    elements[self.sequence] = {id, target, head, headTb, headTr, body, bodyTb, bodyEmpty, pagination};
 }
 
 /**
@@ -75,15 +164,17 @@ const createGrid = (self) => {
 const refresh = (self) => {
 
     // 그리드 상태 초기화
-    watcher.clean(self);
+    status.clean(self);
 
     // 필드 비우기
-    while(self.element.bodyTb.hasChildNodes()){
-        self.element.bodyTb.removeChild(self.element.bodyTb.firstChild);
-    }
+    let bodyTb = elements[self.sequence].bodyTb;
+    util.elementEmpty(bodyTb);
+    // while(self.element.bodyTb.hasChildNodes()){
+    //     self.element.bodyTb.removeChild(self.element.bodyTb.firstChild);
+    // }
 
     // 필드 재생성
-    reposit.getShallowData(self).forEach((row, rIdx) => self.element.bodyTb.appendChild(createBodyRow(self, row, rIdx)));
+    reposit.getData(self).forEach((row, rIdx) => bodyTb.appendChild(createBodyRow(self, row, rIdx)));
 }
 
 /**
@@ -93,7 +184,8 @@ const createHead = (self) => {
 
     // 변수 정의
     let th = null, div = null, tag = null;
-    util.elementEmpty(self.element.headTr);
+    let headTr = elements[self.sequence].headTr;
+    util.elementEmpty(headTr);
 
     // 헤드영역 생성
     let fields = reposit.getFields(self);
@@ -135,7 +227,7 @@ const createHead = (self) => {
 
         // 태그연결
         th.appendChild(div);
-        self.element.headTr.appendChild(th);
+        headTr.appendChild(th);
     }
 }
 
@@ -145,10 +237,10 @@ const createHead = (self) => {
 const createBody = (self) => {
 
     // body 초기화
-    util.elementEmpty(self.element.bodyTb);
+    util.elementEmpty(elements[self.sequence].bodyTb);
 
     // ROW 생성
-    reposit.getShallowData(self).forEach((item, idx) => self.element.bodyTb.appendChild(createBodyRow(self, item, idx)));
+    reposit.getData(self).forEach((item, idx) => self.element.bodyTb.appendChild(createBodyRow(self, item, idx)));
 }
 
 /**
@@ -159,7 +251,8 @@ const createBodyNewRow = (self) => {
 
     // 신규행 ROW 데이터 세팅
     let row = {
-        _rowSeq: self.getNextSeq(),
+        //  self.getNextSeq(),
+        _rowSeq: status.getNextSeq(self),
         _state: constant.row.status.insert
     };
 
@@ -207,7 +300,7 @@ const createBodyNewRow = (self) => {
     let tr = creator.createRow(self, row, reposit.getDataSize(self)-1);
 
     if(self.option.body.state.use == true){
-        tr.classList.add(constant.class.insert);
+        tr.classList.add(constant.class.row.insert);
     }
     
     return tr;
@@ -225,11 +318,14 @@ const createBodyRow = (self, row, rIdx) => {
     tr.dataset.rowSeq = row._rowSeq;
 
     // 앞키 뒤값
-    self.setSeqIndex(row._rowSeq, rIdx);
-    self.setIdxSequence(rIdx, row._rowSeq);
+    // self.setSeqIndex(row._rowSeq, rIdx);
+    status.setSeqIndex(self, row._rowSeq, rIdx);
+    //self.setIdxSequence(rIdx, row._rowSeq);
+    status.setIdxSequence(self, rIdx, row._rowSeq);
 
     // 행 엘리먼트 인덱싱
-    self.setSeqRowElement(row._rowSeq, tr);
+    //self.setSeqRowElement(row._rowSeq, tr);
+    elements[self.sequence]
 
     // CELL 생성        
     let loaded = [];
@@ -397,7 +493,8 @@ const createBodyRowCell = (self, row, rIdx, cell, cIdx, loaded) => {
     }
     
     // 셀 엘리먼트 인덱싱
-    self.setSeqCellElement(row._rowSeq, cell.name, tag);
+    //self.setSeqCellElement(row._rowSeq, cell.name, tag);
+    status.setSeqCellElement(self, row._rowSeq, cell.name, tag);
 
     // 태그연결
     td.appendChild(div);
@@ -417,13 +514,15 @@ const createBodyRowCell = (self, row, rIdx, cell, cIdx, loaded) => {
  * 그리드 생성 - 페이징
  */
 const createPagination = (self, params) => {
-
-    util.elementEmpty(self.element.pagination);
+    // 페이지네이션 엘리먼트
+    let pagination = elements[self.sequence].pagination;
+    // 초기화
+    util.elementEmpty(pagination);
 
     // TEST
     for(let i=0; i<10; i++){
         let btn = document.createElement('button');
         btn.textContent = i;
-        self.element.pagination.appendChild(btn);
+        pagination.appendChild(btn);
     }
 }

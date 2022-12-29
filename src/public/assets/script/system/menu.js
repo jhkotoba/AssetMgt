@@ -45,7 +45,7 @@ const menu = {
         sender.request({url: '/system/getMenuList', body: {}})
             .then(res => res.resultCode == 'SUCCESS' ? this.data.origin = res.data : Promise.reject(new Error(res.message)))
             .then(() => this.initGrid())
-            .catch(error => alert(error));
+            .catch(err => console.error(err));
     },
 
     /**
@@ -301,3 +301,5 @@ const menu = {
         return isValidation;
     }
 }
+
+window._menu = menu;
