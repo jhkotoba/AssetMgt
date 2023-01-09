@@ -56,6 +56,18 @@ export const creator = {
     createCell: (self, rowIdx, cell, cellIdx, loaded) => createBodyRowCell(self, rowIdx, cell, cellIdx, loaded),
 
     /**
+     * 신규행 추가(위에서)
+     * @param {*} self
+     */
+    prependRow: (self) => elements[self.sequence].bodyTb.insertBefore(createBodyNewRow(self), elements[self.sequence].bodyTb.firstChild),
+
+    /**
+     * 신규행 추가(아래에서)
+     * @param {*} self
+     */
+    appendRow: (self) => elements[self.sequence].bodyTb.appendChild(createBodyNewRow(self)),
+
+    /**
      * 
      * @param {*} self 
      * @returns 
@@ -75,6 +87,7 @@ export const creator = {
      * @returns 
      */
     getBodyTbElement: (self) => elements[self.sequence].bodyTb
+    
 }
 
 /**
@@ -283,7 +296,7 @@ const createBodyNewRow = (self) => {
         // 해당 행에 셀렉트박스 데이터가 있는 경우, 셀렉트박스 empty값이 없거나 false일 경우
         if(field.data && field.data.select 
             && (!field.data.select.empty || field.data.select === false)
-            && field.data.select.list.length > 0){
+            && field.data.select.list?.length > 0){
 
             if(field.data.select.value){
                 row[field.name] = field.data.select.list[0][field.data.select.value];
@@ -325,7 +338,7 @@ const createBodyRow = (self, row, rIdx) => {
 
     // 행 엘리먼트 인덱싱
     //self.setSeqRowElement(row._rowSeq, tr);
-    elements[self.sequence]
+    status.setSeqRowElement(self, row._rowSeq, tr);
 
     // CELL 생성        
     let loaded = [];

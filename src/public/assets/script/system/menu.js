@@ -63,8 +63,8 @@ const menu = {
             item.menuLv == 1 ? this.data.topList.push(item) : this.data.subList.push(item)
         });
 
-        // 그리드 데이터 세팅        
-        this.grid.top.setData(JSON.parse(JSON.stringify(this.data.topList)).sort((a,b) => a.menuSeq - b.menuSeq), true);
+        // 그리드 데이터 세팅
+        this.grid.top.setData(JSON.parse(JSON.stringify(this.data.topList)), true);
 
         // 상위메뉴 첫행 혹은 이전에 선택한 행 클릭
         let item = this.grid.top.getData().filter(f => f.menuNo == this.data.topMenuNo)[0];
@@ -110,7 +110,7 @@ const menu = {
                         return false;
                     // 행선택 복원, 진행상태 여부 복원
                     }else{
-                        this.grid.top.chageOption('option.row.chose', true);
+                        this.grid.top.chageOption('row.chose', true);
                         this.data.isSubMenuApply = false;
                     }
                     // 하위메뉴 목록 출력
@@ -156,22 +156,22 @@ const menu = {
         // 상위 메뉴 추가 버튼
         btnTopAdd.addEventListener('click', () => this.grid.top.prependRow());
         // 상위 메뉴 편집 버튼
-        btnTopEdit.addEventListener('click', () => this.grid.top.modifyStateCheckedElement('check'));
+        btnTopEdit.addEventListener('click', () => this.grid.top.modifyRowCheckedElement('check'));
         // 상위 메뉴 삭제 버튼
         btnTopRemove.addEventListener('click', () => this.grid.top.removeStateCheckedElement('check'));
         // 상위 메뉴 취소 버튼
-        btnTopCancel.addEventListener('click', () => this.grid.top.cancelStateCheckedElement('check'));        
+        btnTopCancel.addEventListener('click', () => this.grid.top.cancelRowCheckedElement('check'));        
         // 상위 메뉴 저장 버튼
         btnTopSave.addEventListener('click', () => this.applyTopMenu(this.grid.top.getApplyData()));
 
         // 하위 메뉴 추가 버튼
         btnSubAdd.addEventListener('click', () => this.subMenuEvent(this.grid.sub.prependRow));
         // 하위 메뉴 편집 버튼
-        btnSubEdit.addEventListener('click', () => this.subMenuEvent(this.grid.sub.modifyStateCheckedElement, 'check'));
+        btnSubEdit.addEventListener('click', () => this.subMenuEvent(this.grid.sub.modifyRowCheckedElement, 'check'));
         // 하위 메뉴 삭제 버튼
         btnSubRemove.addEventListener('click', () => this.subMenuEvent(this.grid.sub.removeStateCheckedElement, 'check'));
         // 하위 메뉴 취소 버튼
-        btnSubCancel.addEventListener('click', () => this.subMenuEvent(this.grid.sub.cancelStateCheckedElement, 'check'));        
+        btnSubCancel.addEventListener('click', () => this.subMenuEvent(this.grid.sub.cancelRowCheckedElement, 'check'));        
         // 하위 메뉴 저장 버튼
         btnSubSave.addEventListener('click', () => this.applySubMenu(this.grid.sub.getApplyData()));
     },
@@ -183,10 +183,10 @@ const menu = {
         callFunction(value);
         if(this.grid.sub.getApplyData().length > 0){
             this.data.isSubMenuApply = true;
-            this.grid.top.chageOption('option.row.chose', false);
+            this.grid.top.chageOption('row.chose', false);
         }else{
             this.data.isSubMenuApply = false;
-            this.grid.top.chageOption('option.row.chose', true);
+            this.grid.top.chageOption('row.chose', true);
         }
     },
 
@@ -217,7 +217,7 @@ const menu = {
                 if(response.resultCode == 'SUCCESS'){
                     alert('적용되었습니다.');
                     this.data.isSubMenuApply = false;
-                    this.grid.top.chageOption('option.row.chose', true);
+                    this.grid.top.chageOption('row.chose', true);
                     this.selectMenu();
                 }else{
                     alert(response.message);
@@ -246,7 +246,7 @@ const menu = {
                 if(response.resultCode == 'SUCCESS'){
                     alert('적용되었습니다.');
                     this.data.isSubMenuApply = false;
-                    this.grid.top.chageOption('option.row.chose', true);
+                    this.grid.top.chageOption('row.chose', true);
                     this.selectMenu();
                 }else{
                     alert(response.message);

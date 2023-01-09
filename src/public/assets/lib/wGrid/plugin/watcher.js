@@ -1,8 +1,8 @@
 import { util } from './util.js';
+import { constant } from "./constant.js";
 import { reposit } from "./reposit.js";
 import { status } from "./status.js";
 import { creator } from "./creator.js";
-
 
 /**
  * 이벤트 데이터

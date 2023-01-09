@@ -1,3 +1,4 @@
+import { util } from './util.js';
 import { reposit } from "./reposit.js";
 
 // 그리드 상태 데이터
@@ -83,6 +84,13 @@ export const status = {
     getFirstRowElement: (self) => status.getSeqRowElement(self, status.getIdxSequence(self, 0)),
 
     /**
+     * 최상위 rowElement 반환
+     * @param {*} self
+     * @returns
+     */
+    getFirstRowSeq: (self) => status.getSeqRowElement(self, status.getIdxSequence(self, 0)).dataset.rowSeq,
+
+    /**
      * 그리드 행 엘리먼트 인덱싱
      * @param {*} self 
      * @param {string} sequence 
@@ -108,9 +116,8 @@ export const status = {
      * @returns 
      */
     setSeqCellElement: (self, sequence, name, element) => {
-        let cellElement = states[self.sequence].seqCellElement[sequence];
-        if(!cellElement) cellElement = {}
-        cellElement[name] = element;
+        if(!states[self.sequence].seqCellElement[sequence]) states[self.sequence].seqCellElement[sequence] = {}
+        states[self.sequence].seqCellElement[sequence][name] = element;
     },
 
     /**
@@ -121,6 +128,38 @@ export const status = {
      * @returns 
      */
     getSeqCellElement: (self, sequence, name) => states[self.sequence].seqCellElement[sequence][name],
+
+    /**
+     * name값으로 체크된 체크박스된 엘리먼트 가져오기
+     * @param {*} self
+     * @param {string} name 
+     * @returns
+     */
+    getCheckedCellElement: (self, name) => getCheckedCellElement(self, name),
+
+    /**
+     * name값으로 체크된 체크박스 seq(list)번호 가져오기
+     * @param {*} self
+     * @param {string} name 
+     * @returns 
+     */
+    getNameCheckedSeqs: (self, name) => getNameCheckedSeqs(self, name),
+
+    /**
+     * name값으로 체크된 체크박스 행 데이터(itemList) 가져오기
+     * @param {*} self
+     * @param {string} name 
+     * @returns 
+     */
+    getNameCheckedItems: (self, name) => getNameCheckedItems(self, name),
+
+    /**
+     * name값으로 body 체크박스 전체 선택/해제
+     * @param {string} name 
+     * @param {boolean} bool 
+     * @returns 
+     */
+    setAllChecked: (self, name, bool) => setAllChecked(self, name, bool),
 
     /**
      * 데이터 재 인덱싱
@@ -182,4 +221,64 @@ const reIndexing = (self, rowSequence) => {
         delete states[self.sequence].seqRowElement[rowSequence];
         delete states[self.sequence].seqCellElement[rowSequence];
     }
+}
+
+/**
+ * name값으로 body 체크박스 전체 선택/해제
+ * @param {*} self
+ * @param {string} name 
+ * @param {boolean} bool
+ */
+const setAllChecked = (self, name, bool) => {
+
+    let cellElement = states[self.sequence].seqCellElement;
+    let index = status.getSeqIndex(self, seq);
+    let data = reposit.getData(self, index);
+    let option = reposit.getOption(self);
+
+    for(let seq in cellElement){
+        cellElement[seq][name].checked = bool;
+        data[name] = bool == true ? option.checkbox.check : option.checkbox.uncheck;
+    }
+}
+
+/**
+ * name값으로 체크된 체크박스된 엘리먼트 가져오기
+ * @param {*} self
+ * @param {string} name 
+ * @returns
+ */
+const getCheckedCellElement = (self, name) => {
+    console.log('self.sequence:', self.sequence);
+    console.log('name:', name);
+    return Object.entries(states[self.sequence].seqCellElement)
+        .filter(f => f[1][name].checked == true)
+        .flatMap(fm => fm[1][name]);
+};
+
+/**
+ * name값으로 체크된 체크박스 seq(list)번호 가져오기
+ * @param {*} self
+ * @param {string} name 
+ * @returns 
+ */
+const getNameCheckedSeqs = (self, name) => {
+    let seqList = [];
+    getCheckedCellElement(self, name)
+        .forEach(check => seqList.push(Number(util.getTrNode(check).dataset.rowSeq)));
+
+    return seqList;
+};
+
+/**
+ * name값으로 체크된 체크박스 행 데이터(itemList) 가져오기
+ * @param {*} self
+ * @param {string} name 
+ * @returns 
+ */
+const getNameCheckedItems = (self, name) => {
+    let itemList = [];
+    getCheckedCellElement(self, name)
+        .forEach(check => itemList.push(reposit.getDataIndex(self, status.getSeqIndex(self, util.getTrNode(check).dataset.rowSeq))));
+    return JSON.parse(JSON.stringify(itemList));
 }
