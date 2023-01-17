@@ -3,6 +3,10 @@ import { constant } from "./constant.js";
 import { reposit } from "./reposit.js";
 import { status } from "./status.js";
 import { creator } from "./creator.js";
+import { amender } from "./amender.js";
+import { canceler } from "./canceler.js";
+
+
 
 /**
  * 이벤트 데이터
@@ -19,15 +23,18 @@ export const watcher = {
      * @param {*} self
      * @returns 
      */
-    init: (self) => init(self)
+    init: (self, outerEvent) => init(self, outerEvent)
 }
 
 /**
  * 그리드 이벤트 관련 초기설정
  * @param {*} self
+ * @param {*} outerEvent
  */
-const init = (self) => {
+const init = (self, outerEvent) => {
 
+    console.log('watcher outerEvent:', outerEvent);
+    
     // 생성할 이벤트 종류
     let evList = ["click", "change", "keyup"];
     // 내부 연결 이벤트
@@ -92,6 +99,7 @@ const init = (self) => {
     for(let i=0; i<evList.length; i++){
 
         bodyElement.addEventListener(evList[i], event => {
+
             // 체크박스 클릭이벤트 강제 종료
             if(event.type == 'click' && event.target.dataset.sync == 'checkbox') return;
             
@@ -99,7 +107,6 @@ const init = (self) => {
             if(!row)return;
             
             let sequence = row.dataset.rowSeq;
-            //let index = self.getSeqIndex(sequence);
             let index = status.getSeqIndex(self, sequence);
             let data = reposit.getData(self, index);
 
@@ -134,14 +141,44 @@ const init = (self) => {
             }
 
             // 외부 이벤트 체크
-            if(self.outerEvent && self.outerEvent[evList[i]]){
+            if(outerEvent && outerEvent[evList[i]]){
                 // 정의된 외부 이벤트 호출
-                self.outerEvent[evList[i]](
+                outerEvent[evList[i]](
                     event,
                     reposit.getDeepData(self, index),
                     index,
                     sequence
                 );
+            }
+
+            // 자동 행 상태변경 활성화 된 경우
+            if(self.option.isRowStatusObserve === true){
+                // keyup, change 이벤트만 적용
+                if(evList[i] == 'keyup' || evList[i] == 'change'){
+                    // 예외 필드명 실행막기
+                    if(self.option.rowStatusObserve.exceptList.includes(event.target.name) === false){
+                        // 변경사항 체크
+                        if(amender.isRowModify(self, index, sequence, self.option.rowStatusObserve)){
+                            // 단순 행상태 변경인지 태그재생성인지 여부 분기
+                            if(self.option.rowStatusObserve.isRowEditMode === true){
+                                // 편집모드상태 변경(태그변경)
+                                amender.modifyRowElement(self, index, sequence);
+                            }else{
+                                // 편집상태 변경(스타일 변경)
+                                amender.modifyRow(self, index, sequence);
+                            }
+                        }else{
+                            // 단순 행상태 변경인지 태그재생성인지 여부 분기
+                            if(self.option.rowStatusObserve.isRowEditMode == true){
+                                // 편집모드상태를 취소(태그변경)
+                                canceler.cancelRowElement(self, index, sequence);
+                            }else{
+                                // 편집상태를 취소(스타일 변경)
+                                canceler.cancelRow(self, index, sequence);
+                            }
+                        }
+                    }
+                }
             }
 
             /**
@@ -150,7 +187,7 @@ const init = (self) => {
             // 행선택 chose 옵션 설정시
             if(evList[i] == 'click' 
             && ['INPUT', 'SELECT', 'BUTTON'].includes(event.target.tagName) == false
-            && self.option.row.chose == true){
+            && self.option.style.row.isChose == true){
                 bodyTbElement.childNodes.forEach(item => item.classList.remove(constant.class.row.choose));
                 row.classList.add(constant.class.row.choose);
             }
@@ -160,6 +197,5 @@ const init = (self) => {
     }
 
     //events[self.sequence] = innerEvent;
-
     // return innerEvent;
 }

@@ -100,7 +100,7 @@ const menu = {
                     height: 34.5, overflow: { y: 'scroll'}
                 },
                 body: { state: true },
-                row: { style: {cursor: 'pointer'}, chose: true},
+                style: { row: {cursor: 'pointer'}, chose: true},
                 data: { insert: this.data.newRow.top }
             },
             event: {
@@ -110,7 +110,7 @@ const menu = {
                         return false;
                     // 행선택 복원, 진행상태 여부 복원
                     }else{
-                        this.grid.top.chageOption('row.chose', true);
+                        this.grid.top.chageOption('option.style.row.isChose', true);
                         this.data.isSubMenuApply = false;
                     }
                     // 하위메뉴 목록 출력
@@ -158,7 +158,7 @@ const menu = {
         // 상위 메뉴 편집 버튼
         btnTopEdit.addEventListener('click', () => this.grid.top.modifyRowCheckedElement('check'));
         // 상위 메뉴 삭제 버튼
-        btnTopRemove.addEventListener('click', () => this.grid.top.removeStateCheckedElement('check'));
+        btnTopRemove.addEventListener('click', () => this.grid.top.removeRowCheckedElement('check'));
         // 상위 메뉴 취소 버튼
         btnTopCancel.addEventListener('click', () => this.grid.top.cancelRowCheckedElement('check'));        
         // 상위 메뉴 저장 버튼
@@ -169,7 +169,7 @@ const menu = {
         // 하위 메뉴 편집 버튼
         btnSubEdit.addEventListener('click', () => this.subMenuEvent(this.grid.sub.modifyRowCheckedElement, 'check'));
         // 하위 메뉴 삭제 버튼
-        btnSubRemove.addEventListener('click', () => this.subMenuEvent(this.grid.sub.removeStateCheckedElement, 'check'));
+        btnSubRemove.addEventListener('click', () => this.subMenuEvent(this.grid.sub.removeRowCheckedElement, 'check'));
         // 하위 메뉴 취소 버튼
         btnSubCancel.addEventListener('click', () => this.subMenuEvent(this.grid.sub.cancelRowCheckedElement, 'check'));        
         // 하위 메뉴 저장 버튼
@@ -183,10 +183,10 @@ const menu = {
         callFunction(value);
         if(this.grid.sub.getApplyData().length > 0){
             this.data.isSubMenuApply = true;
-            this.grid.top.chageOption('row.chose', false);
+            this.grid.top.chageOption('option.style.row.isChose', false);
         }else{
             this.data.isSubMenuApply = false;
-            this.grid.top.chageOption('row.chose', true);
+            this.grid.top.chageOption('option.style.row.isChose', true);
         }
     },
 
@@ -217,7 +217,7 @@ const menu = {
                 if(response.resultCode == 'SUCCESS'){
                     alert('적용되었습니다.');
                     this.data.isSubMenuApply = false;
-                    this.grid.top.chageOption('row.chose', true);
+                    this.grid.top.chageOption('option.style.row.isChose', true);
                     this.selectMenu();
                 }else{
                     alert(response.message);
@@ -246,7 +246,7 @@ const menu = {
                 if(response.resultCode == 'SUCCESS'){
                     alert('적용되었습니다.');
                     this.data.isSubMenuApply = false;
-                    this.grid.top.chageOption('row.chose', true);
+                    this.grid.top.chageOption('option.style.row.isChose', true);
                     this.selectMenu();
                 }else{
                     alert(response.message);

@@ -57,24 +57,48 @@ code.createGrid = function(){
         option: { 
             style: { height: 50, overflow: { y: 'scroll'}},
             data: { insert: {code: '', codeNm: '', groupCd:'', useYn: 'Y'}},
+            // 페이징 여부
+            isPaging: true,
+            // 페이징 옵션 설정
             paging: {
-                is: true
+
+            },
+            // 행 상태변경 체크 옵션
+            isRowStatusObserve: true,
+            // 행 상태변경 옵션 설정
+            rowStatusObserve: {
+                // 단순 행상태 변경인지 태그재생성인지 여부 설정
+                isRowEditMode: false,
+                // 예외설정 field의 name
+                exceptList: ['check']
             }
         },
         event: {
-            keyup: (event, item, index, sequence) => this.grid.applyModifyAndCancel(index, sequence, {isRowEditMode: false, exceptList: ['check']}),
             change: (event, item, index, sequence) => {
+                // 삭제 체크박스 클릭시 행 삭제상태, 체크해제시 행 삭제상태 취소
                 if(event.target.name == 'check'){
                     if(event.target.checked){
-                        this.grid.removeState(index, sequence, {exceptDisabledList: ['check']});
+                        this.grid.removeRow(index, sequence, {exceptDisabledList: ['check']});
                     }else{
-                        this.grid.cancelState(index, sequence);
+                        this.grid.cancelRow(index, sequence);
                     }
-                }else{
-                    this.grid.applyModifyAndCancel(index, sequence, {isRowEditMode: false, exceptList: ['check']});    
                 }
             }
         }
+        // event: {
+        //     keyup: (event, item, index, sequence) => this.grid.applyModifyAndCancel(index, sequence, {isRowEditMode: false, exceptList: ['check']}),
+        //     change: (event, item, index, sequence) => {
+        //         if(event.target.name == 'check'){
+        //             if(event.target.checked){
+        //                 this.grid.removeRow(index, sequence, {exceptDisabledList: ['check']});
+        //             }else{
+        //                 this.grid.cancelState(index, sequence);
+        //             }
+        //         }else{
+        //             this.grid.applyModifyAndCancel(index, sequence, {isRowEditMode: false, exceptList: ['check']});    
+        //         }
+        //     }
+        // }
     });
 }
 
@@ -153,3 +177,4 @@ code.applyCode = function(){
         return isValidation;
     }
 }
+window.__code = code;

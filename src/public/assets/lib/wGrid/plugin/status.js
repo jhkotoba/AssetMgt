@@ -167,7 +167,24 @@ export const status = {
      * @param {*} rowSequence 
      * @returns 
      */
-    dataReIndexing: (self, rowSequence) => reIndexing(self, rowSequence)
+    dataReIndexing: (self, rowSequence) => reIndexing(self, rowSequence),
+
+    /**
+     * 그리드 옵션 세팅
+     * @param {*} self 
+     * @param {*} option 
+     * @returns 
+     */
+    settingOption: (self, option) => settingOption(self, option),
+
+    /**
+     * 옵션변경
+     * @param {*} self 
+     * @param {*} optionName 
+     * @param {*} value 
+     * @returns 
+     */
+    chageOption: (self, optionName, value) => chageOption(self, optionName, value),
 }
 
 /**
@@ -234,11 +251,10 @@ const setAllChecked = (self, name, bool) => {
     let cellElement = states[self.sequence].seqCellElement;
     let index = status.getSeqIndex(self, seq);
     let data = reposit.getData(self, index);
-    let option = reposit.getOption(self);
 
     for(let seq in cellElement){
         cellElement[seq][name].checked = bool;
-        data[name] = bool == true ? option.checkbox.check : option.checkbox.uncheck;
+        data[name] = bool == true ? self.option.checkbox.check : self.option.checkbox.uncheck;
     }
 }
 
@@ -249,8 +265,6 @@ const setAllChecked = (self, name, bool) => {
  * @returns
  */
 const getCheckedCellElement = (self, name) => {
-    console.log('self.sequence:', self.sequence);
-    console.log('name:', name);
     return Object.entries(states[self.sequence].seqCellElement)
         .filter(f => f[1][name].checked == true)
         .flatMap(fm => fm[1][name]);
@@ -266,7 +280,6 @@ const getNameCheckedSeqs = (self, name) => {
     let seqList = [];
     getCheckedCellElement(self, name)
         .forEach(check => seqList.push(Number(util.getTrNode(check).dataset.rowSeq)));
-
     return seqList;
 };
 
@@ -281,4 +294,104 @@ const getNameCheckedItems = (self, name) => {
     getCheckedCellElement(self, name)
         .forEach(check => itemList.push(reposit.getDataIndex(self, status.getSeqIndex(self, util.getTrNode(check).dataset.rowSeq))));
     return JSON.parse(JSON.stringify(itemList));
+}
+
+/**
+ * 그리드 옵션세팅
+ */
+const settingOption = (self, option) => {
+
+    // 옵션 객체 생성
+    self.option = {};
+
+    /**
+     * 그리드 스타일 옵션
+     */
+    self.option.style = {};
+    // 넓이 (기본값: 100%)
+    self.option.style.width = option?.style?.width === undefined ? '100%' : option.style.width;
+    // 높이 (기본값: 500vh)
+    self.option.style.height = option?.style?.height === undefined ? '500vh' : option.style.height; 
+    
+    // 스크롤바 설정
+    self.option.style.overflow = {}
+    // 스크롤바 x 설정
+    self.option.style.overflow.y = option?.style?.overflow?.y === undefined ? null : option.style.overflow.y
+    // 스크롤바 y 설정
+    self.option.style.overflow.x = option?.style?.overflow?.x === undefined ? null : option.style.overflow.x;
+    
+    // 행 스타일 설정
+    self.option.style.row = {};
+    // 행 마우스 커서 설정
+    self.option.style.row.cursor = option?.style?.row?.cursor === undefined ? 'inherit' : option.style.row.cursor;
+    // 행 선택 스타일 여부 설정
+    self.option.style.row.isChose = option?.style?.row?.isChose === undefined ? false : option.style.row.isChose;
+
+    /**
+     * 그리드 헤드 표시여부
+     * 기본값: true
+     */
+    self.option.isHead = option?.isHead === undefined ? true : option.isHead;
+    
+    /**
+     * 페이지 사용여부
+     * 기본값 : false
+     */
+    self.option.isPaging = option?.isPaging === undefined ? false : option.isPaging;
+    self.option.paging = {};
+
+    /**
+     * 그리드 빈 상태일 경우 옵션
+     */
+    self.option.empty = {};
+    self.option.empty.message = option?.empty?.message === undefined ? 'No Data' : option.empty.message;
+
+    /**
+     * 그리드 행 상태별 색상 적용 여부
+     * 기본값: true
+     * isRowStatusObserve true 설정시 무시됨
+     */
+    self.option.isRowStatusColor = option?.isRowStatusColor === undefined ? true : option.isRowStatusColor;
+
+    /**
+     * 그리드 행 상태변경시 상태색상 자동 적용
+     * 기본값: false
+     * true 적용시 isRowStatusColor 값 true 적용
+     */
+    self.option.isRowStatusObserve = option?.isRowStatusObserve === undefined ? false : option.isRowStatusObserve;
+    // 행 상태변경 옵션
+    self.option.rowStatusObserve = {};
+    // 행 상태변경 태그변경 여부 옵션 (단순 행상태 변경인지 태그재생성인지 여부)
+    self.option.rowStatusObserve.isRowEditMode = option?.rowStatusObserve?.isRowEditMode === undefined ? false : option.rowStatusObserve.isRowEditMode;
+    // 행 상태변경 예외 항목 설정 (field의 name값을 List 형태로 전달)
+    self.option.rowStatusObserve.exceptList = option?.rowStatusObserve?.exceptList === undefined ? [] : option.rowStatusObserve.exceptList;
+    if(self.option.isRowStatusObserve === true){
+        self.option.isRowStatusColor = true;
+    }
+    
+    /**
+     * 체크박스 선택시 기본값 설정
+     */
+    self.option.checkbox = {};
+    self.option.checkbox.check = option?.checkbox?.check === undefined ? true : option.checkbox.check;
+    self.option.checkbox.uncheck = option?.checkbox?.uncheck === undefined ? false : option.checkbox.uncheck;
+
+    /**
+     * 신규행 생성시 기본값 설정
+     */
+    self.option.data = {};
+    self.option.data.insert = option?.data?.insert === undefined ? null : option.data.insert;
+
+    
+
+}
+
+/**
+ * 옵션변경
+ * @param {*} self 
+ * @param {*} optionName 
+ * @param {*} value 
+ */
+const chageOption = (self, optionName, value) => {
+    eval(`self.${optionName}=${value}`);
 }

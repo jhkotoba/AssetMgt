@@ -154,7 +154,7 @@ const init = (self) => {
 const createGrid = (self) => {
 
     // 헤더 생성
-    if(self.option.head.is === true) createHead(self);
+    if(self.option.isHead === true) createHead(self);
 
     // 바디 생성
     createBody(self);
@@ -168,7 +168,7 @@ const createGrid = (self) => {
     // this.element.body.appendChild(this.element.bodyEmpty);
 
     // 페이징 영역 생성
-    if(self.option.paging.is === true) createPagination(self);
+    if(self.option.isPaging === true) createPagination(self);
 }
 
 /**
@@ -312,7 +312,7 @@ const createBodyNewRow = (self) => {
     // 신규행 추가
     let tr = creator.createRow(self, row, reposit.getDataSize(self)-1);
 
-    if(self.option.body.state.use == true){
+    if(self.option.isRowStatusColor == true){
         tr.classList.add(constant.class.row.insert);
     }
     
@@ -345,7 +345,7 @@ const createBodyRow = (self, row, rIdx) => {
     reposit.getFields(self).forEach((field, cIdx) => tr.appendChild(createBodyRowCell(self, row, rIdx, field, cIdx, loaded)));
 
     // ROW 커서 옵션 적용
-    tr.style.cursor = self.option.row.style.cursor;
+    tr.style.cursor = self.option.style.row.cursor;
 
     // ROW 생성후 loaded함수 호출
     loaded.forEach(item => item.loaded(item.element, item.row));

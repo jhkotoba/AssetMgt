@@ -92,120 +92,120 @@ export const construct = {
      * @param {object} param 
      * @returns 
      */
-    createOption(param){
+    // createOption(param){
 
-        // 옵션 기본값 세팅
-        let option = {
-            style:{
-                width: '100%', 
-                height: '500vh',
-                overflow: {
-                    x: null, y: null
-                }
-            },
-            format:{
-                date: "YYYY-MM-DD"
-            },
-            empty:{
-                message: "no data"
-            },
-            head:{
-                is: true
-            },
-            body: {
-                state:{
-                    use: false
-                }
-            },
-            row: {
-                style:{                    
-                    cursor: "inherit",
-                },
-                chose: false
-            },
-            checkbox: {
-                check: true,
-                uncheck: false
-            },
-            data: {
-                insert: null
-            },
-            paging: {
-                is: false
-            }
-        }
+    //     // 옵션 기본값 세팅
+    //     let option = {
+    //         style:{
+    //             width: '100%', 
+    //             height: '500vh',
+    //             overflow: {
+    //                 x: null, y: null
+    //             }
+    //         },
+    //         format:{
+    //             date: "YYYY-MM-DD"
+    //         },
+    //         empty:{
+    //             message: "no data"
+    //         },
+    //         head:{
+    //             is: true
+    //         },
+    //         body: {
+    //             state:{
+    //                 use: false
+    //             }
+    //         },
+    //         row: {
+    //             style:{                    
+    //                 cursor: "inherit",
+    //             },
+    //             chose: false
+    //         },
+    //         checkbox: {
+    //             check: true,
+    //             uncheck: false
+    //         },
+    //         data: {
+    //             insert: null
+    //         },
+    //         paging: {
+    //             is: false
+    //         }
+    //     }
 
-        // 옵션값 세팅
-        if(param.option){
-            if(param.option.style){
-                if(param.option.style.width){
-                    option.style.width = param.option.style.width;
-                }
-                if(param.option.style.height){
-                    option.style.height = param.option.style.height + 'vh';
-                }
-                if(param.option.style.overflow){
-                    if(param.option.style.overflow.x){
-                        option.style.overflow.x = param.option.style.overflow.x;
-                    }
-                    if(param.option.style.overflow.y){
-                        option.style.overflow.y = param.option.style.overflow.y;
-                    }
+    //     // 옵션값 세팅
+    //     if(param.option){
+    //         if(param.option.style){
+    //             if(param.option.style.width){
+    //                 option.style.width = param.option.style.width;
+    //             }
+    //             if(param.option.style.height){
+    //                 option.style.height = param.option.style.height + 'vh';
+    //             }
+    //             if(param.option.style.overflow){
+    //                 if(param.option.style.overflow.x){
+    //                     option.style.overflow.x = param.option.style.overflow.x;
+    //                 }
+    //                 if(param.option.style.overflow.y){
+    //                     option.style.overflow.y = param.option.style.overflow.y;
+    //                 }
                    
-                }
-            }
-            if(param.option.empty){
-                if(param.option.empty.message){
-                    option.empty.message = param.option.empty.message;
-                }
-            }
-            if(param.option.format){
-                if(param.option.format.date){
-                    option.format.date = param.option.format.date
-                }
-            }
-            if(param.option.head){
-                if(param.option.head.is == false){
-                    option.head.is = false;
-                }else{
-                    option.head.is = true;
-                }
-            }
-            option.body.state.use = true;
-            if(param.option.body){
-                if(param.option.body.state){
-                    if(param.option.body.state.use == false){
-                        option.body.state.use = false;
-                    }else{
-                        option.body.state.use = true;
-                    }
-                }
-            }
-            if(param.option.row){
-                if(param.option.row.style){
-                    if(param.option.row.style.cursor){
-                        option.row.style.cursor = param.option.row.style.cursor;
-                    }                    
-                }
-                if(param.option.row.chose == true){
-                    option.row.chose = param.option.row.chose;
-                }
-            }
-            if(param?.option?.data){
-                if(param.option.data.insert){
-                    option.data.insert = param.option.data.insert;
-                }
-            }
-            if(param?.option?.paging){
-                if(param.option.paging.is === true){
-                    option.paging.is = true;
-                }else{
-                    option.paging.is = false;
-                }
-            }
-        }
-        return option;
-    },
+    //             }
+    //         }
+    //         if(param.option.empty){
+    //             if(param.option.empty.message){
+    //                 option.empty.message = param.option.empty.message;
+    //             }
+    //         }
+    //         if(param.option.format){
+    //             if(param.option.format.date){
+    //                 option.format.date = param.option.format.date
+    //             }
+    //         }
+    //         if(param.option.head){
+    //             if(param.option.head.is == false){
+    //                 option.head.is = false;
+    //             }else{
+    //                 option.head.is = true;
+    //             }
+    //         }
+    //         option.body.state.use = true;
+    //         if(param.option.body){
+    //             if(param.option.body.state){
+    //                 if(param.option.body.state.use == false){
+    //                     option.body.state.use = false;
+    //                 }else{
+    //                     option.body.state.use = true;
+    //                 }
+    //             }
+    //         }
+    //         if(param.option.row){
+    //             if(param.option.row.style){
+    //                 if(param.option.row.style.cursor){
+    //                     option.row.style.cursor = param.option.row.style.cursor;
+    //                 }                    
+    //             }
+    //             if(param.option.row.chose == true){
+    //                 option.row.chose = param.option.row.chose;
+    //             }
+    //         }
+    //         if(param?.option?.data){
+    //             if(param.option.data.insert){
+    //                 option.data.insert = param.option.data.insert;
+    //             }
+    //         }
+    //         if(param?.option?.paging){
+    //             if(param.option.paging.is === true){
+    //                 option.paging.is = true;
+    //             }else{
+    //                 option.paging.is = false;
+    //             }
+    //         }
+    //     }
+    //     return option;
+    // },
 
     /**
      * wGrid 생성시 그리드 세팅
@@ -353,7 +353,7 @@ export const construct = {
                 // 행선택 chose 옵션 설정시
                 if(evList[i] == 'click' 
                 && ['INPUT', 'SELECT', 'BUTTON'].includes(event.target.tagName) == false
-                && self.option.row.chose == true){
+                && self.option.style.row.isChose == true){
                     self.element.bodyTb.childNodes.forEach(item => item.classList.remove(constant.class.row.choose));
                     row.classList.add(constant.class.row.choose);
                 }

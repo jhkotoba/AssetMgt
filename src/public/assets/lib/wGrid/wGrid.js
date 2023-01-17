@@ -1,6 +1,3 @@
-import { util } from "./plugin/util.js";
-import { construct } from "./plugin/construct.js";
-import { constant } from "./plugin/constant.js";
 import { status } from "./plugin/status.js";
 import { reposit } from "./plugin/reposit.js";
 import { watcher } from "./plugin/watcher.js";
@@ -21,15 +18,15 @@ import { deleter } from "./plugin/deleter.js";
 
          // 그리드 아이디 저장
         this.id = target;
-
         // 자신 값 저장
         this.self = this;
 
         // 데이터 관리 객체 생성
         reposit.init(this, paramater);
-
         // 상태 관리 객체 생성
         status.init(this);
+        // 그리드 옵션세팅
+        status.settingOption(this, paramater.option);
 
         // 제작 관리 객체 생성
         // element.init(this);
@@ -39,7 +36,7 @@ import { deleter } from "./plugin/deleter.js";
         deleter.init(this);
 
         // 이벤트 관리 객체 생성
-        watcher.init(this);
+        watcher.init(this, paramater.event);
 
         // // 데이터 변수 생성 
         // this.data = [];
@@ -58,7 +55,7 @@ import { deleter } from "./plugin/deleter.js";
         
 
         // 외부 이벤트 연결
-        this.outerEvent = paramater.event;
+        //this.outerEvent = paramater.event;
 
         // 엘리멘트 생성
         // if(typeof target == 'string'){
@@ -73,7 +70,7 @@ import { deleter } from "./plugin/deleter.js";
         // this.constant = construct.createConstant();
 
         // 옵션세팅
-        this.option = construct.createOption(paramater);
+        // this.option = construct.createOption(paramater);
 
         // 그리드 스타일세팅
         //construct.settingGrid(this.element, paramater);
@@ -855,7 +852,8 @@ import { deleter } from "./plugin/deleter.js";
      * @returns 
      */
     //chageOption = (optionName, value) => eval(`this.${optionName}=` + value);
-    chageOption = (optionName, value) => reposit.chageOption(this, optionName, value);
+    //chageOption = (optionName, value) => reposit.chageOption(this, optionName, value);
+    chageOption = (optionName, value) => status.chageOption(this, optionName, value);
 
     /**
      * 수정/삭제 상태를 취소
@@ -870,12 +868,14 @@ import { deleter } from "./plugin/deleter.js";
      */
     // cancelStateIdx = rowIdx => this.cancelState(rowIdx, this.getIdxSequence(rowIdx));
     cancelRowIdx = rowIdx => canceler.cancelRowIdx(this, rowIdx);
+    
  
     /**
      * 수정/삭제 상태를 취소
      * @param {number} rowIdx 행 IDX
      * @param {number/string} rowSeq 행 시퀀스
      */
+    cancelRow = (rowIdx, rowSeq) => canceler.cancelRowIdx(this, rowIdx, rowSeq);
     // cancelState(rowIdx, rowSeq){
 
     //     let rowElement = this.getRowElementRowSeq(rowSeq);
@@ -1061,7 +1061,8 @@ import { deleter } from "./plugin/deleter.js";
      * @param {object} option
      */
     applyModifyAndCancel(rowIdx, rowSeq, option){
-        if(amender.isRowModify(rowIdx, rowSeq, option)){
+
+        if(amender.isRowModify(this, rowIdx, rowSeq, option)){
             if(option?.isRowEditMode == true){
                 amender.modifyRowElement(this, rowIdx, rowSeq);
             }else{
@@ -1197,167 +1198,180 @@ import { deleter } from "./plugin/deleter.js";
     // }
 
     /**
-     * 삭제 상태로 변경(sequence)
-     * @param {number/string}                   행 시퀀스
-     * @param {boolean} option.isDisabled       비활성화 여부(기본값 true)
-     * @param {array} option.exceptDisabledList 비활성화 제외 항목
-     */
-    removeStateSeq = rowSeq => this.removeState(this.getSeqIndex(rowSeq), rowSeq, option);
-
-    /**
      * 삭제 상태로 변경(index)
      * @param {number} rowIdx                   행IDX
      * @param {boolean} option.isDisabled       비활성화 여부(기본값 true)
      * @param {array} option.exceptDisabledList 비활성화 제외 항목
      */
-    removeStateIdx = rowIdx => this.removeState(rowIdx, this.getIdxSequence(rowIdx), option);
- 
+    removeRowIdx = rowIdx => deleter.removeRowIdx(this, rowIdx, option);
+    //removeStateIdx = rowIdx => this.removeState(rowIdx, this.getIdxSequence(rowIdx), option);
+
     /**
-     * 삭제 상태로 변경
-     * @param {number} rowIdx                   행IDX
+     * 삭제 상태로 변경(sequence)
+     * @param {number/string}                   행 시퀀스
      * @param {boolean} option.isDisabled       비활성화 여부(기본값 true)
      * @param {array} option.exceptDisabledList 비활성화 제외 항목
      */
-    removeState(rowIdx, rowSeq, option){
-        window.__option = option;
+    removeRowSeq = rowSeq => deleter.removeRowSeq(this, rowSeq, option);
+    //removeStateSeq = rowSeq => this.removeState(this.getSeqIndex(rowSeq), rowSeq, option);
  
-        // 데이터 행상태 값 변경
-        this.data[rowIdx]._state = constant.row.status.remove;
+    /**
+     * 삭제 상태로 변경
+     * @param {number} rowIdx                   행 IDX
+     * @param {number} rowSeq                   행 시퀀스
+     * @param {boolean} option.isDisabled       비활성화 여부(기본값 true)
+     * @param {array} option.exceptDisabledList 비활성화 제외 항목
+     */
+    removeRow = (rowIdx, rowSeq, option) => deleter.removeRow(this, rowIdx, rowSeq, option);
+    // removeState(rowIdx, rowSeq, option){
+    //     window.__option = option;
+ 
+    //     // 데이터 행상태 값 변경
+    //     this.data[rowIdx]._state = constant.row.status.remove;
 
-        // Disabled 여부 확인
-        if(option?.isDisabled !== false){
+    //     // Disabled 여부 확인
+    //     if(option?.isDisabled !== false){
 
-            // Disabled 처리
-            for(let field of reposit.getFields(this)){
+    //         // Disabled 처리
+    //         for(let field of reposit.getFields(this)){
 
-                // Disabled 제외 항목이 아닌 경우만 비활성화 처리
-                if((option?.exceptDisabledList?.length > 0 ? option.exceptDisabledList : []).includes(field.name) == false){
-                    this.getSeqCellElement(rowSeq, field.name).disabled = true;
-                }
-            }
-        }
+    //             // Disabled 제외 항목이 아닌 경우만 비활성화 처리
+    //             if((option?.exceptDisabledList?.length > 0 ? option.exceptDisabledList : []).includes(field.name) == false){
+    //                 this.getSeqCellElement(rowSeq, field.name).disabled = true;
+    //             }
+    //         }
+    //     }
         
-        // 행 삭제상태(색상) 변환
-        if(this.option.body.state.use == true){
-            this.getRowElementRowSeq(rowSeq)
-                .classList.add(constant.class.row.remove);
-        }
-    }
+    //     // 행 삭제상태(색상) 변환
+    //     if(this.option.body.state.use == true){
+    //         this.getRowElementRowSeq(rowSeq)
+    //             .classList.add(constant.class.row.remove);
+    //     }
+    // }
 
     /**
      * 선택한 체크박스의 행을 삭제상태로 변환
      * @param {string} name 
      */
-    removeStateCheckedElement = name => this.removeStateRowSeqs(this.getNameCheckedSeqs(name));
+    removeRowCheckedElement = name => deleter.removeRowCheckedElement(this, name);
+    // removeStateCheckedElement = name => this.removeStateRowSeqs(this.getNameCheckedSeqs(name));
 
     /**
      * 행 삭제상태로 변경 (rowIdxList)
      * @param {Array} rowIdxList 
      * @returns 
      */
-    removeStateRowIdxs = rowIdxList => rowIdxList.forEach(idx => this.removeStateRowIdx(idx));    
+    removeRowElementRowIdxs = rowIdxList => deleter.removeRowElementRowIdxs(this, rowIdxList);
+    //removeStateRowIdxs = rowIdxList => rowIdxList.forEach(idx => this.removeStateRowIdx(idx));    
 
     /**
      * 행 삭제상태로 변경 (rowSeqList)
      * @param {Array} rowSeqList 
      * @returns 
      */
-    removeStateRowSeqs = rowSeqList => rowSeqList.forEach(req => this.removeStateRowSeq(req));
+    removeRowElementRowSeqs = rowSeqList => deleter.removeRowElementRowSeqs(this, rowSeqList);
+    //removeStateRowSeqs = rowSeqList => rowSeqList.forEach(req => this.removeStateRowSeq(req));
 
     /**
      * 행 삭제상태로 변경 (rowIdx)
      * @param {number} rowIdx 
      * @returns 
      */
-    removeStateRowIdx = rowIdx => this.removeStateRow(rowIdx, this.getIdxSequence(rowIdx));    
+    removeRowElementRowIdx = rowIdx => deleter.removeRowElementRowIdx(this, rowIdx);
+    //removeStateRowIdx = rowIdx => this.removeStateRow(rowIdx, this.getIdxSequence(rowIdx));    
 
     /**
      * 행 삭제상태로 변경 (rowSeq)
      * @param {string/number} rowSeq 
      * @returns 
      */
-    removeStateRowSeq = rowSeq => this.removeStateRow(this.getSeqIndex(rowSeq), rowSeq);
+    removeRowElementRowSeq = rowSeq => deleter.removeRowElementRowSeq(this, rowSeq);
+    //removeStateRowSeq = rowSeq => this.removeStateRow(this.getSeqIndex(rowSeq), rowSeq);
    
     /**
      *  행 삭제상태로 변경
      * @param {number} rowIdx 
      * @param {string/number} rowSeq 
      */
-    removeStateRow(rowIdx, rowSeq){        
+    removeRowElement = (rowIdx, rowSeq) => deleter.removeRowElementRowSeq(this, rowIdx, rowSeq);
+    // removeStateRow(rowIdx, rowSeq){        
 
-        let tr = this.getRowElementRowSeq(rowSeq);
+    //     let tr = this.getRowElementRowSeq(rowSeq);
 
-        // 이전상태 분기처리
-        switch(this.data[rowIdx]._state){
-        case constant.row.status.insert:
-             // 신규행 제거
-             this.removeRow(rowIdx, rowSeq);
-        case constant.row.status.remove:
-            return;
-        case constant.row.status.update:
-            // 삭제 상태에서 편집 상태로 변경시 행 상태 원복 진행
-            this.cancelStateRow(rowIdx, rowSeq);
-            break;
-        }
+    //     // 이전상태 분기처리
+    //     switch(this.data[rowIdx]._state){
+    //     case constant.row.status.insert:
+    //          // 신규행 제거
+    //          this.removeRow(rowIdx, rowSeq);
+    //     case constant.row.status.remove:
+    //         return;
+    //     case constant.row.status.update:
+    //         // 삭제 상태에서 편집 상태로 변경시 행 상태 원복 진행
+    //         this.cancelStateRow(rowIdx, rowSeq);
+    //         break;
+    //     }
 
-        if(this.option.body.state.use == true){
-            tr.classList.add(constant.class.row.remove);
-        }
+    //     if(this.option.body.state.use == true){
+    //         tr.classList.add(constant.class.row.remove);
+    //     }
 
-        this.data[rowIdx]._state = constant.row.status.remove;
+    //     this.data[rowIdx]._state = constant.row.status.remove;
 
-        // 조회목록 없을시 메시지 표시
-        // this.emptyMessageDisply();
-    }
+    //     // 조회목록 없을시 메시지 표시
+    //     // this.emptyMessageDisply();
+    // }
 
     /**
      * 한개의 행 삭제 (rowIdx)
      * @param {number} rowIdx 
      */
-    removeRowIdx = rowIdx => this.removeRow(rowIdx, this.getIdxSequence(rowIdx));
+    deleteRowIdx = rowIdx => deleter.deleteRow(this, rowIdx);
+    //removeRowIdx = rowIdx => this.removeRow(rowIdx, this.getIdxSequence(rowIdx));
 
     /**
      * 한개의 행 삭제 (rowSeq)
      * @param {string/number} rowSeq 
      */
-    removeRowSeq = rowSeq => this.removeRow(this.getSeqIndex(rowSeq), rowSeq);
+    deleteRowSeq = rowSeq => deleter.deleteRowSeq(this, rowSeq);
+    //removeRowSeq = rowSeq => this.removeRow(this.getSeqIndex(rowSeq), rowSeq);
 
     /**
      * 한개의 행 삭제
      * @param {number} rowIdx 
      * @param {string/number} rowSeq 
      */
-    removeRow(rowIdx, rowSeq){
+    deleteRow = (rowIdx, rowSeq) => deleter.deleteRow(this, rowIdx, rowSeq);
+    // removeRow(rowIdx, rowSeq){
 
-        // 데이터 삭제
-        this.data.splice(rowIdx, 1);
+    //     // 데이터 삭제
+    //     this.data.splice(rowIdx, 1);
 
-        // 엘리먼트 삭제
-        this.getRowElementRowSeq(rowSeq).remove();
+    //     // 엘리먼트 삭제
+    //     this.getRowElementRowSeq(rowSeq).remove();
 
-        // 데이터 재 인덱싱
-        status.dataReIndexing(this, rowSeq);
+    //     // 데이터 재 인덱싱
+    //     status.dataReIndexing(this, rowSeq);
 
-        // 조회목록 없을시 메시지 표시
-        // this.emptyMessageDisply();
-    }
+    //     // 조회목록 없을시 메시지 표시
+    //     // this.emptyMessageDisply();
+    // }
 
     /**
      * 목록데이터가 있음/없음에 따라서 메시지 표시/숨기기
      * @returns 
      */
-    emptyMessageDisply = () => this.data < 1 
-        ? this.emptyMessageShow(true) 
-        : this.emptyMessageShow(false);
+    // emptyMessageDisply = () => this.data < 1 
+    //     ? this.emptyMessageShow(true) 
+    //     : this.emptyMessageShow(false);
 
     /**
      * 그리드 목록 0건인경우 표시되는 메시지 표시/숨기기
      * @param {boolean} bool 
      * @returns 
      */
-    emptyMessageShow = bool => bool 
-        ? this.element.bodyEmpty.classList.remove("wgrid-hide")
-        : this.element.bodyEmpty.classList.add("wgrid-hide");
+    // emptyMessageShow = bool => bool 
+    //     ? this.element.bodyEmpty.classList.remove("wgrid-hide")
+    //     : this.element.bodyEmpty.classList.add("wgrid-hide");
 
     // // 상태체크 SELECT
     // isSelect = state => constant.row.status.select === state;
@@ -1367,5 +1381,7 @@ import { deleter } from "./plugin/deleter.js";
     // isUpdate = state => constant.row.status.update === state;
     // // 상태체크 REMOVE
     // isRemove = state => constant.row.status.remove === state;
+
+    
 }
 window.wGrid = wGrid;

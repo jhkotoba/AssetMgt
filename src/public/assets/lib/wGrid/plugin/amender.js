@@ -20,13 +20,20 @@ export const amender = {
     init: (self) => init(self),
 
     /**
+     * 수정 데이터 조회
+     * @param {*} self 
+     * @returns 
+     */
+    getEditData: (self) => editData[self.sequence],
+
+    /**
      * 행의 변경상태를 체크 (index)
      * @param {*} self
      * @param {number} rowIdx 
      * @param {*} option
      * @returns 
      */
-    isRowModifyRowIdx: (self, rowIdx, option) => isRowModify(self, rowIdx, status.getIdxSequence(self), option),
+    isRowModifyRowIdx: (self, rowIdx, option) => isRowModify(self, rowIdx, status.getIdxSequence(self, rowIdx), option),
 
     /**
      * 행의 변경상태를 체크 (sequence)
@@ -35,7 +42,7 @@ export const amender = {
      * @param {*} option
      * @returns 
      */
-    isRowModifyRowSeq: (self, rowSeq, option) => isRowModify(self, status.getSeqIndex(self), rowSeq, option),
+    isRowModifyRowSeq: (self, rowSeq, option) => isRowModify(self, status.getSeqIndex(self, rowSeq), rowSeq, option),
 
     /**    
      * 행의 변경상태를 체크
@@ -52,14 +59,14 @@ export const amender = {
      * @param {*} self
      * @param {*} rowIdx
      */
-    modifyRowIdx: (self, rowIdx) => modifyRow(self, rowIdx, status.getIdxSequence(self)),
+    modifyRowIdx: (self, rowIdx) => modifyRow(self, rowIdx, status.getIdxSequence(self, rowIdx)),
 
     /**
      * 수정 상태로 변경(sequence)
      * @param {*} self
      * @param {*} rowSeq
      */
-    modifyRowSeq: (self, rowSeq) => modifyRow(self, status.getSeqIndex(self), rowSeq),
+    modifyRowSeq: (self, rowSeq) => modifyRow(self, status.getSeqIndex(self, rowSeq), rowSeq),
 
     /**
      * 수정 상태로 변경
@@ -129,7 +136,7 @@ const init = (self) => {}
  * @returns 
  */
 const isRowModify = (self, rowIdx, rowSeq, option) => {
-
+    
     let isModify = false;
     let data = reposit.getData(self);
     let originData = reposit.getOriginData(self);
@@ -155,10 +162,10 @@ const isRowModify = (self, rowIdx, rowSeq, option) => {
 const modifyRow = (self, rowIdx, rowSeq) => {
 
     // 데이터 행상태 값 변경
-    reposit.getData(self, rowIdx) = constant.row.status.update;
+    reposit.getData(self, rowIdx)._state = constant.row.status.update;
 
     // 행 색상 변경
-    if(reposit.getOption(self).body.state.use == true){
+    if(self.option.isRowStatusColor == true){
         status.getSeqRowElement(self, rowSeq)
             .classList.add(constant.class.row.update);
     }
@@ -186,11 +193,15 @@ const modifyElementRow = (self, rowIdxList, rowSeqList) => {
     let row = null;
     let loaded = null;
     let item = null;
+    let rowIdx = null;
+    let rowSeq = null;
 
     for(let i=0; i<rowIdxList.length; i++){
 
+        rowIdx = rowIdxList[i];
+        rowSeq = rowSeqList[i];
         // 데이터
-        item = data[rowIdxList[i]];
+        item = data[rowIdx];
 
         // 편집할 행 엘리먼트
         row = status.getSeqRowElement(self, rowSeqList[i]);
@@ -202,7 +213,7 @@ const modifyElementRow = (self, rowIdxList, rowSeqList) => {
             return;
         case constant.row.status.remove:
             // 삭제 상태에서 편집 상태로 변경시 행 상태 원복 진행
-            canceler.cancelRowElement(self, rowIdxList[i], rowSeqList[i]);
+            canceler.cancelRowElement(self, rowIdx, rowSeq);
             break;
         }
 
@@ -210,9 +221,9 @@ const modifyElementRow = (self, rowIdxList, rowSeqList) => {
         if(editData[self.sequence] == undefined){
             editData[self.sequence] = {};
         }
-        editData[self.sequence][rowSeqList[i]] = {};
+        editData[self.sequence][rowSeq] = {};
         for(let key in item){
-            editData[self.sequence][key] = item[key];
+            editData[self.sequence][rowSeq][key] = item[key];
         }
 
         // 데이터 행상태 값 변경
@@ -223,13 +234,13 @@ const modifyElementRow = (self, rowIdxList, rowSeqList) => {
 
         // CELL 생성   
         loaded = [];
-        reposit.getFields(self).forEach((field, idx) => row.appendChild(creator.createCell(self, item, rowIdxList[i], field, idx, loaded)));
+        reposit.getFields(self).forEach((field, idx) => row.appendChild(creator.createCell(self, item, rowIdx, field, idx, loaded)));
 
         // 행생성후 loaded함수 호출
         loaded.forEach(item => item.fn(item.tag, item.row));
         
         // 업데이트 스타일 적용
-        if(reposit.getOption(self).body.state.use == true){
+        if(self.option.isRowStatusColor == true){
             row.classList.add(constant.class.row.update);
         }
     }
