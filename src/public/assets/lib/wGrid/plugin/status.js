@@ -310,14 +310,14 @@ const settingOption = (self, option) => {
     self.option.style = {};
     // 넓이 (기본값: 100%)
     self.option.style.width = option?.style?.width === undefined ? '100%' : option.style.width;
-    // 높이 (기본값: 500vh)
-    self.option.style.height = option?.style?.height === undefined ? '500vh' : option.style.height; 
+    // 높이 (기본값: 500px)
+    self.option.style.height = option?.style?.height === undefined ? '500px' : option.style.height; 
     
     // 스크롤바 설정
     self.option.style.overflow = {}
-    // 스크롤바 x 설정
-    self.option.style.overflow.y = option?.style?.overflow?.y === undefined ? null : option.style.overflow.y
     // 스크롤바 y 설정
+    self.option.style.overflow.y = option?.style?.overflow?.y === undefined ? null : option.style.overflow.y;
+    // 스크롤바 x 설정
     self.option.style.overflow.x = option?.style?.overflow?.x === undefined ? null : option.style.overflow.x;
     
     // 행 스타일 설정
@@ -337,8 +337,7 @@ const settingOption = (self, option) => {
      * 페이지 사용여부
      * 기본값 : false
      */
-    self.option.isPaging = option?.isPaging === undefined ? false : option.isPaging;
-    self.option.paging = {};
+    self.option.isPaging = option?.isPaging === undefined ? false : option.isPaging;    
 
     /**
      * 그리드 빈 상태일 경우 옵션
@@ -377,6 +376,7 @@ const settingOption = (self, option) => {
     self.option.checkbox.uncheck = option?.checkbox?.uncheck === undefined ? false : option.checkbox.uncheck;
 
     /**
+     * @deprecated
      * 신규행 생성시 기본값 설정
      */
     self.option.data = {};

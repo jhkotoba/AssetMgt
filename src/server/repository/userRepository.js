@@ -29,8 +29,8 @@ exports.selectUser = async (userId, conn) => {
  * @param {*} params 
  * @param {*} conn 
  */
-exports.selectUserTotolCount = async(params, conn) => {
-    return await repo.selectOne(`/* userRepository.selectUserTotolCount */ SELECT COUNT(1) AS totalCount FROM UR_USER`, conn);
+exports.selectUserCount = async(params, conn) => {
+    return await repo.selectOne(`/* userRepository.selectUserCount */ SELECT COUNT(1) AS totalCount FROM UR_USER`, conn);
 }
 
 /**

@@ -465,9 +465,10 @@ import { deleter } from "./plugin/deleter.js";
 
     /**
      * 그리드 데이터 추가
-     * @param {object} params 
+     * @param {array} list 
+     * @param {object} paging
      */
-    setData = function(params){
+    setData = function(list, paging){
 
         // let list = null;
 
@@ -499,7 +500,7 @@ import { deleter } from "./plugin/deleter.js";
         // this.data.forEach(item => this.originData[item._rowSeq] = JSON.parse(JSON.stringify(item)));
 
         // 그리드 데이터 추가
-        reposit.setData(this, params);
+        reposit.setData(this, list, paging);
 
         // 필드 새로고침
         creator.refresh(this);
@@ -515,10 +516,7 @@ import { deleter } from "./plugin/deleter.js";
     //     if(params.paging?.block) this.paging.block = params.paging.block;
     //     if(params.paging?.totolCount) this.paging.totolCount = params.paging.totolCount;
     // }
-
-    /**
-     * 그리드 새로고침 (필드부분 재생성)
-     */
+    
     // refresh = function(newData){
         
     //     // // 신규데이터 기존데이터 분기처리

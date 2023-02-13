@@ -14,7 +14,21 @@ exports.getViewCodeList = params => codeRepository.selectViewCodeList(params)
  * @param {object} params 
  * @returns 
  */
-exports.getCodeList = params => codeRepository.selectCodeList(params);
+exports.getCodeList = params => {
+
+    return Promise.all([
+        codeRepository.selectCodeCount(params),
+        codeRepository.selectCodeList(params)
+    ]).then(values => {
+        return {
+            totalCount: Number(values[0].totalCount),
+            list: values[1]
+        }
+    }).catch(async error => {
+        logger.error('getCodeList ERROR ::', error);
+        return Promise.reject(error);
+    });
+}
 
  /**
  * 코드 등록/수정/삭제 적용

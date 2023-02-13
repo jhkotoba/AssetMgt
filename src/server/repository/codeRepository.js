@@ -20,8 +20,26 @@ exports.selectViewCodeList = async (params, conn) => {
 }
 
 /**
+ * 공통코드 카운트 조회
+ * @param {*} params 
+ * @param {*} conn 
+ */
+exports.selectCodeCount = async(params, conn) => {
+
+    return await repo.selectOne(
+        `/* codeRepository.selectCodeCount */
+        SELECT COUNT(1) AS totalCount FROM SY_CODE 
+        WHERE 1=1
+        ${params?.groupCd ? " AND GROUP_CD = '" + params.groupCd : ' '}
+        ${params?.code ? " AND CODE = " + repo.string(params.code) : ' '}
+        ${params?.useYn ? " AND USE_YN = " + repo.string(params.useYn) : ' '}
+        `, conn);
+}
+
+/**
  * 공통코드 목록 조회
- * @returns 
+ * @param {*} params 
+ * @param {*} conn 
  */
  exports.selectCodeList = async (params, conn) => {
 
@@ -39,10 +57,10 @@ exports.selectViewCodeList = async (params, conn) => {
             , DATE_FORMAT(UPT_DTTM, '%Y-%m-%d %H:%i:%S') AS uptDttm
         FROM SY_CODE
         WHERE 1=1
-        ${params?.groupCd ? " AND GROUP_CD = '" + params.groupCd + "' AND CODE <> GROUP_CD " : ' '}
-        ${params?.groupCdList ? " AND GROUP_CD IN ('" + params.groupCdList.join("','") + "') AND CODE <> GROUP_CD " : ' '}
+        ${params?.groupCd ? " AND GROUP_CD = '" + params.groupCd : ' '}
+        ${params?.code ? " AND CODE = " + repo.string(params.code) : ' '}
         ${params?.useYn ? " AND USE_YN = " + repo.string(params.useYn) : ' '}
-        ORDER BY GROUP_CD`, conn);
+        LIMIT ${(params.paging.pageNo -1) * params.paging.pageSize}, ${params.paging.pageSize}`, conn);
 }
 
 /**

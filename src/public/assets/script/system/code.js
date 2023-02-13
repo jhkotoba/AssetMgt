@@ -6,14 +6,20 @@ window.addEventListener('DOMContentLoaded', () => code.init());
 // 코드 객체
 const code = {};
 code.data = {};
+code.data.paging = {pageNo: 1, pageSize: 20, pageBlock: 10, totalCount: 0, search: (paging) => code.selectCode(paging)};
 
 code.init = async function(){
     
     // 공통코드 목록 조회
     try{
-        this.data.code = await this.selectCode();
+        let data = await this.selectCode(code.data.paging);
+        this.data.list = data.list;
+        this.data.paging.totalCount = data.totalCount;
         this.createGrid();
-        this.grid.setData(JSON.parse(JSON.stringify(this.data.code)));
+
+        console.log('data:', this.data);
+
+        this.grid.setData(JSON.parse(JSON.stringify(data.list)), this.data.paging);
     }catch(err){
         console.error(err);
     }
@@ -21,16 +27,16 @@ code.init = async function(){
     // 추가버튼 클릭 이벤트
     btnAdd.addEventListener('click', e => this.grid.prependRow());
     // 새로고침 클릭 이벤트
-    btnRefresh.addEventListener('click', e => this.grid.refresh(this.data.code));
+    btnRefresh.addEventListener('click', e => this.grid.setData(JSON.parse(JSON.stringify(this.data.list))));
     // 저장버튼 클릭 이벤트
     btnSave.addEventListener('click', this.applyCode);
 }
 
 // 공통코드 조회
-code.selectCode = async function(){
-    let response = await sender.request({url: '/system/getCodeList', body: {}});
+code.selectCode = async function(paging){
+    let response = await sender.request({url: '/system/getCodeList', body: { paging }});
     if(response.resultCode == 'SUCCESS'){
-        response.data.forEach(item => item.check = false);
+        response.data.list.forEach(item => item.check = false);
         return response.data;
     }else{
         throw new Error(response.message);
@@ -39,7 +45,12 @@ code.selectCode = async function(){
 
 // 코드목록 생성
 code.createGrid = function(){
+
+    // 그리드 높이 설정
+    let gridHeight = window.innerHeight - 294;
+
     this.grid = new wGrid('commonCode', {
+        // 필드 설정
         fields: [
             {title:'삭제', element:'checkbox', name: 'check', width:'4%', align:'center'},
             {title:'코드번호', element: 'text', name: 'codeNo', width: '5%'},
@@ -55,14 +66,12 @@ code.createGrid = function(){
             {title:'수정일시', element: 'text', name: 'uptDttm', width: '10%'},
         ],
         option: { 
-            style: { height: 50, overflow: { y: 'scroll'}},
+            // 그리드 스타일 설정
+            style: { height: gridHeight ? gridHeight : 635, overflow: {y: 'scroll'}},
+            // 그리드 데이터 설정(@deprecated)
             data: { insert: {code: '', codeNm: '', groupCd:'', useYn: 'Y'}},
             // 페이징 여부
             isPaging: true,
-            // 페이징 옵션 설정
-            paging: {
-
-            },
             // 행 상태변경 체크 옵션
             isRowStatusObserve: true,
             // 행 상태변경 옵션 설정
@@ -72,6 +81,13 @@ code.createGrid = function(){
                 // 예외설정 field의 name
                 exceptList: ['check']
             }
+        },
+        // 그리드에 사용되는 데이터
+        data: {
+            // 신규행 생성시 기본 데이터
+            insert: {code: '', codeNm: '', groupCd:'', useYn: 'Y'},
+            // 페이징 데이터 세팅
+            paging: code.data.paging,
         },
         event: {
             change: (event, item, index, sequence) => {
@@ -85,20 +101,6 @@ code.createGrid = function(){
                 }
             }
         }
-        // event: {
-        //     keyup: (event, item, index, sequence) => this.grid.applyModifyAndCancel(index, sequence, {isRowEditMode: false, exceptList: ['check']}),
-        //     change: (event, item, index, sequence) => {
-        //         if(event.target.name == 'check'){
-        //             if(event.target.checked){
-        //                 this.grid.removeRow(index, sequence, {exceptDisabledList: ['check']});
-        //             }else{
-        //                 this.grid.cancelState(index, sequence);
-        //             }
-        //         }else{
-        //             this.grid.applyModifyAndCancel(index, sequence, {isRowEditMode: false, exceptList: ['check']});    
-        //         }
-        //     }
-        // }
     });
 }
 
@@ -161,9 +163,10 @@ code.applyCode = function(){
         .then(response => {
             if(response.resultCode == 'SUCCESS'){
                 alert('적용되었습니다.');
-                code.selectCode().then((data) => {
-                    code.data.code = data;
-                    code.grid.setData(JSON.parse(JSON.stringify(data)))
+                code.selectCode(code.data.paging).then((data) => {
+                    code.data.list = data.list;
+                    code.data.totalCount = data.totalCount;
+                    code.grid.setData(JSON.parse(JSON.stringify(data.list)), this.data.paging);
                 });
             }else{
                 alert(response.message);

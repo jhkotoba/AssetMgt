@@ -7,43 +7,62 @@
     <div class="area">
         <div class="sub-title">
             <span class="text">■ 코드 관리</span>
-            <div class="button-box">
-                <button id="btnSearch" class="search">조회</button>
-            </div>
         </div>
         <div class="search-box">
             <table>
                 <colgroup>
-                    <col width="100px">
-                    <col width="250px">
-                    <col width="100px">
+                    <col width="8%">
+                    <col width="20%">
+                    <col width="6%">
                     <col width="*">
+                    <col width="8%">
+                    <col width="8%">
                 </colgroup>
                 <tr>
-                    <th scope="col">사용여부</th>
-                    <td scope="col"></td>
-                    <th rowspan="2">검색</th>
-                    <td rowspan="2">
-                        <textarea></textarea>
-                    </td>
-                </tr>
-                <tr>
-                    <th>그룹코드</th>
+                    <th>사용여부</th>
                     <td>
+                        <div>
+                            <label><input type="radio" name="useYn" value="ALL" checked>전체</label>
+                            <label><input type="radio" name="useYn" value="Y">사용</label>
+                            <label><input type="radio" name="useYn" value="N">미사용</label>
+                        </div>
+                    </td>
+                    <th>검색</th>
+                    <td>
+                        <div class="search-input">
+                            <select id="srhType">
+                                <option value="CODE">코드</option>
+                                <option value="GROUP_CODE">그룹코드</option>
+                            </select>
+                            <input id="srhWord" type="text">
+                        </div>
+                    </td>
+                    <th>페이지 수</th>
+                    <td>
+                        <div class="search-input">
+                            <select id="sbPageSize" class="w100p">
+                                <option value="20" selected>20</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                                <option value="ALL">ALL</option>
+                            </select>
+                            <button id="btnSearch" class="search">조회</button>
+                        </div>
                     </td>
                 </tr>
             </table>
         </div>
-        
     </div>
+</div>
 
+<div class="content">
     <div class="area">
-        <!-- <span class="text">■ 공통 코드</span> -->
         <div class="button-box">
             <button id="btnAdd">추가</button>
             <button id="btnRefresh">새로고침</button>
             <button id="btnSave" class="warning">저장</button>
         </div>
     </div>
-    <div id="commonCode"></div>
 </div>
+
+<div id="commonCode"></div>

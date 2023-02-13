@@ -86,7 +86,10 @@ export const creator = {
      * @param {*} self 
      * @returns 
      */
-    getBodyTbElement: (self) => elements[self.sequence].bodyTb
+    getBodyTbElement: (self) => elements[self.sequence].bodyTb,
+
+
+    createPagination: (self) => createPagination(self)
     
 }
 
@@ -95,8 +98,10 @@ export const creator = {
  * @param {*} self 
  */
 const init = (self) => {
-    
-    // 그리드에 사용되는 엘리먼트 생성
+   
+    /**
+     * 그리드에 사용되는 엘리먼트 생성
+     */
     let id = self.id;
     let target = document.getElementById(id);
     let head = document.createElement('div');
@@ -107,13 +112,27 @@ const init = (self) => {
     let bodyEmpty = document.createElement('div');
     let pagination = document.createElement('div');
     
-    // 그리드 CSS 적용
+    /**
+     * 그리드 CSS 적용
+     */
     target.classList.add(constant.class.area.target);
     head.classList.add(constant.class.area.header);
     body.classList.add(constant.class.area.body);
     pagination.classList.add(constant.class.area.pagination);
 
-    // 그리드 Style 적용
+    /**
+     * 그리드 style 적용
+     */
+    // 그리드 div 영역 설정
+    target.style.width = self.option.style.width;
+    // 그리드 헤더 영역 설정
+    head.style.overflowX = self.option.style.overflow.x;
+    head.style.overflowY = self.option.style.overflow.y;
+    // 그리드 바디 영역 설정
+    body.style.height = `calc(${self.option.style.height}px + 0vh)`;
+    body.style.overflowX = self.option.style.overflow.x;
+    body.style.overflowY = self.option.style.overflow.y;
+    
 
     // 엘리먼트 연결
     headTb.appendChild(headTr);
@@ -168,7 +187,7 @@ const createGrid = (self) => {
     // this.element.body.appendChild(this.element.bodyEmpty);
 
     // 페이징 영역 생성
-    if(self.option.isPaging === true) createPagination(self);
+    // if(self.option.isPaging === true) createPagination(self);
 }
 
 /**
@@ -188,6 +207,9 @@ const refresh = (self) => {
 
     // 필드 재생성
     reposit.getData(self).forEach((row, rIdx) => bodyTb.appendChild(createBodyRow(self, row, rIdx)));
+
+    // 페이징 영역 생성
+    if(self.option.isPaging === true) createPagination(self);
 }
 
 /**
@@ -270,9 +292,10 @@ const createBodyNewRow = (self) => {
     };
 
     // 신규행 기본값 설정되어있으면 세팅
-    if(self.option.data.insert){
-        for(let key in self.option.data.insert){
-            row[key] = self.option.data.insert[key];
+    let insertData = reposit.getBasicInsertData(self);
+    if(insertData){
+        for(let key in insertData){
+            row[key] = insertData[key];
         }
     }
 
@@ -526,16 +549,56 @@ const createBodyRowCell = (self, row, rIdx, cell, cIdx, loaded) => {
 /**
  * 그리드 생성 - 페이징
  */
-const createPagination = (self, params) => {
+const createPagination = (self) => {
+
+    console.log('createPagination====>');
+
     // 페이지네이션 엘리먼트
     let pagination = elements[self.sequence].pagination;
     // 초기화
     util.elementEmpty(pagination);
 
-    // TEST
-    for(let i=0; i<10; i++){
+    console.log('createPagination');
+    let paging = reposit.getPagingData(self);
+    console.log('reposit.getPagingData paging:', paging);
+    let pageButton = null;
+
+    let pageNo = paging.pageNo;
+    let pageBlock = paging.pageBlock;
+    let totalCount = paging.totalCount;
+    let pageSize = paging.pageSize;
+    let fnSearch = paging.search;
+    console.log('pageNo:', pageNo);
+    console.log('pageBlock:', pageBlock);
+    console.log('pageSize:', pageSize);
+    console.log('totalCount:', totalCount);
+    console.log('fnSearch:', fnSearch);
+
+    let startPageNo = (pageNo - 1) * pageSize + 1;
+    let endPageNo = Math.ceil(totalCount/pageSize);
+
+    console.log('startPageNo:', startPageNo);
+    console.log('endPageNo:', endPageNo);
+
+    
+
+    for(let i=startPageNo; i<=endPageNo; i++){
         let btn = document.createElement('button');
         btn.textContent = i;
+        btn.addEventListener('click', e => {
+            console.log('btn click [' + i + ']');
+            fnSearch({
+                pageNo: i,
+                pageSize: paging.pageSize
+            }).then(data => {
+
+                paging.totalCount = data.totalCount;
+
+                console.log('fnSearch data: ', data);
+                console.log('paging: ', paging);
+                reposit.setData(self, data.list, paging);
+            });
+        });
         pagination.appendChild(btn);
     }
 }

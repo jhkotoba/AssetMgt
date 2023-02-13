@@ -1,6 +1,8 @@
 import { util } from './util.js';
 import { constant } from "./constant.js";
 import { status } from "./status.js";
+//import { creator } from "./creator";
+import { creator } from "./creator.js";
 
 // 그리드 번호
 let sequence = 1;
@@ -10,6 +12,9 @@ let data = {};
 
 // 옵션 데이터
 //let option = {};
+
+// 기본값 데이터
+let basic = {};
 
 // 페이징 데이터
 let paging = {};
@@ -27,7 +32,7 @@ export const reposit = {
      * @params {*} self 
      * @returns 
      */
-    init: (self, paramss) => init(self, paramss),
+    init: (self, params) => init(self, params),
 
     /**
      * 그리드 필드 데이터 가져오기
@@ -56,7 +61,7 @@ export const reposit = {
      * @params {*} self 
      * @returns 
      */
-    setData: (self, paramss) => setData(self, paramss),
+    setData: (self, params, paging) => setData(self, params, paging),
 
     /**
      * 그리드 데이터 추가
@@ -141,6 +146,15 @@ export const reposit = {
      * @returns 
      */
     getApplyData: (self) => data[self.sequence].data.filter(item => !isSelect(item._state)),
+
+    /**
+     * 기본값(insert) 데이터 가져오기
+     * @param {*} self 
+     * @returns 
+     */
+    getBasicInsertData: (self) => basic[self.sequence].insert,
+
+    getPagingData: (self) => paging[self.sequence]
 }
 
 /**
@@ -166,14 +180,29 @@ const init = (self, params) => {
     // option[self.sequence] = initOption(params);
     // self.option = initOption(params);
 
+    // 기본값 데이터 저장
+    basic[self.sequence] = {}
+    basic[self.sequence].insert = params?.data?.insert === undefined ? null : params.data.insert;
+
     // 필드 데이터 저장
     fields[self.sequence] = params.fields;
 
+    // 페이징 관련 변수 세팅
+    if(params?.option?.isPaging === true){
+        paging[self.sequence] = {
+            pageNo: params?.data?.pageNo === undefined ? 1 : params.data.pageNo,
+            pageSize: params?.data?.pageSize === undefined ? 10 : params.data.pageSize,
+            pageBlock: params?.data?.pageBlock === undefined ? 10 : params.data.pageBlock,
+            totalCount: params?.data?.totalCount === undefined ? 0 : params.data.totalCount
+        }
     // 페이징 관련 변수 (기본값)
-    paging[self.sequence] = {pageNo: 1, pageSize: 10, pageBlock: 10, totolCount: 0};
+    }else{
+        paging[self.sequence] = {pageNo: 1, pageSize: 10, pageBlock: 10, totalCount: 0};
+    }
 
+    // @deprecated
     // 생성시 데이터 존재시 세팅
-    if(util.isNotEmpty(params.data)) setData(self, params);
+    // if(util.isNotEmpty(params.data)) setData(self, params);
 }
 
 
@@ -229,26 +258,30 @@ const getData = (self, index) => {
 /**
  * 그리드 데이터 세팅
  * @params {*} self 
- * @params {*} paramss 
+ * @params {*} list 
+ * @params {*} paging 
  * @returns 
  */
-const setData = (self, paramss) => {
+const setData = (self, list, paging) => {
+    
+    console.log('reposit setData list:: ', list);
+    console.log('reposit setData paging:: ', paging);
 
-    let list = null;
+    // let list = null;
 
-    // 배열
-    if(typeof paramss == 'object' && typeof paramss.length == 'number'){
-        list = paramss;
-    // 객체
-    }else if(typeof paramss == 'object' && typeof paramss.length == 'undefined'){
-        list = paramss.list;
-        if(self.option.isPaging === true && paramss.paging){
-            setPaging(self, paramss.paging);
-        }
-    }else {
-        console.error('setData paramsater error:', typeof paramss, paramss);
-        return;
-    }
+    // // 배열
+    // if(typeof params == 'object' && typeof params.length == 'number'){
+    //     list = params;
+    // // 객체
+    // }else if(typeof params == 'object' && typeof params.length == 'undefined'){
+    //     list = params.list;
+    //     if(self.option.isPaging === true && params.paging){
+    //         setPaging(self, params.paging);
+    //     }
+    // }else {
+    //     console.error('setData paramsater error:', typeof params, params);
+    //     return;
+    // }
 
     // 데이터를 그리드에 삽입
     for(let item of list){
@@ -258,22 +291,47 @@ const setData = (self, paramss) => {
         item._state = constant.row.status.select;
     }
 
+    // 페이징 데이터 세팅
+    if(self.option.isPaging === true){
+        setPaging(self, paging);
+
+        //creator.createPagination(self);
+    }
+
     // 데이터 저장
     data[self.sequence].data = list;
 
     // 초기데이터 보존
     data[self.sequence].data.forEach(item => data[self.sequence].originData[item._rowSeq] = JSON.parse(JSON.stringify(item)));
+
+
+    // 
+    creator.refresh(self);
+    //creator.createPagination(self);
 }
 
 /**
  * 페이징 변수 세팅
- * @params {*} paramss 
+ * @params {*} params 
  */
-const setPaging = (self, paramss) => {
-    if(paramss.paging?.no) self.paging.no = paramss.paging.no;
-    if(paramss.paging?.size) self.paging.size = paramss.paging.size;
-    if(paramss.paging?.block) self.paging.block = paramss.paging.block;
-    if(paramss.paging?.totolCount) self.paging.totolCount = paramss.paging.totolCount;
+const setPaging = (self, pagingData) => {
+    console.log('reposit.js => setPaging pagingData value::', pagingData);
+    if(pagingData?.pageNo !== undefined){
+        paging[self.sequence].pageNo = pagingData.pageNo;
+    }
+    if(pagingData?.pageSize !== undefined){
+        paging[self.sequence].pageSize = pagingData.pageSize;
+    }
+    if(pagingData?.pageBlock !== undefined){
+        paging[self.sequence].pageBlock = pagingData.pageBlock;
+    }
+    if(pagingData?.totalCount !== undefined){
+        paging[self.sequence].totalCount = pagingData.totalCount;
+    }
+    if(typeof pagingData.search === 'function'){
+        paging[self.sequence].search = pagingData.search;
+    }
+    console.log(`setPaging:`, paging[self.sequence]);
 }
 
 // 상태체크 SELECT
@@ -286,6 +344,7 @@ const isUpdate = state => constant.row.status.update === state;
 const isRemove = state => constant.row.status.remove === state;
 
 /**
+ * @deprecated
  * 옵션데이터 세팅
  */
 const initOption = (params) => {

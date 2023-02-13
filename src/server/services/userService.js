@@ -98,7 +98,7 @@ exports.getUser = userId => userRepository.selectUser(userId);
  */
 exports.getUserList = async params => {
     return Promise.all([
-        await userRepository.selectUserTotolCount(params),
+        await userRepository.selectUserCount(params),
         await userRepository.selectUserList(params),
     ])
     .then(values => {

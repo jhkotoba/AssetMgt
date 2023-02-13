@@ -1,4 +1,4 @@
-.wgrid{background: #3c3c3c; border: 1px solid #484848; margin: 5px 0px 5px 0px; overflow: overlay;}
+.wgrid{background: #3c3c3c; font-size: 12px; color: #C6C6C6; border: 1px solid #484848; margin: 5px 0px 5px 0px; overflow: overlay;}
 .wgrid::-webkit-scrollbar {width: 10px; height: 10px;}
 .wgrid::-webkit-scrollbar-button:start:decrement,::-webkit-scrollbar-button:end:increment {display: none;}
 .wgrid::-webkit-scrollbar-track {background: #5A5A5A; border: 1px solid #484747;}
@@ -37,35 +37,38 @@
 .wgrid .body table tr.update{background: #5A607D;}
 .wgrid .body table tr.update:hover{background: #3F4356;}
 .wgrid .body table tr.update:active{background: #282B37;}
-.wgrid .body table tr.update > td select, input{background: #535473;}
-.wgrid .body table tr.update > td div input{background: #535473;}
-.wgrid .body table tr.update > td span {background: inherit;}
-.wgrid .body table tr.update input[type='checkbox']{background: #535473;}
-.wgrid .body table tr.update input[type='checkbox']:disabled{background: #5A607D; pointer-events: none;}
-.wgrid .body table tr.update input[type='checkbox']:checked::after {display: block;}
-.wgrid .body table tr.update input[type='checkbox']:checked{background: #535473;}
+.wgrid .body table tr.update > td > input{background: #535473;}
+.wgrid .body table tr.update > td > select{background: #535473;}
+.wgrid .body table tr.update > td > div > input{background: #535473;}
+.wgrid .body table tr.update > td > span {background: inherit;}
+.wgrid .body table tr.update > input[type='checkbox']{background: #535473;}
+.wgrid .body table tr.update > input[type='checkbox']:disabled{background: #5A607D; pointer-events: none;}
+.wgrid .body table tr.update > input[type='checkbox']:checked::after {display: block;}
+.wgrid .body table tr.update >input[type='checkbox']:checked{background: #535473;}
 
 .wgrid .body table tr.remove{background: #795757 !important;}
 .wgrid .body table tr.remove:hover{background: #593F3F !important;}
 .wgrid .body table tr.remove:active{background: #3C2B2B !important;}
-.wgrid .body table tr.remove > td select, input{background: #654A4A;}
-.wgrid .body table tr.remove > td div input{background: #654A4A;}
-.wgrid .body table tr.remove > td span {background: inherit;}
-.wgrid .body table tr.remove input[type='checkbox']{background: #654A4A !important; color: #777777 !important;}
-.wgrid .body table tr.remove input[type='checkbox']:disabled{background: #795757 !important; pointer-events: none;}
-.wgrid .body table tr.remove input[type='checkbox']:checked::after {display: block;}
-.wgrid .body table tr.remove input[type='checkbox']:checked{background: #654A4A;}
+.wgrid .body table tr.remove > td > select{background: #654A4A;}
+.wgrid .body table tr.remove > td > input{background: #654A4A;}
+.wgrid .body table tr.remove > td > div > input{background: #654A4A;}
+.wgrid .body table tr.remove > td > span {background: inherit;}
+.wgrid .body table tr.remove >  input[type='checkbox']{background: #654A4A !important; color: #777777 !important;}
+.wgrid .body table tr.remove > input[type='checkbox']:disabled{background: #795757 !important; pointer-events: none;}
+.wgrid .body table tr.remove > input[type='checkbox']:checked::after {display: block;}
+.wgrid .body table tr.remove > input[type='checkbox']:checked{background: #654A4A;}
 
 .wgrid .body table tr.insert{background: #7B7B5D;}
 .wgrid .body table tr.insert:hover{background: #606048 !important;}
 .wgrid .body table tr.insert:active{background: #464634 !important;}
-.wgrid .body table tr.insert > td select, input{background: #5A5A47;}
-.wgrid .body table tr.insert > td div input{background: #5A5A47;}
-.wgrid .body table tr.insert > td span {background: inherit;}
-.wgrid .body table tr.insert input[type='checkbox']{background: #5A5A47;}
-.wgrid .body table tr.insert input[type='checkbox']:disabled{background: #7C7D5D; pointer-events: none;}
-.wgrid .body table tr.insert input[type='checkbox']:checked::after {display: block;}
-.wgrid .body table tr.insert input[type='checkbox']:checked{background: #5A5A47;}
+.wgrid .body table tr.insert > td > input{background: #5A5A47;}
+.wgrid .body table tr.insert > td > input{background: #5A5A47;}
+.wgrid .body table tr.insert > td > div > input{background: #5A5A47;}
+.wgrid .body table tr.insert > td > span {background: inherit;}
+.wgrid .body table tr.insert > input[type='checkbox']{background: #5A5A47;}
+.wgrid .body table tr.insert > input[type='checkbox']:disabled{background: #7C7D5D; pointer-events: none;}
+.wgrid .body table tr.insert > input[type='checkbox']:checked::after {display: block;}
+.wgrid .body table tr.insert > input[type='checkbox']:checked{background: #5A5A47;}
 
 .wgrid .body table tr td {overflow: hidden; white-space: nowrap; text-overflow: ellipsis; border-bottom: 0; border-top: 0; border: 1px solid #363636; padding: 5px 5px 5px 5px; text-align: center; border-collapse: collapse; border-spacing: 0; height: 30px;}
 .wgrid .body table tr td span{font-size: 1em;}
