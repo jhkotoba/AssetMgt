@@ -45,6 +45,8 @@ exports.selectCodeCount = async(params, conn) => {
 
     return await repo.selectList(
         `/* codeRepository.selectCodeList */
+        -- pageNo: ${params.paging.pageNo}
+        -- pageSize: ${params.paging.pageSize}
         SELECT
             CODE_NO     AS codeNo
             , CODE      AS code

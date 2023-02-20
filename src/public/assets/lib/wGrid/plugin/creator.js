@@ -6,6 +6,8 @@ import { status } from "./status.js";
 // 엘리먼트 데이터
 let elements = {};
 
+// 외부 조회함수
+let search = {};
 /**
  * 그리드 제작 객체
  */
@@ -16,7 +18,7 @@ export const creator = {
      * @param {*} self 
      * @returns 
      */
-    init: (self) => init(self),
+    init: (self, paramater) => init(self, paramater),
 
     /**
      * 그리드 생성(최초 1회 실행)
@@ -97,7 +99,7 @@ export const creator = {
  * 
  * @param {*} self 
  */
-const init = (self) => {
+const init = (self, paramater) => {
    
     /**
      * 그리드에 사용되는 엘리먼트 생성
@@ -165,6 +167,10 @@ const init = (self) => {
     // }
 
     elements[self.sequence] = {id, target, head, headTb, headTr, body, bodyTb, bodyEmpty, pagination};
+
+    // 호출 함수 저장
+    console.log('paramater.search::::', paramater);
+    search[self.sequence] = paramater.search;
 }
 
 /**
@@ -188,6 +194,8 @@ const createGrid = (self) => {
 
     // 페이징 영역 생성
     // if(self.option.isPaging === true) createPagination(self);
+
+    
 }
 
 /**
@@ -551,53 +559,64 @@ const createBodyRowCell = (self, row, rIdx, cell, cIdx, loaded) => {
  */
 const createPagination = (self) => {
 
-    console.log('createPagination====>');
-
     // 페이지네이션 엘리먼트
     let pagination = elements[self.sequence].pagination;
     // 초기화
     util.elementEmpty(pagination);
 
-    console.log('createPagination');
-    let paging = reposit.getPagingData(self);
-    console.log('reposit.getPagingData paging:', paging);
-    let pageButton = null;
+    // 페이징 정보 가져오기
+    let paging = reposit.getPagingData(self);    
 
-    let pageNo = paging.pageNo;
-    let pageBlock = paging.pageBlock;
-    let totalCount = paging.totalCount;
-    let pageSize = paging.pageSize;
-    let fnSearch = paging.search;
-    console.log('pageNo:', pageNo);
-    console.log('pageBlock:', pageBlock);
-    console.log('pageSize:', pageSize);
-    console.log('totalCount:', totalCount);
-    console.log('fnSearch:', fnSearch);
-
-    let startPageNo = (pageNo - 1) * pageSize + 1;
-    let endPageNo = Math.ceil(totalCount/pageSize);
-
-    console.log('startPageNo:', startPageNo);
-    console.log('endPageNo:', endPageNo);
-
+    // 페이징 데이터 세팅
+    let currentBlock = Math.ceil(paging.pageNo/paging.pageBlock);
+    let startPageNo = (currentBlock - 1) * paging.pageBlock + 1;
+    let endPageNo = currentBlock * paging.pageBlock;
+    let maxEndPageNo = Math.ceil(paging.totalCount/paging.pageSize);
+    if(endPageNo > maxEndPageNo){
+        endPageNo = maxEndPageNo;
+    }
     
-
+    // 이전 블록 페이지 가기 버튼생성
+    if(startPageNo > paging.pageBlock){
+        let btn = document.createElement('button');
+        btn.textContent = '<';
+        btn.addEventListener('click', e => {
+            search[self.sequence]({
+                pageNo: startPageNo - paging.pageBlock,
+                pageSize: paging.pageSize
+            }).then(data => reposit.setData(self, data.list, data.paging));
+        });
+        pagination.appendChild(btn);        
+    }
+    
+    // 페이지네이션 버튼 생성
     for(let i=startPageNo; i<=endPageNo; i++){
         let btn = document.createElement('button');
         btn.textContent = i;
-        btn.addEventListener('click', e => {
-            console.log('btn click [' + i + ']');
-            fnSearch({
-                pageNo: i,
-                pageSize: paging.pageSize
-            }).then(data => {
 
-                paging.totalCount = data.totalCount;
-
-                console.log('fnSearch data: ', data);
-                console.log('paging: ', paging);
-                reposit.setData(self, data.list, paging);
+        if(i === paging.pageNo){
+            btn.classList.add(constant.class.pagination.current);
+        }else{
+            btn.addEventListener('click', e => {
+                search[self.sequence]({
+                    pageNo: i,
+                    pageSize: paging.pageSize
+                }).then(data => reposit.setData(self, data.list, data.paging));
             });
+        }
+        
+        pagination.appendChild(btn);
+    }
+   
+    // 다음 블록 페이지 가기 버튼생성
+    if(endPageNo < maxEndPageNo){
+        let btn = document.createElement('button');
+        btn.textContent = '>';
+        btn.addEventListener('click', e => {
+            search[self.sequence]({
+                pageNo: startPageNo + paging.pageBlock,
+                pageSize: paging.pageSize
+            }).then(data => reposit.setData(self, data.list, data.paging));
         });
         pagination.appendChild(btn);
     }

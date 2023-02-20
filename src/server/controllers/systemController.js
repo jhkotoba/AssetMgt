@@ -111,7 +111,7 @@ exports.applyMenu = async (request, response, next) => {
  exports.getCodeList = async (request, response, next) => {
 
     // 메뉴목록 조회
-    await codeService.getCodeList({paging: request.body.paging}).then(value => {
+    await codeService.getCodeList({paging: request.body.paging}).then(value => {        
         response.status(200).json({
             message: 'SUCCESS',
             resultCode: 'SUCCESS',

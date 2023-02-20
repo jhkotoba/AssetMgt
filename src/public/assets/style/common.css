@@ -40,7 +40,7 @@ main{height: 100% ; overflow-x: hidden; overflow-y: auto;}
 
 .content .search-box .search-input {float: left; width: 100%;}
 .content .search-box .search-input select{width: 150px;}
-.content .search-box .search-input input[type='text']{width: calc(100% - 207px);}
+.content .search-box .search-input input[type='text']{width: calc(100% - 170px);}
 .content .search-box .search-input button{}
 
 /* .content .last-input {width: calc(100% - 50px);} */

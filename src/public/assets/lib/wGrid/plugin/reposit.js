@@ -315,7 +315,6 @@ const setData = (self, list, paging) => {
  * @params {*} params 
  */
 const setPaging = (self, pagingData) => {
-    console.log('reposit.js => setPaging pagingData value::', pagingData);
     if(pagingData?.pageNo !== undefined){
         paging[self.sequence].pageNo = pagingData.pageNo;
     }
@@ -328,10 +327,6 @@ const setPaging = (self, pagingData) => {
     if(pagingData?.totalCount !== undefined){
         paging[self.sequence].totalCount = pagingData.totalCount;
     }
-    if(typeof pagingData.search === 'function'){
-        paging[self.sequence].search = pagingData.search;
-    }
-    console.log(`setPaging:`, paging[self.sequence]);
 }
 
 // 상태체크 SELECT

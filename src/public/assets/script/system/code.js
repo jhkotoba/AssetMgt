@@ -6,20 +6,20 @@ window.addEventListener('DOMContentLoaded', () => code.init());
 // 코드 객체
 const code = {};
 code.data = {};
-code.data.paging = {pageNo: 1, pageSize: 20, pageBlock: 10, totalCount: 0, search: (paging) => code.selectCode(paging)};
+//code.data.paging = {pageNo: 1, pageSize: 5, pageBlock: 10, totalCount: 0, search: (paging) => code.selectCode(paging)};
 
 code.init = async function(){
     
     // 공통코드 목록 조회
     try{
-        let data = await this.selectCode(code.data.paging);
-        this.data.list = data.list;
-        this.data.paging.totalCount = data.totalCount;
+        let data = await this.selectCode();
+        // this.data.list = data.list;
+        // this.data.paging = data.paging;
         this.createGrid();
 
         console.log('data:', this.data);
 
-        this.grid.setData(JSON.parse(JSON.stringify(data.list)), this.data.paging);
+        this.grid.setData(JSON.parse(JSON.stringify(data.list)), data.paging);
     }catch(err){
         console.error(err);
     }
@@ -34,6 +34,16 @@ code.init = async function(){
 
 // 공통코드 조회
 code.selectCode = async function(paging){
+
+    if(paging == undefined){
+        paging = {
+            pageNo: 1,
+            pageSize: 20,
+            pageBlock: 10, 
+            totalCount: 0
+        }
+    }
+
     let response = await sender.request({url: '/system/getCodeList', body: { paging }});
     if(response.resultCode == 'SUCCESS'){
         response.data.list.forEach(item => item.check = false);
@@ -82,12 +92,14 @@ code.createGrid = function(){
                 exceptList: ['check']
             }
         },
+        // 목록 조회함수 설정
+        search: code.selectCode,
         // 그리드에 사용되는 데이터
         data: {
             // 신규행 생성시 기본 데이터
             insert: {code: '', codeNm: '', groupCd:'', useYn: 'Y'},
             // 페이징 데이터 세팅
-            paging: code.data.paging,
+            //paging: code.data.paging,
         },
         event: {
             change: (event, item, index, sequence) => {

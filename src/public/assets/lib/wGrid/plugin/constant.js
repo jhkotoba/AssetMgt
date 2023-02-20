@@ -18,6 +18,9 @@ export const constant = {
             body: 'body',
             pagination: 'pagination'
         },
+        pagination: {
+            current: 'current'
+        },        
         button: 'wgrid-btn'
         // select: '',
         // insert: 'insert',

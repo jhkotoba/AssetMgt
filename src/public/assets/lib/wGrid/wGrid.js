@@ -30,7 +30,7 @@ import { deleter } from "./plugin/deleter.js";
 
         // 제작 관리 객체 생성
         // element.init(this);
-        creator.init(this);
+        creator.init(this, paramater);
         canceler.init(this);
         amender.init(this);
         deleter.init(this);
@@ -79,7 +79,7 @@ import { deleter } from "./plugin/deleter.js";
         // this.innerEvent = construct.createEvent(this, paramater);
 
         // 그리드 생성
-        creator.create(this);
+        creator.create(this);        
 
         return this;
     }
