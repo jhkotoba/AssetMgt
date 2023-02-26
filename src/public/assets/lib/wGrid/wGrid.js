@@ -466,9 +466,9 @@ import { deleter } from "./plugin/deleter.js";
     /**
      * 그리드 데이터 추가
      * @param {array} list 
-     * @param {object} paging
+     * @param {object} param
      */
-    setData = function(list, paging){
+    setData = function(list, param){
 
         // let list = null;
 
@@ -500,7 +500,7 @@ import { deleter } from "./plugin/deleter.js";
         // this.data.forEach(item => this.originData[item._rowSeq] = JSON.parse(JSON.stringify(item)));
 
         // 그리드 데이터 추가
-        reposit.setData(this, list, paging);
+        reposit.setData(this, list, param);
 
         // 필드 새로고침
         creator.refresh(this);

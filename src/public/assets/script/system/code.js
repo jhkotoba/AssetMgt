@@ -1,55 +1,62 @@
 import { sender } from "/script/common/sender.js";
 import { isEmpty } from "/script/common/validation.js";
 
-window.addEventListener('DOMContentLoaded', () => code.init());
-
 // 코드 객체
 const code = {};
-code.data = {};
-//code.data.paging = {pageNo: 1, pageSize: 5, pageBlock: 10, totalCount: 0, search: (paging) => code.selectCode(paging)};
 
-code.init = async function(){
-    
+// 최초실행
+window.addEventListener('DOMContentLoaded', async event => {
+
     // 공통코드 목록 조회
-    try{
-        let data = await this.selectCode();
-        // this.data.list = data.list;
-        // this.data.paging = data.paging;
-        this.createGrid();
+    let response = await code.search();
 
-        console.log('data:', this.data);
+    // 그리드 생성
+    code.createGrid();
 
-        this.grid.setData(JSON.parse(JSON.stringify(data.list)), data.paging);
-    }catch(err){
-        console.error(err);
-    }
+    // 그리드 데이터 세팅
+    code.grid.setData(response.list, response.param);
 
+    // 조회버튼 클릭 이벤트
+    btnSearch.addEventListener('click', e => code.search({
+        srhType: srhType.value,
+        srhWord: srhWord.value,
+        useYn: document.querySelector('input[name="useYn"]:checked').value
+    }));
+    
     // 추가버튼 클릭 이벤트
-    btnAdd.addEventListener('click', e => this.grid.prependRow());
+    btnAdd.addEventListener('click', e => code.grid.prependRow());
     // 새로고침 클릭 이벤트
-    btnRefresh.addEventListener('click', e => this.grid.setData(JSON.parse(JSON.stringify(this.data.list))));
+    btnRefresh.addEventListener('click', e => response.list, response.param);
     // 저장버튼 클릭 이벤트
-    btnSave.addEventListener('click', this.applyCode);
-}
+    btnSave.addEventListener('click', code.applyCode);
+});
 
 // 공통코드 조회
-code.selectCode = async function(paging){
+code.search = async function(param){
+    console.log('code.search param: ', param);
 
-    if(paging == undefined){
-        paging = {
-            pageNo: 1,
-            pageSize: 20,
-            pageBlock: 10, 
-            totalCount: 0
-        }
+    // 파라미터가 없을 경우 빈 객체 생성
+    if(param === undefined) param = {};
+
+    // 페이징 정보가 없을 경우 기본 페이징 세팅
+    if(param.paging === undefined){
+        param.paging = {pageNo: 1, pageSize: Number(sbPageSize.value), pageBlock: 10, totalCount: 0}
     }
 
-    let response = await sender.request({url: '/system/getCodeList', body: { paging }});
+    // 코드목록 조회
+    let response = await sender.request({url: '/system/getCodeList', body: param});
+
+    // 응답 성공 시
     if(response.resultCode == 'SUCCESS'){
         response.data.list.forEach(item => item.check = false);
         return response.data;
+    // 응답 실패 시
     }else{
-        throw new Error(response.message);
+        console.error(response.message);
+        alert(response.message);
+
+        // 빈값 반환
+        return {list:[], param:{}};
     }
 };
 
@@ -93,13 +100,11 @@ code.createGrid = function(){
             }
         },
         // 목록 조회함수 설정
-        search: code.selectCode,
+        search: code.search,
         // 그리드에 사용되는 데이터
         data: {
             // 신규행 생성시 기본 데이터
             insert: {code: '', codeNm: '', groupCd:'', useYn: 'Y'},
-            // 페이징 데이터 세팅
-            //paging: code.data.paging,
         },
         event: {
             change: (event, item, index, sequence) => {
@@ -174,12 +179,10 @@ code.applyCode = function(){
         sender.request({url: '/system/applyCode', body: {applyList}})
         .then(response => {
             if(response.resultCode == 'SUCCESS'){
-                alert('적용되었습니다.');
-                code.selectCode(code.data.paging).then((data) => {
-                    code.data.list = data.list;
-                    code.data.totalCount = data.totalCount;
-                    code.grid.setData(JSON.parse(JSON.stringify(data.list)), this.data.paging);
-                });
+                alert('적용되었습니다.');                
+
+                sbPageSize.value = 20;
+                code.search().then(data => code.grid.setData(JSON.parse(JSON.stringify(data.list)), data.paging));
             }else{
                 alert(response.message);
             }
@@ -192,4 +195,3 @@ code.applyCode = function(){
         return isValidation;
     }
 }
-window.__code = code;

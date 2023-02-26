@@ -109,9 +109,21 @@ exports.applyMenu = async (request, response, next) => {
  * @param {*} next 
  */
  exports.getCodeList = async (request, response, next) => {
+    
+    /**
+     * 파라미터 세팅
+     */
+    // 조회 타입
+    let srhType = request.body.srhType;
+    // 조회 문구
+    let srhWord = request.body.srhWord;
+    // 사용여부
+    let useYn = request.body.useYn;
+    // 페이징 정보
+    let paging = request.body.paging;
 
     // 메뉴목록 조회
-    await codeService.getCodeList({paging: request.body.paging}).then(value => {        
+    await codeService.getCodeList({srhType, srhWord, useYn, paging}).then(value => {
         response.status(200).json({
             message: 'SUCCESS',
             resultCode: 'SUCCESS',

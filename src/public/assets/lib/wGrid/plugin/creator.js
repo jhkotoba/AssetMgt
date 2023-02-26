@@ -565,26 +565,28 @@ const createPagination = (self) => {
     util.elementEmpty(pagination);
 
     // 페이징 정보 가져오기
-    let paging = reposit.getPagingData(self);    
+    let parameter = reposit.getParameter(self);
+    let pageBlock = parameter.paging.pageBlock;
+    let pageSize = parameter.paging.pageSize;
+    let pageNo = parameter.paging.pageNo;
+    let totalCount = parameter.paging.totalCount;
 
     // 페이징 데이터 세팅
-    let currentBlock = Math.ceil(paging.pageNo/paging.pageBlock);
-    let startPageNo = (currentBlock - 1) * paging.pageBlock + 1;
-    let endPageNo = currentBlock * paging.pageBlock;
-    let maxEndPageNo = Math.ceil(paging.totalCount/paging.pageSize);
+    let currentBlock = Math.ceil(pageNo/pageBlock);
+    let startPageNo = (currentBlock - 1) * pageBlock + 1;
+    let endPageNo = currentBlock * pageBlock;
+    let maxEndPageNo = Math.ceil(totalCount/pageSize);
     if(endPageNo > maxEndPageNo){
         endPageNo = maxEndPageNo;
     }
     
     // 이전 블록 페이지 가기 버튼생성
-    if(startPageNo > paging.pageBlock){
+    if(startPageNo > pageBlock){
         let btn = document.createElement('button');
         btn.textContent = '<';
         btn.addEventListener('click', e => {
-            search[self.sequence]({
-                pageNo: startPageNo - paging.pageBlock,
-                pageSize: paging.pageSize
-            }).then(data => reposit.setData(self, data.list, data.paging));
+            parameter.paging.pageNo = startPageNo - pageBlock;
+            search[self.sequence](parameter).then(data => reposit.setData(self, data.list, data.param));
         });
         pagination.appendChild(btn);        
     }
@@ -594,17 +596,14 @@ const createPagination = (self) => {
         let btn = document.createElement('button');
         btn.textContent = i;
 
-        if(i === paging.pageNo){
+        if(i === pageNo){
             btn.classList.add(constant.class.pagination.current);
         }else{
             btn.addEventListener('click', e => {
-                search[self.sequence]({
-                    pageNo: i,
-                    pageSize: paging.pageSize
-                }).then(data => reposit.setData(self, data.list, data.paging));
+                parameter.paging.pageNo = i;
+                search[self.sequence](parameter).then(data => reposit.setData(self, data.list, data.param));
             });
         }
-        
         pagination.appendChild(btn);
     }
    
@@ -613,10 +612,8 @@ const createPagination = (self) => {
         let btn = document.createElement('button');
         btn.textContent = '>';
         btn.addEventListener('click', e => {
-            search[self.sequence]({
-                pageNo: startPageNo + paging.pageBlock,
-                pageSize: paging.pageSize
-            }).then(data => reposit.setData(self, data.list, data.paging));
+            parameter.paging.pageNo = startPageNo + pageBlock;
+            search[self.sequence](parameter).then(data => reposit.setData(self, data.list, data.param));
         });
         pagination.appendChild(btn);
     }

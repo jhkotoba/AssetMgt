@@ -24,15 +24,15 @@ exports.selectViewCodeList = async (params, conn) => {
  * @param {*} params 
  * @param {*} conn 
  */
-exports.selectCodeCount = async(params, conn) => {
+exports.selectCodeCount = async(param, conn) => {
 
     return await repo.selectOne(
         `/* codeRepository.selectCodeCount */
         SELECT COUNT(1) AS totalCount FROM SY_CODE 
         WHERE 1=1
-        ${params?.groupCd ? " AND GROUP_CD = '" + params.groupCd : ' '}
-        ${params?.code ? " AND CODE = " + repo.string(params.code) : ' '}
-        ${params?.useYn ? " AND USE_YN = " + repo.string(params.useYn) : ' '}
+        ${param?.groupCd ? " AND GROUP_CD = '" + param.groupCd : ' '}
+        ${param?.code ? " AND CODE = " + repo.string(param.code) : ' '}
+        ${param?.useYn ? " AND USE_YN = " + repo.string(param.useYn) : ' '}
         `, conn);
 }
 
@@ -41,12 +41,12 @@ exports.selectCodeCount = async(params, conn) => {
  * @param {*} params 
  * @param {*} conn 
  */
- exports.selectCodeList = async (params, conn) => {
+ exports.selectCodeList = async (param, conn) => {
+
+    console.log('selectCodeList:: param:', param);
 
     return await repo.selectList(
         `/* codeRepository.selectCodeList */
-        -- pageNo: ${params.paging.pageNo}
-        -- pageSize: ${params.paging.pageSize}
         SELECT
             CODE_NO     AS codeNo
             , CODE      AS code
@@ -59,10 +59,10 @@ exports.selectCodeCount = async(params, conn) => {
             , DATE_FORMAT(UPT_DTTM, '%Y-%m-%d %H:%i:%S') AS uptDttm
         FROM SY_CODE
         WHERE 1=1
-        ${params?.groupCd ? " AND GROUP_CD = '" + params.groupCd : ' '}
-        ${params?.code ? " AND CODE = " + repo.string(params.code) : ' '}
-        ${params?.useYn ? " AND USE_YN = " + repo.string(params.useYn) : ' '}
-        LIMIT ${(params.paging.pageNo -1) * params.paging.pageSize}, ${params.paging.pageSize}`, conn);
+        ${param?.groupCd ? " AND GROUP_CD = '" + param.groupCd : ' '}
+        ${param?.code ? " AND CODE = " + repo.string(param.code) : ' '}
+        ${param?.useYn ? " AND USE_YN = " + repo.string(param.useYn) : ' '}
+        LIMIT ${(param.paging.pageNo - 1) * param.paging.pageSize}, ${param.paging.pageSize}`, conn);
 }
 
 /**

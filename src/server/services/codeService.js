@@ -11,17 +11,16 @@ exports.getViewCodeList = params => codeRepository.selectViewCodeList(params)
 
 /**
  * 코드목록 조회
- * @param {object} params 
+ * @param {object} param 
  * @returns 
  */
-exports.getCodeList = params => {
-    let paging = params.paging;
+exports.getCodeList = (param) => {
     return Promise.all([
-        codeRepository.selectCodeCount(params),
-        codeRepository.selectCodeList(params)
+        codeRepository.selectCodeCount(param),
+        codeRepository.selectCodeList(param)
     ]).then(values => {
-        paging.totalCount = Number(values[0].totalCount);
-        return {list: values[1], paging: paging}
+        param.paging.totalCount = Number(values[0].totalCount);
+        return {list: values[1], param}
     }).catch(async error => {
         logger.error('getCodeList ERROR ::', error);
         return Promise.reject(error);
