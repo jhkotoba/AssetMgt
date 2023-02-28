@@ -18,10 +18,10 @@ window.addEventListener('DOMContentLoaded', async event => {
 
     // 조회버튼 클릭 이벤트
     btnSearch.addEventListener('click', e => code.search({
-        srhType: srhType.value,
-        srhWord: srhWord.value,
-        useYn: document.querySelector('input[name="useYn"]:checked').value
-    }));
+            srhType: srhType.value,
+            srhWord: srhWord.value,
+            useYn: document.querySelector('input[name="useYn"]:checked').value
+        }).then(data => code.grid.setData(data.list, data.param)));
     
     // 추가버튼 클릭 이벤트
     btnAdd.addEventListener('click', e => code.grid.prependRow());
@@ -33,7 +33,6 @@ window.addEventListener('DOMContentLoaded', async event => {
 
 // 공통코드 조회
 code.search = async function(param){
-    console.log('code.search param: ', param);
 
     // 파라미터가 없을 경우 빈 객체 생성
     if(param === undefined) param = {};
@@ -182,7 +181,7 @@ code.applyCode = function(){
                 alert('적용되었습니다.');                
 
                 sbPageSize.value = 20;
-                code.search().then(data => code.grid.setData(JSON.parse(JSON.stringify(data.list)), data.paging));
+                code.search().then(data => code.grid.setData(data.list, data.param));
             }else{
                 alert(response.message);
             }

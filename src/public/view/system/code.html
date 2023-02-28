@@ -3,7 +3,6 @@
 <script type="module" src="/script/system/code.js"></script>
 
 <div class="content">
-    
     <div class="area">
         <div class="sub-title">
             <span class="text">■ 코드 관리</span>
@@ -22,7 +21,7 @@
                     <th>사용여부</th>
                     <td>
                         <div>
-                            <label><input type="radio" name="useYn" value="ALL" checked>전체</label>
+                            <label><input type="radio" name="useYn" value="" checked>전체</label>
                             <label><input type="radio" name="useYn" value="Y">사용</label>
                             <label><input type="radio" name="useYn" value="N">미사용</label>
                         </div>
@@ -31,8 +30,8 @@
                     <td>
                         <div class="search-input">
                             <select id="srhType">
-                                <option value="CODE">코드</option>
-                                <option value="GROUP_CODE">그룹코드</option>
+                                <option value="code">코드</option>
+                                <option value="groupCode">그룹코드</option>
                             </select>
                             <input id="srhWord" type="text">
                         </div>
@@ -44,7 +43,6 @@
                                 <option value="20" selected>20</option>
                                 <option value="50">50</option>
                                 <option value="100">100</option>
-                                <option value="ALL">ALL</option>
                             </select>
                             <button id="btnSearch" class="search">조회</button>
                         </div>

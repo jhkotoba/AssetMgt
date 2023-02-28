@@ -26,12 +26,21 @@ exports.selectViewCodeList = async (params, conn) => {
  */
 exports.selectCodeCount = async(param, conn) => {
 
+    let searchWord = '';
+    switch(param?.srhType){
+        case 'code':
+            searchWord = `AND CODE = '${param.srhWord}'`;
+            break;
+        case 'groupCode':
+            searchWord = `AND GROUP_CD = '${param.srhWord}'`;
+            break;
+    }
+
     return await repo.selectOne(
         `/* codeRepository.selectCodeCount */
         SELECT COUNT(1) AS totalCount FROM SY_CODE 
         WHERE 1=1
-        ${param?.groupCd ? " AND GROUP_CD = '" + param.groupCd : ' '}
-        ${param?.code ? " AND CODE = " + repo.string(param.code) : ' '}
+        ${param?.srhWord ? searchWord : ' '}
         ${param?.useYn ? " AND USE_YN = " + repo.string(param.useYn) : ' '}
         `, conn);
 }
@@ -43,7 +52,15 @@ exports.selectCodeCount = async(param, conn) => {
  */
  exports.selectCodeList = async (param, conn) => {
 
-    console.log('selectCodeList:: param:', param);
+    let searchWord = '';
+    switch(param?.srhType){
+        case 'code' :
+            searchWord = `AND CODE = '${param.srhWord}'`;
+            break;
+        case 'groupCode' :
+            searchWord = `AND GROUP_CD = '${param.srhWord}'`;
+            break;
+    }
 
     return await repo.selectList(
         `/* codeRepository.selectCodeList */
@@ -59,8 +76,7 @@ exports.selectCodeCount = async(param, conn) => {
             , DATE_FORMAT(UPT_DTTM, '%Y-%m-%d %H:%i:%S') AS uptDttm
         FROM SY_CODE
         WHERE 1=1
-        ${param?.groupCd ? " AND GROUP_CD = '" + param.groupCd : ' '}
-        ${param?.code ? " AND CODE = " + repo.string(param.code) : ' '}
+        ${param?.srhWord ? searchWord : ' '}
         ${param?.useYn ? " AND USE_YN = " + repo.string(param.useYn) : ' '}
         LIMIT ${(param.paging.pageNo - 1) * param.paging.pageSize}, ${param.paging.pageSize}`, conn);
 }
