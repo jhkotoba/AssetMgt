@@ -37,8 +37,6 @@
 .wgrid .body table tr.update{background: #5A607D;}
 .wgrid .body table tr.update:hover{background: #3F4356;}
 .wgrid .body table tr.update:active{background: #282B37;}
-/* .wgrid .body table tr.update > td > input{background: #535473;}
-.wgrid .body table tr.update > td > select{background: #535473;} */
 .wgrid .body table tr.update > td > div > input{background: #535473;}
 .wgrid .body table tr.update > td > div > select{background: #535473;}
 .wgrid .body table tr.update > td > span {background: inherit;}
@@ -50,8 +48,6 @@
 .wgrid .body table tr.remove{background: #795757 !important;}
 .wgrid .body table tr.remove:hover{background: #593F3F !important;}
 .wgrid .body table tr.remove:active{background: #3C2B2B !important;}
-/* .wgrid .body table tr.remove > td > input{background: #654A4A;}
-.wgrid .body table tr.remove > td > select{background: #654A4A;} */
 .wgrid .body table tr.remove > td > div > input{background: #654A4A;}
 .wgrid .body table tr.remove > td > div > select{background: #654A4A;}
 .wgrid .body table tr.remove > td > span {background: inherit;}
@@ -63,8 +59,6 @@
 .wgrid .body table tr.insert{background: #7B7B5D;}
 .wgrid .body table tr.insert:hover{background: #606048 !important;}
 .wgrid .body table tr.insert:active{background: #464634 !important;}
-/* .wgrid .body table tr.insert > td > input{background: #5A5A47;}
-.wgrid .body table tr.insert > td > select{background: #5A5A47;} */
 .wgrid .body table tr.insert > td > div > input{background: #5A5A47;}
 .wgrid .body table tr.insert > td > div > select{background: #5A5A47;}
 .wgrid .body table tr.insert > td > span {background: inherit;}

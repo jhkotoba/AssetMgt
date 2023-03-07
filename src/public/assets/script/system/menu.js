@@ -80,6 +80,10 @@ const menu = {
      *  그리드 최초생성
      */
     createGrid() {
+
+        // 그리드 높이 설정
+        let gridHeight = window.innerHeight - 294;
+
         // 상위메뉴 그리드 생성
         this.grid.top = new wGrid('topMenu', {
             fields: [
@@ -96,13 +100,10 @@ const menu = {
                 {title:'수정일시', element: 'text', name: 'uptDttm', width: '10%'}                
             ],
             option: { 
-                style: {
-                    height: 34.5, overflow: { y: 'scroll'}
-                },
+                style: { height: Number(gridHeight/2)+13, overflow: { y: 'scroll'}},
                 body: { state: true },
-                style: { row: {cursor: 'pointer'}, chose: true},
-                data: { insert: this.data.newRow.top }
             },
+            data: { insert: this.data.newRow.top },
             event: {
                 click: (event, item, index, sequence) => {
                     // 변경 진행상태에서 정지
@@ -143,9 +144,9 @@ const menu = {
                 {title:'수정일시', element: 'text', name: 'uptDttm', width: '10%'},
             ],
             option: { 
-                style: { height: 34.5, overflow: { y: 'scroll'}},
-                data: { insert: this.data.newRow.sub }
-            }
+                style: { height: Number(gridHeight/2)+13, overflow: { y: 'scroll'}},
+            },
+            data: { insert: this.data.newRow.sub }
         });
     },
 

@@ -70,33 +70,36 @@ export const creator = {
     appendRow: (self) => elements[self.sequence].bodyTb.appendChild(createBodyNewRow(self)),
 
     /**
-     * 
+     * 헤드영역 태그 가져오기
      * @param {*} self 
      * @returns 
      */
     getHeadElement: (self) => elements[self.sequence].head,
 
     /**
-     * 
+     * 바디영역 태그 가져오기
      * @param {*} self 
      * @returns 
      */
     getBodyElement: (self) => elements[self.sequence].body,
     
     /**
-     * 
+     * 바디목록 영역 태그 가져오기
      * @param {*} self 
      * @returns 
      */
     getBodyTbElement: (self) => elements[self.sequence].bodyTb,
 
-
+    /**
+     * 페이지네이션 영역 가져오기
+     * @param {*} self 
+     * @returns 
+     */
     createPagination: (self) => createPagination(self)
-    
 }
 
 /**
- * 
+ * 생성객체 초기화
  * @param {*} self 
  */
 const init = (self, paramater) => {
@@ -147,29 +150,10 @@ const init = (self, paramater) => {
     target.appendChild(body);
     target.appendChild(pagination);
 
-    // 그리드 css 세팅
-    // el.target.classList.add("wgrid");
-    // if(param?.option?.style?.width){
-    //     el.target.style.width = param.option.style.width;
-    // }     
-
-    // if(param?.option?.style?.height){
-    //     el.body.style.height = param.option.style.height + 'vh';
-    // }
-
-    // if(param?.option?.style?.overflow?.x == 'overlay' || param?.option?.style?.overflow?.x == 'scroll'){
-    //     el.head.style.overflowX = param.option.style.overflow.x;
-    //     el.body.style.overflowX = param.option.style.overflow.x;
-    // }
-    // if(param?.option?.style?.overflow?.y == 'overlay' || param?.option?.style?.overflow?.y == 'scroll'){
-    //     el.head.style.overflowY = param.option.style.overflow.y;
-    //     el.body.style.overflowY = param.option.style.overflow.y;
-    // }
-
+    // 그리드 엘리먼트 저장
     elements[self.sequence] = {id, target, head, headTb, headTr, body, bodyTb, bodyEmpty, pagination};
 
     // 호출 함수 저장
-    console.log('paramater.search::::', paramater);
     search[self.sequence] = paramater.search;
 }
 
@@ -194,8 +178,6 @@ const createGrid = (self) => {
 
     // 페이징 영역 생성
     // if(self.option.isPaging === true) createPagination(self);
-
-    
 }
 
 /**
@@ -209,9 +191,6 @@ const refresh = (self) => {
     // 필드 비우기
     let bodyTb = elements[self.sequence].bodyTb;
     util.elementEmpty(bodyTb);
-    // while(self.element.bodyTb.hasChildNodes()){
-    //     self.element.bodyTb.removeChild(self.element.bodyTb.firstChild);
-    // }
 
     // 필드 재생성
     reposit.getData(self).forEach((row, rIdx) => bodyTb.appendChild(createBodyRow(self, row, rIdx)));
@@ -301,6 +280,7 @@ const createBodyNewRow = (self) => {
 
     // 신규행 기본값 설정되어있으면 세팅
     let insertData = reposit.getBasicInsertData(self);
+    console.log('insertData:', insertData);
     if(insertData){
         for(let key in insertData){
             row[key] = insertData[key];
@@ -362,13 +342,10 @@ const createBodyRow = (self, row, rIdx) => {
     tr.dataset.rowSeq = row._rowSeq;
 
     // 앞키 뒤값
-    // self.setSeqIndex(row._rowSeq, rIdx);
     status.setSeqIndex(self, row._rowSeq, rIdx);
-    //self.setIdxSequence(rIdx, row._rowSeq);
     status.setIdxSequence(self, rIdx, row._rowSeq);
 
     // 행 엘리먼트 인덱싱
-    //self.setSeqRowElement(row._rowSeq, tr);
     status.setSeqRowElement(self, row._rowSeq, tr);
 
     // CELL 생성        
@@ -537,7 +514,6 @@ const createBodyRowCell = (self, row, rIdx, cell, cIdx, loaded) => {
     }
     
     // 셀 엘리먼트 인덱싱
-    //self.setSeqCellElement(row._rowSeq, cell.name, tag);
     status.setSeqCellElement(self, row._rowSeq, cell.name, tag);
 
     // 태그연결

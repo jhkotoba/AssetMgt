@@ -22,13 +22,6 @@ export const status = {
      * @returns 
      */
     clean: (self) => clean(self), 
-
-    // /**
-    //  * 그리드 상태 데이터 가져오기
-    //  * @param {*} self 
-    //  * @returns 
-    //  */
-    // getState: (self) => states[self.sequence],
     
     /**
      * 다음시퀀스 가져오기(시퀀스 증가)
@@ -228,7 +221,7 @@ const clean = (self) => {
 const reIndexing = (self, rowSequence) => {
 
     let data = reposit.getData(self);
-    let seqIndex = states[self.sequence];
+    let seqIndex = states[self.sequence].seqIndex;
 
     // seqIndex 재 인덱싱
     data.forEach((item, index) => seqIndex[item._rowSeq] = index);
@@ -277,9 +270,11 @@ const getCheckedCellElement = (self, name) => {
  * @returns 
  */
 const getNameCheckedSeqs = (self, name) => {
+
     let seqList = [];
     getCheckedCellElement(self, name)
         .forEach(check => seqList.push(Number(util.getTrNode(check).dataset.rowSeq)));
+
     return seqList;
 };
 
@@ -381,9 +376,6 @@ const settingOption = (self, option) => {
      */
     self.option.data = {};
     self.option.data.insert = option?.data?.insert === undefined ? null : option.data.insert;
-
-    
-
 }
 
 /**

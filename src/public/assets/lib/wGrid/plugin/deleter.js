@@ -1,11 +1,7 @@
-import { util } from './util.js';
 import { constant } from "./constant.js";
 import { reposit } from "./reposit.js";
 import { status } from "./status.js";
-import { creator } from "./creator.js";
 import { canceler } from "./canceler.js";
-
-
 
 /**
  * 그리드 삭제 관련 객체
@@ -18,9 +14,6 @@ export const deleter = {
      * @returns 
      */
     init: (self) => init(self),
-
-    
-
 
     /**
      * 삭제 상태로 변경(index)
@@ -40,7 +33,6 @@ export const deleter = {
      */
     removeRowSeq: (self, rowSeq, option) => removeRow(self, status.getSeqIndex(self, rowSeq), rowSeq, option),
 
-
     /**
      * 삭제 상태로 변경
      * @param {*} self
@@ -59,29 +51,73 @@ export const deleter = {
      */
     removeRowCheckedElement: (self, name) => removeRowElement(self, null, status.getNameCheckedSeqs(self, name)),
 
+    /**
+     * 행을 삭제상태 또는 삭제 진행(rowIdxList)
+     * @param {*} self 
+     * @param {*} rowIdxList 
+     * @param {*} rowSeqList 
+     */
     removeRowElementRowIdxs: (self, rowIdxList) => removeRowElement(self, rowIdxList, null),
 
+    /**
+     * 행을 삭제상태 또는 삭제 진행(rowSeqList)
+     * @param {*} self 
+     * @param {*} rowIdxList 
+     * @param {*} rowSeqList 
+     */
     removeRowElementRowSeqs: (self, rowSeqList) => removeRowElement(self, null, rowSeqList),
 
+    /**
+     * 행을 삭제상태 또는 삭제 진행(rowIdx)
+     * @param {*} self 
+     * @param {*} rowIdxList 
+     * @param {*} rowSeqList 
+     */
     removeRowElementRowIdx: (self, rowIdx) => removeRowElement(self, [rowIdx], null),
 
+    /**
+     * 행을 삭제상태 또는 삭제 진행(rowSeq)
+     * @param {*} self 
+     * @param {*} rowIdxList 
+     * @param {*} rowSeqList 
+     */
     removeRowElementRowSeq: (self, rowSeq) => removeRowElement(self, null, [rowSeq]),
 
+    /**
+     * 행을 삭제상태 또는 삭제 진행
+     * @param {*} self 
+     * @param {*} rowIdxList 
+     * @param {*} rowSeqList 
+     */
     removeRowElement: (self, rowIdx, rowSeq) => removeRowElement(self, [rowIdx], [rowSeq]),
 
+    /**
+     * 행삭제(데이터, 엘리먼트), 삭제데이터 재 인덱싱(rowIdx)
+     * @param {*} self 
+     * @param {*} rowIdx 
+     * @returns 
+     */
     deleteRowIdx: (self, rowIdx) => deleteRow(self, rowIdx, status.getIdxSequence(self, rowIdx)),
 
+    /**
+     * 행삭제(데이터, 엘리먼트), 삭제데이터 재 인덱싱(rowSeq)
+     * @param {*} self 
+     * @param {*} rowSeq 
+     * @returns 
+     */
+    deleteRowSeq: (self, rowSeq) => deleteRow(self, status.getSeqIndex(self, rowSeq), rowSeq),
 
-    deleteRowSeq: (self, rowIdx) => deleteRow(self, status.getSeqIndex(self, rowSeq), rowSeq),
-
-
-    deleteRow: (self, rowIdx, rowSeq) => deleteRow(self, rowIdx, rowSeq),
-
-
+    /**
+     * 행삭제(데이터, 엘리먼트), 삭제데이터 재 인덱싱
+     * @param {*} self 
+     * @param {*} rowIdx 
+     * @param {*} rowSeq 
+     */
+    deleteRow: (self, rowIdx, rowSeq) => deleteRow(self, rowIdx, rowSeq)
 }
 
 /**
- * 
+ * 삭제 초기화 객체
  * @param {*} self 
  */
 const init = (self) => {}
@@ -119,6 +155,12 @@ const removeRow = (self, rowIdx, rowSeq, option) => {
     }
 }
 
+/**
+ * 행을 삭제상태 또는 삭제 진행
+ * @param {*} self 
+ * @param {*} rowIdxList 
+ * @param {*} rowSeqList 
+ */
 const removeRowElement = (self, rowIdxList, rowSeqList) => {
 
     // 키값 조회
@@ -127,24 +169,25 @@ const removeRowElement = (self, rowIdxList, rowSeqList) => {
         rowSeqList.forEach(rowSeq => rowIdxList.push(status.getSeqIndex(self, rowSeq)));
     }else if(rowSeqList === null){
         rowSeqList = [];
-        rowIdxList.forEach(rowIdx => rowSeqList.push(status.setIdxSequence(self, rowIdx)));
+        rowIdxList.forEach(rowIdx => rowSeqList.push(status.getIdxSequence(self, rowIdx)));
     }
 
     let row = null;
-    let data = reposit.getData(self);
+    let data = null;
     let rowIdx = null;
     let rowSeq = null;
 
     for(let i=0; i<rowIdxList.length; i++){
 
-        rowIdx = rowIdxList[i];
         rowSeq = rowSeqList[i];
-        row = status.getSeqRowElement(self, rowSeqList[i]);
+        rowIdx = status.getSeqIndex(self, rowSeq);
+        row = status.getSeqRowElement(self, rowSeq);
+        data = reposit.getData(self, rowIdx);
 
-        switch(data[rowIdx]._state){
+        switch(data._state){
         // 신규행 제거
         case constant.row.status.insert:
-            deleteRow(rowIdx, rowSeqList[i]);
+            deleteRow(self, rowIdx, rowSeq);
             break;
         // 삭제 상태에서 편집 상태로 변경시 행 상태 원복 진행
         case constant.row.status.update:
@@ -153,6 +196,7 @@ const removeRowElement = (self, rowIdxList, rowSeqList) => {
             break;
         // 미동작
         case constant.row.status.remove:
+            data._state = constant.row.status.remove;
             break;
         }
 
@@ -160,35 +204,15 @@ const removeRowElement = (self, rowIdxList, rowSeqList) => {
         if(self.option.isRowStatusColor == true){
             row.classList.add(constant.class.row.remove);
         }
-
-        data[rowIdx]._state = constant.row.status.remove;
     }
-
-
-    // let tr = status.getSeqRowElement(self, rowSeq);
-    // let data = reposit.getData(self);
-    // console.log('data:', data, rowIdx);
-
-    // // 이전상태 분기처리
-    // switch(data[rowIdx]._state){
-    // case constant.row.status.insert:
-    //     // 신규행 제거
-    //     deleteRow(rowIdx, rowSeq);
-    // case constant.row.status.remove:
-    //     return;
-    // case constant.row.status.update:
-    //     // 삭제 상태에서 편집 상태로 변경시 행 상태 원복 진행
-    //     canceler.cancelRow(self, rowIdx, rowSeq);
-    //     break;
-    // }
-
-    // if(reposit.getOption(self).body.state.use == true){
-    //     tr.classList.add(constant.class.row.remove);
-    // }
-
-    // data[rowIdx]._state = constant.row.status.remove;
 }
 
+/**
+ * 행삭제(데이터, 엘리먼트), 삭제데이터 재 인덱싱
+ * @param {*} self 
+ * @param {*} rowIdx 
+ * @param {*} rowSeq 
+ */
 const deleteRow = (self, rowIdx, rowSeq) => {
 
     // 데이터 삭제
@@ -199,5 +223,4 @@ const deleteRow = (self, rowIdx, rowSeq) => {
 
     // 데이터 재 인덱싱
     status.dataReIndexing(self, rowSeq);
-
 }

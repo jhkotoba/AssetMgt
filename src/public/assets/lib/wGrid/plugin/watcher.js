@@ -7,12 +7,6 @@ import { amender } from "./amender.js";
 import { canceler } from "./canceler.js";
 
 
-
-/**
- * 이벤트 데이터
- */
-let events = {};
-
 /**
  * 그리드 이벤트 관련 객체
  */
@@ -33,8 +27,6 @@ export const watcher = {
  */
 const init = (self, outerEvent) => {
 
-    console.log('watcher outerEvent:', outerEvent);
-    
     // 생성할 이벤트 종류
     let evList = ["click", "change", "keyup"];
     // 내부 연결 이벤트
@@ -195,7 +187,4 @@ const init = (self, outerEvent) => {
             event.stopPropagation();
         });
     }
-
-    //events[self.sequence] = innerEvent;
-    // return innerEvent;
 }

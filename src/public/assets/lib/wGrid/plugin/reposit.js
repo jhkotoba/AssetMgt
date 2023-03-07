@@ -1,7 +1,6 @@
 import { util } from './util.js';
 import { constant } from "./constant.js";
 import { status } from "./status.js";
-//import { creator } from "./creator";
 import { creator } from "./creator.js";
 
 // 그리드 번호
@@ -10,14 +9,9 @@ let sequence = 1;
 // 데이터
 let data = {};
 
-// 옵션 데이터
-//let option = {};
-
 // 기본값 데이터
 let basic = {};
 
-// 페이징 데이터
-//let paging = {};
 // 파라미터
 let parameter = {}
 
@@ -42,21 +36,6 @@ export const reposit = {
      * @returns 
      */
     getFields: (self) => fields[self.sequence],
-
-    /**
-     * 그리드 옵션 데이터 가져오기
-     * @params {*} self 
-     * @returns 
-     */
-    //getOption: (self) => option[self.sequence],
-
-    /**
-     * 옵션변경
-     * @param {*} optionName 
-     * @param {*} value 
-     * @returns 
-     */
-    //chageOption: (self, optionName, value) => eval(`option[${self.sequence}].${optionName}=` + value),
 
     /**
      * 그리드 데이터 세팅
@@ -155,17 +134,20 @@ export const reposit = {
      * @returns 
      */
     getBasicInsertData: (self) => basic[self.sequence].insert,
-
     
-
+    /**
+     * 조회 데이터 가져오기(페이징 포함)
+     * @param {*} self 
+     * @returns 
+     */
     getParameter: (self) => parameter[self.sequence],
 
-    getPagingData: (self) => {
-        //parameter[self.sequence].paging,
-        console.log('======> ', parameter);
-        return parameter[self.sequence].paging;
-    }
-
+    /**
+     * 조회 데이터중 페이징 데이터 가져오기
+     * @param {*} self 
+     * @returns 
+     */
+    getPagingData: (self) => parameter[self.sequence].paging
 }
 
 /**
@@ -187,56 +169,13 @@ const init = (self, params) => {
         editData: {}
     };
 
-    // 옵션 데이터 저장
-    // option[self.sequence] = initOption(params);
-    // self.option = initOption(params);
-
     // 기본값 데이터 저장
     basic[self.sequence] = {}
     basic[self.sequence].insert = params?.data?.insert === undefined ? null : params.data.insert;
 
     // 필드 데이터 저장
     fields[self.sequence] = params.fields;
-
-    // // 페이징 관련 변수 세팅
-    // if(params?.option?.isPaging === true){
-    //     paging[self.sequence] = {
-    //         pageNo: params?.data?.pageNo === undefined ? 1 : params.data.pageNo,
-    //         pageSize: params?.data?.pageSize === undefined ? 10 : params.data.pageSize,
-    //         pageBlock: params?.data?.pageBlock === undefined ? 10 : params.data.pageBlock,
-    //         totalCount: params?.data?.totalCount === undefined ? 0 : params.data.totalCount
-    //     }
-    // // 페이징 관련 변수 (기본값)
-    // }else{
-    //     paging[self.sequence] = {pageNo: 1, pageSize: 10, pageBlock: 10, totalCount: 0};
-    // }
-
-    // @deprecated
-    // 생성시 데이터 존재시 세팅
-    // if(util.isNotEmpty(params.data)) setData(self, params);
 }
-
-
-
-// /**
-//  * 데이터 재 인덱싱
-//  * @params {*} self 
-//  * @params {*} rowSequence 
-//  */
-// const reIndexing = (self, rowSequence) => {
-
-//     // seqIndex 재 인덱싱
-//     self.state.seqIndex = [];
-//     data[self.sequence].forEach((item, index) => {
-//         self.state.seqIndex[item._rowSeq] = index;
-//     });
-
-//     // sequence가 키인 데이터 삭제
-//     if(rowSequence){
-//         delete self.state.seqRowElement[rowSequence];
-//         delete self.state.seqCellElement[rowSequence];
-//     }
-// }
 
 /**
  * 그리드 데이터 가져오기(깊은복사)
@@ -259,6 +198,7 @@ const getDeepData = (self, index) => {
  * @returns 
  */
 const getData = (self, index) => {
+
     if(util.isEmpty(index)){
         return data[self.sequence].data;
     }else{
@@ -274,7 +214,6 @@ const getData = (self, index) => {
  * @returns 
  */
 const setData = (self, list, params) => {
-    console.log('setData params:', params);
 
     // 데이터를 그리드에 삽입
     for(let item of list){
@@ -298,28 +237,6 @@ const setData = (self, list, params) => {
     creator.refresh(self);
 }
 
-/**
- * 페이징 변수 세팅
- * @params {*} params 
- */
-// const setPaging = (self, param) => {
-
-//     let pagingData = param.paging;
-
-//     if(pagingData?.pageNo !== undefined){
-//         paging[self.sequence].pageNo = pagingData.pageNo;
-//     }
-//     if(pagingData?.pageSize !== undefined){
-//         paging[self.sequence].pageSize = pagingData.pageSize;
-//     }
-//     if(pagingData?.pageBlock !== undefined){
-//         paging[self.sequence].pageBlock = pagingData.pageBlock;
-//     }
-//     if(pagingData?.totalCount !== undefined){
-//         paging[self.sequence].totalCount = pagingData.totalCount;
-//     }
-// }
-
 // 상태체크 SELECT
 const isSelect = state => constant.row.status.select === state;
 // 상태체크 INSERT
@@ -328,138 +245,3 @@ const isInsert = state => constant.row.status.insert === state;
 const isUpdate = state => constant.row.status.update === state;
 // 상태체크 REMOVE
 const isRemove = state => constant.row.status.remove === state;
-
-/**
- * @deprecated
- * 옵션데이터 세팅
- */
-const initOption = (params) => {
-
-    // 옵션 기본값 세팅
-    let option = {
-        style:{
-            width: '100%', 
-            height: '500vh',
-            overflow: {
-                x: null, y: null
-            }
-        },
-        format:{
-            date: "YYYY-MM-DD"
-        },
-        empty:{
-            message: "no data"
-        },
-        // isHead: true,
-        // head:{
-        //     is: true
-        // },
-        body: {
-            state:{
-                use: false
-            }
-        },
-        row: {
-            style:{                    
-                cursor: "inherit",
-            },
-            chose: false
-        },
-        checkbox: {
-            check: true,
-            uncheck: false
-        },
-        data: {
-            insert: null
-        },
-        // paging: {
-        //     is: false
-        // }
-    }
-
-    /**
-     * 그리드 헤드 표시여부
-     * 기본값: true
-     */
-    option.isHead = params?.option?.isHead === undefined ? true : params.option.isHead;
-    
-    /**
-     * 페이지 사용여부
-     * 기본값 : false
-     */
-    option.isPaging = params?.option?.isPaging === undefined ? false : params.option.isPaging;
-
-    // 옵션값 세팅
-    if(params.option){
-        if(params.option.style){
-            if(params.option.style.width){
-                option.style.width = params.option.style.width;
-            }
-            if(params.option.style.height){
-                option.style.height = params.option.style.height + 'vh';
-            }
-            if(params.option.style.overflow){
-                if(params.option.style.overflow.x){
-                    option.style.overflow.x = params.option.style.overflow.x;
-                }
-                if(params.option.style.overflow.y){
-                    option.style.overflow.y = params.option.style.overflow.y;
-                }
-               
-            }
-        }
-        if(params.option.empty){
-            if(params.option.empty.message){
-                option.empty.message = params.option.empty.message;
-            }
-        }
-        if(params.option.format){
-            if(params.option.format.date){
-                option.format.date = params.option.format.date
-            }
-        }
-        // if(params.option.head){
-        //     if(params.option.head.is == false){
-        //         option.head.is = false;
-        //     }else{
-        //         option.head.is = true;
-        //     }
-        // }
-        
-
-
-        option.body.state.use = true;
-        if(params.option.body){
-            if(params.option.body.state){
-                if(params.option.body.state.use == false){
-                    option.body.state.use = false;
-                }else{
-                    option.body.state.use = true;
-                }
-            }
-        }
-        if(params.option.row){
-            if(params.option.row.style){
-                if(params.option.row.style.cursor){
-                    option.row.style.cursor = params.option.row.style.cursor;
-                }                    
-            }
-            if(params.option.row.chose == true){
-                option.row.chose = params.option.row.chose;
-            }
-        }
-        if(params?.option?.data){
-            if(params.option.data.insert){
-                option.data.insert = params.option.data.insert;
-            }
-        }
-        // if(params?.option?.paging){
-        //     if(params.option.paging.is === true){
-        //         option.paging.is = true;
-        //     }else{
-        //         option.paging.is = false;
-        //     }
-        // }
-    }
-    return option;
-}

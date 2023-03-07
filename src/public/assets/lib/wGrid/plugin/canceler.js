@@ -84,6 +84,10 @@ export const canceler = {
     cancelRowElement: (self, rowIdx, rowSeq) => cancelRowElement(self, [rowIdx], [rowSeq]),
 }
 
+/**
+ * 취소객체 초기화
+ * @param {*} self 
+ */
 const init = (self) => {}
 
 /**
@@ -93,6 +97,8 @@ const init = (self) => {}
  * @param {number/string} rowSeq 행 시퀀스
  */
 const cancelRow = (self, rowIdx, rowSeq) => {
+
+    // 행 엘리먼트
     let rowElement = status.getSeqRowElement(self, rowSeq);
     let data = reposit.getData(self);
             
@@ -117,12 +123,13 @@ const cancelRow = (self, rowIdx, rowSeq) => {
 }
 
 /**
- * 행을 편집,삭제 상태로 부터 복원 (rowIdx)
+ * 행을 편집,삭제 상태로 부터 복원
  * @param {*} self
  * @param {numberList} rowIdxList
  * @param {stringList} rowSeqList
  */
 const cancelRowElement = (self, rowIdxList, rowSeqList) => {
+
     // 키값 조회
     if(rowIdxList === null){
         rowIdxList = [];
@@ -133,48 +140,48 @@ const cancelRowElement = (self, rowIdxList, rowSeqList) => {
     }
 
     let row = null;
-    let data = reposit.getData(self);
-    let editData = amender.getEditData(self);
     let rowIdx = null;
     let rowSeq = null;
+    let data = null;
+    let editData = amender.getEditData(self);
 
     for(let i=0; i<rowIdxList.length; i++){
 
-        rowIdx = rowIdxList[i];
         rowSeq = rowSeqList[i];
+        rowIdx = status.getSeqIndex(self, rowSeq);
         row = status.getSeqRowElement(self, rowSeq);
+        data = reposit.getData(self, rowIdx);
 
-        switch(data[rowIdx]._state){
+        switch(data._state){
         // 등록상태 취소(삭제)
         case constant.row.status.insert:
             deleter.removeRowElement(self, rowIdx, rowSeq);
             break;
         // 편집상태 취소(편집의 경우 행 재생성)
         case constant.row.status.update:
-
             // 원본 데이터로 돌림
             for(let key in editData[rowSeq]){
-                data[rowIdx][key] = editData[rowSeq][key];
+                data[key] = editData[rowSeq][key];
             }
             delete editData[rowSeq];
 
             // 데이터 상태 조회로 변경
-            data[rowIdx]._state = constant.row.status.select;
+            data._state = constant.row.status.select;
 
             // 자식노드 비우기
             util.elementEmpty(row);
 
             // cell 생성후 태그 연결
             let loaded = [];
-            reposit.getFields(self).forEach((field, idx) => row.appendChild(creator.createCell(self, data[rowIdx], rowIdx, field, idx, loaded)));
+            reposit.getFields(self).forEach((field, idx) => row.appendChild(creator.createCell(self, data, rowIdx, field, idx, loaded)));
             // 행생성후 loaded함수 호출
             loaded.forEach(item => item.fn(item.tag, item.row));
-            
+
             break;
         // 삭제상태 취소
         case constant.row.status.remove:
             // 데이터 상태 조회로 변경
-            data[rowIdx]._state = constant.row.status.select;
+            data._state = constant.row.status.select;
             break;
         }
 

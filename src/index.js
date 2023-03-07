@@ -22,8 +22,8 @@ const express = require("express");
 const app = express();
 
 // body-parser
+app.use(express.urlencoded({extended: true}));
 app.use(express.json());
-app.use(express.urlencoded({ extends: true}));
 
 /**
  * Express 프레임워크를 위한 간단한 세션 관리용 미들웨어

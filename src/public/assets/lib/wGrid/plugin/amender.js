@@ -189,25 +189,23 @@ const modifyElementRow = (self, rowIdxList, rowSeqList) => {
     }
 
     // 데이터
-    let data = reposit.getData(self);
     let row = null;
     let loaded = null;
-    let item = null;
     let rowIdx = null;
     let rowSeq = null;
+    let data = null;
 
     for(let i=0; i<rowIdxList.length; i++){
 
-        rowIdx = rowIdxList[i];
         rowSeq = rowSeqList[i];
-        // 데이터
-        item = data[rowIdx];
+        rowIdx = status.getSeqIndex(self, rowSeq);
+        data = reposit.getData(self, rowIdx);
 
         // 편집할 행 엘리먼트
         row = status.getSeqRowElement(self, rowSeqList[i]);
 
         // 이전상태 분기처리
-        switch(item._state){
+        switch(data._state){
         case constant.row.status.insert:
         case constant.row.status.update:
             return;
@@ -222,19 +220,19 @@ const modifyElementRow = (self, rowIdxList, rowSeqList) => {
             editData[self.sequence] = {};
         }
         editData[self.sequence][rowSeq] = {};
-        for(let key in item){
-            editData[self.sequence][rowSeq][key] = item[key];
+        for(let key in data){
+            editData[self.sequence][rowSeq][key] = data[key];
         }
 
         // 데이터 행상태 값 변경
-        item._state = constant.row.status.update;
+        data._state = constant.row.status.update;
 
         // 자식노드 비우기
         util.elementEmpty(row);
 
         // CELL 생성   
         loaded = [];
-        reposit.getFields(self).forEach((field, idx) => row.appendChild(creator.createCell(self, item, rowIdx, field, idx, loaded)));
+        reposit.getFields(self).forEach((field, idx) => row.appendChild(creator.createCell(self, data, rowIdx, field, idx, loaded)));
 
         // 행생성후 loaded함수 호출
         loaded.forEach(item => item.fn(item.tag, item.row));
@@ -244,48 +242,4 @@ const modifyElementRow = (self, rowIdxList, rowSeqList) => {
             row.classList.add(constant.class.row.update);
         }
     }
-
-    // // 행의 데이터
-    // let item = reposit.getData(self, rowIdx);
-
-    // // 편집할 행 엘리먼트
-    // let tr = status.getSeqRowElement(self, rowSeq);
-    
-    // // 이전상태 분기처리
-    // switch(item._state){
-    // case constant.row.status.insert:
-    // case constant.row.status.update:
-    //     return;
-    // case constant.row.status.remove:
-    //     // 삭제 상태에서 편집 상태로 변경시 행 상태 원복 진행
-    //     canceler.cancelRowElement(self, rowIdx, rowSeq);
-    //     break;
-    // }
-
-    // // 편집모드 변경전 본래값 저장
-    // if(editData[self.sequence] == undefined){
-    //     editData[self.sequence] = {};
-    // }
-    // editData[self.sequence][rowSeq] = {};
-    // for(let key in item){
-    //     editData[self.sequence][key] = item[key];
-    // }  
-
-    // 데이터 행상태 값 변경
-    // item._state = constant.row.status.update;
-
-    // // 자식노드 비우기
-    // util.elementEmpty(tr);
-
-    // // CELL 생성   
-    // let loaded = [];
-    // reposit.getFields(self).forEach((field, idx) => tr.appendChild(creator.createCell(self, item, rowIdx, field, idx, loaded)));
-
-    // // 행생성후 loaded함수 호출
-    // loaded.forEach(item => item.fn(item.tag, item.row));
-    
-    // // 업데이트 스타일 적용
-    // if(reposit.getOption(self).body.state.use == true){
-    //     tr.classList.add(constant.class.row.update);
-    // }
 }

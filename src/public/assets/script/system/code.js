@@ -26,7 +26,7 @@ window.addEventListener('DOMContentLoaded', async event => {
     // 추가버튼 클릭 이벤트
     btnAdd.addEventListener('click', e => code.grid.prependRow());
     // 새로고침 클릭 이벤트
-    btnRefresh.addEventListener('click', e => response.list, response.param);
+    btnRefresh.addEventListener('click', e => code.search().then(data => code.grid.setData(data.list, data.param)));
     // 저장버튼 클릭 이벤트
     btnSave.addEventListener('click', code.applyCode);
 });
