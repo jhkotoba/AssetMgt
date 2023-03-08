@@ -194,8 +194,8 @@ const removeRowElement = (self, rowIdxList, rowSeqList) => {
             // 취소할 상태값 저장
             canceler.cancelRowElement(self, rowIdx, rowSeq);
             break;
-        // 미동작
-        case constant.row.status.remove:
+        // 조회상태에서 삭제상태로 변경
+        case constant.row.status.select:
             data._state = constant.row.status.remove;
             break;
         }
