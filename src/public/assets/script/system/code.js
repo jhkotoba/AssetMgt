@@ -84,8 +84,6 @@ code.createGrid = function(){
         option: { 
             // 그리드 스타일 설정
             style: { height: gridHeight ? gridHeight : 635, overflow: {y: 'scroll'}},
-            // 그리드 데이터 설정(@deprecated)
-            data: { insert: {code: '', codeNm: '', groupCd:'', useYn: 'Y'}},
             // 페이징 여부
             isPaging: true,
             // 행 상태변경 체크 옵션

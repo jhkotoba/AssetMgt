@@ -25,7 +25,7 @@ exports.selectUser = async (userId, conn) => {
 }
 
 /**
- * 
+ * 사용자 목록 카운트 조회
  * @param {*} params 
  * @param {*} conn 
  */
@@ -34,12 +34,12 @@ exports.selectUserCount = async(params, conn) => {
 }
 
 /**
- * 
+ * 사용자 목록 조회
  * @param {*} params 
  * @param {*} conn 
  */
 exports.selectUserList = async (params, conn) => {
-
+    
     return await repo.selectList(
         `/* userRepository.selectUserList */
         SELECT
@@ -51,8 +51,7 @@ exports.selectUserList = async (params, conn) => {
             , DATE_FORMAT(INS_DTTM, '%Y-%m-%d %H:%i:%S') AS insDttm
             , DATE_FORMAT(UPT_DTTM, '%Y-%m-%d %H:%i:%S') AS uptDttm
         FROM UR_USER
-        LIMIT ${params.pageSize} OFFSET ${params.pageNo - 1}
-        `, conn);
+        LIMIT ${(params.paging.pageNo - 1) * params.paging.pageSize}, ${params.paging.pageSize}`, conn);
 }
 
 /**

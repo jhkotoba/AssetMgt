@@ -24,15 +24,15 @@ exports.selectViewCodeList = async (params, conn) => {
  * @param {*} params 
  * @param {*} conn 
  */
-exports.selectCodeCount = async(param, conn) => {
+exports.selectCodeCount = async(params, conn) => {
 
     let searchWord = '';
-    switch(param?.srhType){
+    switch(params?.srhType){
         case 'code':
-            searchWord = `AND CODE = '${param.srhWord}'`;
+            searchWord = `AND CODE = '${params.srhWord}'`;
             break;
         case 'groupCode':
-            searchWord = `AND GROUP_CD = '${param.srhWord}'`;
+            searchWord = `AND GROUP_CD = '${params.srhWord}'`;
             break;
     }
 
@@ -40,8 +40,8 @@ exports.selectCodeCount = async(param, conn) => {
         `/* codeRepository.selectCodeCount */
         SELECT COUNT(1) AS totalCount FROM SY_CODE 
         WHERE 1=1
-        ${param?.srhWord ? searchWord : ' '}
-        ${param?.useYn ? " AND USE_YN = " + repo.string(param.useYn) : ' '}
+        ${params?.srhWord ? searchWord : ' '}
+        ${params?.useYn ? " AND USE_YN = " + repo.string(params.useYn) : ' '}
         `, conn);
 }
 
@@ -50,15 +50,15 @@ exports.selectCodeCount = async(param, conn) => {
  * @param {*} params 
  * @param {*} conn 
  */
- exports.selectCodeList = async (param, conn) => {
+ exports.selectCodeList = async (params, conn) => {
 
     let searchWord = '';
-    switch(param?.srhType){
+    switch(params?.srhType){
         case 'code' :
-            searchWord = `AND CODE = '${param.srhWord}'`;
+            searchWord = `AND CODE = '${params.srhWord}'`;
             break;
         case 'groupCode' :
-            searchWord = `AND GROUP_CD = '${param.srhWord}'`;
+            searchWord = `AND GROUP_CD = '${params.srhWord}'`;
             break;
     }
 
@@ -76,9 +76,9 @@ exports.selectCodeCount = async(param, conn) => {
             , DATE_FORMAT(UPT_DTTM, '%Y-%m-%d %H:%i:%S') AS uptDttm
         FROM SY_CODE
         WHERE 1=1
-        ${param?.srhWord ? searchWord : ' '}
-        ${param?.useYn ? " AND USE_YN = " + repo.string(param.useYn) : ' '}
-        LIMIT ${(param.paging.pageNo - 1) * param.paging.pageSize}, ${param.paging.pageSize}`, conn);
+        ${params?.srhWord ? searchWord : ' '}
+        ${params?.useYn ? " AND USE_YN = " + repo.string(params.useYn) : ' '}
+        LIMIT ${(params.paging.pageNo - 1) * params.paging.pageSize}, ${params.paging.pageSize}`, conn);
 }
 
 /**

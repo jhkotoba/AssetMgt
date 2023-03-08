@@ -1,3 +1,4 @@
+const logger = require(`${basePath}/config/logger.js`);
 const crypto = require('crypto');
 const jsencrypt = require(`nodejs-jsencrypt`);
 const userRepository = require(`${basePath}/repository/userRepository.js`);
@@ -102,10 +103,11 @@ exports.getUserList = async params => {
         await userRepository.selectUserList(params),
     ])
     .then(values => {
-        return{
-            totalCount: Number(values[0].totalCount),
-            list: values[1]
-        }
+        params.paging.totalCount = Number(values[0].totalCount);
+        return {list: values[1], params}
     })
-    .catch(error => logger.error(error));    
+    .catch(error => {
+        logger.error('getUserList ERROR ::', error);
+        return Promise.reject(error);
+    });
 }    

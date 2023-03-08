@@ -14,13 +14,13 @@ exports.getViewCodeList = params => codeRepository.selectViewCodeList(params)
  * @param {object} param 
  * @returns 
  */
-exports.getCodeList = (param) => {
+exports.getCodeList = async params => {
     return Promise.all([
-        codeRepository.selectCodeCount(param),
-        codeRepository.selectCodeList(param)
+        codeRepository.selectCodeCount(params),
+        codeRepository.selectCodeList(params)
     ]).then(values => {
-        param.paging.totalCount = Number(values[0].totalCount);
-        return {list: values[1], param}
+        params.paging.totalCount = Number(values[0].totalCount);
+        return {list: values[1], params}
     }).catch(async error => {
         logger.error('getCodeList ERROR ::', error);
         return Promise.reject(error);
