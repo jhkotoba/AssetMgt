@@ -1,7 +1,7 @@
+const logger = require(`${basePath}/config/logger.js`);
 const menuService = require(`${basePath}/services/menuService.js`);
 const codeService = require(`${basePath}/services/codeService.js`);
 const userService = require(`${basePath}/services/userService.js`);
-const logger = require(`${basePath}/config/logger.js`);
 
 /**
  * 사용자 메뉴목록 조회

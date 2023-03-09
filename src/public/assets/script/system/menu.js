@@ -27,11 +27,11 @@ const menu = {
         },
         optionRow: { style: {cursor: 'pointer'}, chose: true},
         code: {
-            mapping: _code.reduce((acc, curr) => {
+            mapping: __code.reduce((acc, curr) => {
                 acc[curr.code] = curr.codeNm;
                 return acc;
             }, {}),
-            select: {codeList: _code}
+            select: {codeList: __code}
         }
     },
     grid: {
@@ -302,5 +302,3 @@ const menu = {
         return isValidation;
     }
 }
-
-window._menu = menu;

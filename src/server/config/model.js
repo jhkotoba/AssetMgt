@@ -5,14 +5,14 @@ const menuService = require(`${basePath}/services/menuService.js`);
 
 exports.modelAndView = function(path, params){
     return Promise.all([
-        // 
+        // 틀 페이지 가져오기
         new Promise((resolve, reject) => {
             fs.readFile(`${public}/view/index.html`, 'UTF-8', (error, value) => {
                 if(error) reject(error);
                 else resolve(value);
             })
         }),
-        //
+        // 내용 페이지 가져오기
         new Promise((resolve, reject) => {
             fs.readFile(`${public}/view/${path}`, 'UTF-8', (error, value) => {
                 if(error) reject(error);
@@ -50,7 +50,7 @@ exports.modelAndView = function(path, params){
     .then(values => {
         let html = values[0];
         if(values[3] == true){
-            html = html.replace("</body>", "</body>" + `<script>window._code = JSON.parse('${JSON.stringify(values[2])}');</script>`);
+            html = html.replace("</body>", "</body>" + `<script>window.__code = JSON.parse('${JSON.stringify(values[2])}');</script>`);
             html = html.replace("<main>", "<main>" + values[1]);
         }else if(values[2].length > 0){
             html = html.replace("<body>", "<body>" + `<script>window.location.href = '/';</script>`);

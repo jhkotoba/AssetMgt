@@ -6,11 +6,56 @@
     <div class="area">
         <div class="sub-title">
             <span class="text">■ 사용자 관리</span>
-            <div class="button-box">
-                <button id="btnRefresh">새로고침</button>
-                <button id="btnSave" class="warning">저장</button>
-            </div>
         </div>
-        <div id="userList"></div>
+        <div class="search-box">
+            <table>
+                <colgroup>
+                    <col width="8%">
+                    <col width="34%">
+                    <col width="8%">
+                    <col width="34%">
+                    <col width="8%">
+                    <col width="8%">
+                </colgroup>
+                <tr>
+                    <th>아이디</th>
+                    <td>
+                        <div class="search-input">
+                            <input id="iptUserId" type="text">
+                        </div>
+                    </td>
+                    <th>권한</th>
+                    <td>
+                        <div class="search-input">
+                            <select id="sbAuth">
+                                <option value="">전체</option>
+                            </select>
+                        </div>
+                    </td>
+                    
+                    <th>페이지 수</th>
+                    <td>
+                        <div class="search-input">
+                            <select id="sbPageSize" class="w100p">
+                                <option value="20" selected>20</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            <button id="btnSearch" class="search">조회</button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
+</div>
+
+<div class="content">
+    <div class="area">
+        <div class="button-box">
+            <button id="btnRefresh">새로고침</button>
+            <button id="btnSave" class="warning">저장</button>
+        </div>
+    </div>
+    <div id="userList"></div>
 </div>

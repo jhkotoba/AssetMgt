@@ -10,7 +10,7 @@ router.get("/menu", async (request, response) => response.send(await model.model
 router.get("/code", async (request, response) => response.send(await model.modelAndView('system/code.html', {request})));
 
 // 사용자관리 페이지
-router.get("/user", async (request, response) => response.send(await model.modelAndView('system/user.html', {request})));
+router.get("/user", async (request, response) => response.send(await model.modelAndView('system/user.html', {request, code: ['GRP_CD_AUTH']})));
 
 // 사용자 메뉴목록 조회
 router.post('/getUserMenuList', systemController.getUserMenuList);

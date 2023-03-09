@@ -2,7 +2,11 @@ import { sender } from "/script/common/sender.js";
 
 window.addEventListener('DOMContentLoaded', () => user.init());
 const user = {
-    grid: null
+    grid: null,
+    authCode : __code.reduce((acc, curr) => {
+        acc[curr.code] = curr.codeNm;
+        return acc;
+    }, {})
 };
 
 // 사용자 목록 조회
@@ -21,7 +25,6 @@ user.search = async function(param){
 
     // 응답 성공 시
     if(response.resultCode == 'SUCCESS'){
-        response.data.list.forEach(item => item.check = false);
         return response.data;
     // 응답 실패 시
     }else{
@@ -36,6 +39,14 @@ user.search = async function(param){
 // 사용자 목록 초기세팅
 user.init = async function(){
 
+    // 검색항목 설정
+    __code.forEach(code => {
+        let option = document.createElement('option');
+        option.value = code.code;
+        option.textContent = code.codeNm;
+        sbAuth.appendChild(option);
+    });
+
     // 그리드 높이 설정
     let gridHeight = window.innerHeight - 294;
 
@@ -44,7 +55,7 @@ user.init = async function(){
             {title:'사용자번호', element: 'text', name: 'userNo', width: '5%'},
             {title:'사용자 아이디', element: 'text', name: 'userId', width: '18%'},
             {title:'이메일', element: 'text', name: 'email', width: '18%'},
-            {title:'권한', element: 'text', name: 'authCd', width: '18%'},
+            {title:'권한', element: 'text', name: 'authCd', width: '18%', data: {mapping: user.authCode}},
             {title:'수정일시', element: 'text', name: 'uptDttm', width: '10%'},
             {title:'등록일시', element: 'text', name: 'insDttm', width: '10%'},
         ],
@@ -59,7 +70,7 @@ user.init = async function(){
     });
 
     // 조회 및 그리드 데이터 입력
-    this.search().then(data => user.grid.setData(data.list, data.param));
+    this.search().then(data => user.grid.setData(data.list, data.params));
 }
 
 user.select = async function(params){

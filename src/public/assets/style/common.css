@@ -49,7 +49,7 @@ main{height: 100% ; overflow-x: hidden; overflow-y: auto;}
 /* .content .search-box div > .last-input {width: 100%;} */
 
 /* input */
-.content input[type='text']{background: #4e4e4e; color:#C6C6C6; font-size: 1em; height: 30px; border: 1px solid #585858; border-radius: 2px; text-indent: 5px;}
+.content input[type='text']{background: #4e4e4e; color:#C6C6C6; font-size: 1em; height: 26px; border: 1px solid #585858; border-radius: 2px; text-indent: 5px;}
 .content input[type='radio']{appearance: none; width: 20px; height: 20px; border: 1.5px solid #7e7e7e; border-radius: 50%;	background-clip: content-box; padding: 3px; cursor: pointer; vertical-align: bottom;}
 .content input[type='radio']:checked{background-color: #9f9f9f;}
 .content input[type='radio']:checked::after {display: block;}
