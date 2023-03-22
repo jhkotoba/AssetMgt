@@ -18,8 +18,8 @@ window.addEventListener('DOMContentLoaded', async event => {
 
     // 조회버튼 클릭 이벤트
     btnSearch.addEventListener('click', e => code.search({
-            srhType: srhType.value,
-            srhWord: srhWord.value,
+            srhType: sbSrhType.value,
+            srhWord: iptSrhWord.value,
             useYn: document.querySelector('input[name="useYn"]:checked').value
         }).then(data => code.grid.setData(data.list, data.params)));
     
