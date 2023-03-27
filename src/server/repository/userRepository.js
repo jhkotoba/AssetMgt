@@ -30,7 +30,23 @@ exports.selectUser = async (userId, conn) => {
  * @param {*} conn 
  */
 exports.selectUserCount = async(params, conn) => {
-    return await repo.selectOne(`/* userRepository.selectUserCount */ SELECT COUNT(1) AS totalCount FROM UR_USER`, conn);
+
+    let searchWord = '';
+    switch(params?.srhType){
+        case 'userNo':
+            searchWord = `AND USER_NO = '${params.srhWord}'`;
+            break;
+        case 'userId':
+            searchWord = `AND USER_ID = '${params.srhWord}'`;
+            break;
+    }
+
+    return await repo.selectOne(`/* userRepository.selectUserCount */ 
+        SELECT COUNT(1) AS totalCount FROM UR_USER
+        WHERE 1=1
+        ${params?.srhWord ? searchWord : ' '}
+        ${params?.auth ? " AND AUTH_CD = " + repo.string(params.auth) : ' '}
+        `, conn);
 }
 
 /**
@@ -39,6 +55,16 @@ exports.selectUserCount = async(params, conn) => {
  * @param {*} conn 
  */
 exports.selectUserList = async (params, conn) => {
+
+    let searchWord = '';
+    switch(params?.srhType){
+        case 'userNo':
+            searchWord = `AND USER_NO = '${params.srhWord}'`;
+            break;
+        case 'userId':
+            searchWord = `AND USER_ID = '${params.srhWord}'`;
+            break;
+    }
     
     return await repo.selectList(
         `/* userRepository.selectUserList */
@@ -51,6 +77,9 @@ exports.selectUserList = async (params, conn) => {
             , DATE_FORMAT(INS_DTTM, '%Y-%m-%d %H:%i:%S') AS insDttm
             , DATE_FORMAT(UPT_DTTM, '%Y-%m-%d %H:%i:%S') AS uptDttm
         FROM UR_USER
+        WHERE 1=1
+        ${params?.srhWord ? searchWord : ' '}
+        ${params?.auth ? " AND AUTH_CD = " + repo.string(params.auth) : ' '}
         LIMIT ${(params.paging.pageNo - 1) * params.paging.pageSize}, ${params.paging.pageSize}`, conn);
 }
 

@@ -187,8 +187,20 @@ exports.applyMenu = async (request, response, next) => {
  */
 exports.getUserList = async (request, response, next) => {
 
+    /**
+     * 파라미터 세팅
+     */
+    // 조회 타입
+    let srhType = request.body.srhType;
+    // 조회 문구
+    let srhWord = request.body.srhWord;
+    // 권한
+    let auth = request.body.auth;
+    // 페이징 정보
+    let paging = request.body.paging;
+
     // 메뉴목록 조회
-    await userService.getUserList(request.body).then(value => {
+    await userService.getUserList({srhType, srhWord, auth, paging}).then(value => {
         response.status(200).json({
             message: 'SUCCESS',
             resultCode: 'SUCCESS',
@@ -198,7 +210,8 @@ exports.getUserList = async (request, response, next) => {
         // 예외 응답
         switch(error.message){
             default:
-                response.status(500).json({resultCode: 'SYSTEM_ERROR', message: `시스템 오류가 발생하였습니다. (${error.message})`});
+                console.error('SYSTEM_ERROR::', error.message);
+                response.status(500).json({resultCode: 'SYSTEM_ERROR', message: `시스템 오류가 발생하였습니다.`});
             break;
         }
     });

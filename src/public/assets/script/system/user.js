@@ -17,7 +17,7 @@ user.search = async function(param){
 
     // 페이징 정보가 없을 경우 기본 페이징 세팅
     if(param.paging === undefined){
-        param.paging = {pageNo: 1, pageSize: 20, pageBlock: 10, totalCount: 0}
+        param.paging = {pageNo: 1, pageSize: Number(sbPageSize.value), pageBlock: 10, totalCount: 0}
     }
 
     // 사용자 목록 조회
@@ -71,6 +71,16 @@ user.init = async function(){
 
     // 조회 및 그리드 데이터 입력
     this.search().then(data => user.grid.setData(data.list, data.params));
+
+    // 조회버튼 클릭 이벤트
+    btnSearch.addEventListener('click', e => user.search({
+        srhType: sbSrhType.value,
+        srhWord: iptSrhWord.value,
+        auth: sbAuth.value
+    }).then(data => user.grid.setData(data.list, data.params)));
+
+    // 새로고침 클릭 이벤트
+    btnRefresh.addEventListener('click', e => user.search().then(data => user.grid.setData(data.list, data.params)));
 }
 
 user.select = async function(params){
@@ -84,5 +94,3 @@ user.select = async function(params){
         alert(response.message);
     }
 }
-
-window._user = user;
