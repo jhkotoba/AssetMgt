@@ -1,21 +1,11 @@
 import { sender } from "/script/common/sender.js";
 
 window.addEventListener('DOMContentLoaded', function(event){
-    account.select();
+    account.search();
 });
 
-// 계좌관리
-const account = {
-    data: {}
-};
-
-// 계좌목록 조회
-account.select = async () => {
-    account.data.acctList = await sender.request({url: '/account/getAccountList', body: {}});
-};
-
 // 계좌목록 그리드 선언
-account.grid = new wGrid('account', {
+const account = new wGrid('account', {
     fields: [
         {title: null, element:'checkbox', name: 'check', edit: 'checkbox', width:'3%', align:'center'},
         {title:'번호', element: 'text', name: 'acctNo', width: '5%'},
@@ -29,11 +19,34 @@ account.grid = new wGrid('account', {
         {title:'수정일시', element: 'text', name: 'uptDttm', width: '12%'}                
     ],
     option: { 
+        isPaging: true,
         style: {
             height: 100, overflow: { y: 'scroll'}
         },
-        body: { state: true },
         data: { insert: {acctNum: '', acctNm: '', bankCd:'', acctSeq: 0} }
+    },
+    search: async (params) => {
+
+        // 기본값 세팅
+        if(params === undefined) params = {};
+        if(params.paging === undefined){
+            params.paging = {pageNo: 1, pageSize: 10, pageBlock: 10, totalCount: 0};
+        }
+
+        // 계좌목록 조회
+        let response = await sender.request({url: '/account/getAccountList', body: params});
+
+        // 응답 성공 시
+        if(response.resultCode == 'SUCCESS'){
+            response.data.list.forEach(item => item.check = false);
+            return response.data;
+        // 응답 실패 시
+        }else{
+            console.error(response.message);
+            alert(response.message);
+            // 빈값 반환
+            return {list:[], params:{}};
+        }
     }
 });
 

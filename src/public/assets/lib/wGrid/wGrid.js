@@ -29,7 +29,6 @@ import { deleter } from "./plugin/deleter.js";
         status.settingOption(this, paramater.option);
 
         // 제작 관리 객체 생성
-        // element.init(this);
         creator.init(this, paramater);
         canceler.init(this);
         amender.init(this);
@@ -39,10 +38,17 @@ import { deleter } from "./plugin/deleter.js";
         watcher.init(this, paramater.event);
 
         // 그리드 생성
-        creator.create(this);        
+        creator.create(this);
 
         return this;
     }
+
+    /**
+     * 조회함수 연결
+     * @param {*} params 
+     * @returns 
+     */
+    search = params => creator.search(this, params);
 
     /**
      * 그리드 데이터 가져오기

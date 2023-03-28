@@ -21,6 +21,14 @@ export const creator = {
     init: (self, paramater) => init(self, paramater),
 
     /**
+     * 저장된 조회함수 호출
+     * @param {*} self 
+     * @param {*} params 
+     * @returns 
+     */
+    search: (self, params) => search[self.sequence](params),
+
+    /**
      * 그리드 생성(최초 1회 실행)
      * @param {*} self 
      * @returns 
