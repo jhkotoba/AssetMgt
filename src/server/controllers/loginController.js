@@ -21,7 +21,7 @@ exports.loginProcess = async (request, response, next) => {
                     response.status(200).json({message: '로그인에 실패하였습니다.', resultCode: 'FAIL'});
                     break;
                 default :
-                    response.status(500).json({resultCode: 'SYSTEM_ERROR', message: `시스템 오류가 발생하였습니다.(${error.message})`});
+                    response.status(500).json({resultCode: 'SYSTEM_ERROR', message: `시스템 오류가 발생하였습니다.`});
                     break;
             }
             
@@ -68,7 +68,7 @@ exports.joinProcess = async (request, response, next) => {
                 response.status(200).json({resultCode: error.message, message: '저장에 실패하였습니다.'});
             break;
             default:
-                response.status(500).json({resultCode: 'SYSTEM_ERROR', message: `시스템 오류가 발생하였습니다.(${error.message})`});
+                response.status(500).json({resultCode: 'SYSTEM_ERROR', message: `시스템 오류가 발생하였습니다.`});
             break;
         }
     });
