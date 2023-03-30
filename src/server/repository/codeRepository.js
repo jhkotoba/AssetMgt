@@ -114,8 +114,13 @@ exports.selectCodeCount = async(params, conn) => {
  */
 exports.updateCodeList = async (params, conn) => {
     logger.debug(`codeRepository.updateCodeList \n params:: [${JSON.stringify(params)}]`);
+
+    // 수정할 코드번호 키 값
+    let updateNo = params.updateList.map(item => item.codeNo).join();
+
+    // 쿼리문 작성
     let query = 
-    ` /* menuRepository.updateCodeList */
+    ` /* codeRepository.updateCodeList */
     UPDATE SY_CODE M JOIN (
         SELECT
             A.CODE_NO
@@ -138,7 +143,7 @@ exports.updateCodeList = async (params, conn) => {
         ) A
         INNER JOIN SY_CODE C
         ON A.CODE_NO = C.CODE_NO
-        AND C.CODE_NO IN (` + params.updateList.map(item => item.codeNo).join() + `)
+        AND C.CODE_NO IN (${updateNo})
     ) U
     ON U.CODE_NO = M.CODE_NO
     SET
@@ -147,7 +152,8 @@ exports.updateCodeList = async (params, conn) => {
     , M.GROUP_CD = U.GROUP_CD
     , M.USE_YN = U.USE_YN
     , M.UPT_NO = U.UPT_NO
-    , M.UPT_DTTM = U.UPT_DTTM   
+    , M.UPT_DTTM = U.UPT_DTTM
+    WHERE M.CODE_NO IN (${updateNo})
     `;
     return await repo.update(query, conn);
 }

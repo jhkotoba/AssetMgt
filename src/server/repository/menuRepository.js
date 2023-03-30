@@ -133,6 +133,11 @@ exports.insertMenuList = async (params, conn) => {
  */
 exports.updateMenuList = async (params, conn) => {
     logger.debug(`menuRepository.updateMenuList \n params:: [${JSON.stringify(params)}]`);
+
+    // 수정할 메뉴번호 키 값
+    let updateNo = params.updateList.map(item => item.menuNo).join();
+
+    // 쿼리문 작성
     let query = 
     ` /* menuRepository.updateMenuList */
     UPDATE SY_MENU M JOIN (
@@ -158,7 +163,7 @@ exports.updateMenuList = async (params, conn) => {
         ) A
         INNER JOIN SY_MENU M
         ON M.MENU_NO = A.MENU_NO
-        AND M.MENU_NO IN (` + params.updateList.map(item => item.menuNo).join() + `)
+        AND M.MENU_NO IN (${updateNo})
     ) U
     ON U.MENU_NO = M.MENU_NO
     SET
@@ -171,6 +176,7 @@ exports.updateMenuList = async (params, conn) => {
     , M.USE_YN = U.USE_YN
     , M.UPT_NO = ${params.userNo}
     , M.UPT_DTTM = NOW()
+    AND M.MENU_NO IN (${updateNo})
     `;
     return await repo.update(query, conn);
 }
