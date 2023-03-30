@@ -108,3 +108,6 @@ exports.delete = async (query, oConn) => {
 
 // 문자대입
 exports.string = value => utils.isEmpty(value) ? 'NULL' : `'${value}'`;
+
+// 숫자 대입
+exports.int = value => utils.isEmpty(value) ? 0 : value;
