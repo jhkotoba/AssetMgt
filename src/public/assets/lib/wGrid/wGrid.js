@@ -144,6 +144,13 @@ import { deleter } from "./plugin/deleter.js";
     getRowElementRowSeq = rowSeq => status.getSeqRowElement(this, rowSeq);
 
     /**
+     * name값으로 엘리먼트 가져오기
+     * @param {string} name 
+     * @returns
+     */
+    getSeqCellElement = (rowSeq, name) => status.getSeqCellElement(this, rowSeq, name);
+
+    /**
      * name값으로 체크된 체크박스된 엘리먼트 가져오기
      * @param {string} name 
      * @returns

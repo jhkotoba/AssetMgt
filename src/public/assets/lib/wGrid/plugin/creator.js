@@ -288,7 +288,6 @@ const createBodyNewRow = (self) => {
 
     // 신규행 기본값 설정되어있으면 세팅
     let insertData = reposit.getBasicInsertData(self);
-    console.log('insertData:', insertData);
     if(insertData){
         for(let key in insertData){
             row[key] = insertData[key];
