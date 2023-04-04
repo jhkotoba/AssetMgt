@@ -26,10 +26,11 @@ exports.selectAccountCount = async(params, conn) => {
         `/* accountRepository.selectAccountList */
         SELECT
             ACCT_NO         AS acctNo
-            , ACCT_NUM      AS acctNum
-            , ACCT_NM       AS acctNm
             , USER_NO       AS userNo
             , BANK_CD       AS bankCd
+            , ACCT_TP_CD    AS acctTpCd
+            , ACCT_NM       AS acctNm
+            , ACCT_NUM      AS acctNum
             , ACCT_SEQ      AS acctSeq
             , CUR_MONEY     AS curMoney
             , USE_YN        AS useYn
@@ -54,10 +55,11 @@ exports.insertAccountList = async (params, conn) => {
     let query = `
     /* accountRepository.insertAccountList */
     INSERT INTO AC_ACCOUNT (
-        ACCT_NUM
-        , ACCT_NM
         , USER_NO
         , BANK_CD
+        , ACCT_TP_CD
+        , ACCT_NM
+        , ACCT_NUM
         , ACCT_SEQ
         , CUR_MONEY
         , USE_YN
@@ -67,7 +69,7 @@ exports.insertAccountList = async (params, conn) => {
         , UPT_DTTM
     ) VALUES \n`;
     params.insertList
-        .forEach((item, idx) => query += (idx == 0 ? '\n' : '\n, ') + `(${repo.string(item.acctNum)}, ${repo.string(item.acctNm)}, ${params.userNo}, ${repo.string(item.bankCd)}, ${repo.int(item.acctSeq)}, 0, ${repo.string(item.useYn)}, ${params.userNo}, NOW(), ${params.userNo}, NOW())`);
+        .forEach((item, idx) => query += (idx == 0 ? '\n' : '\n, ') + `(${params.userNo}, ${repo.string(item.bankCd)}, ${repo.string(item.acctTpCd)}, ${repo.string(item.acctNm)}, ${repo.string(item.acctNum)}, ${repo.int(item.acctSeq)}, 0, ${repo.string(item.useYn)}, NOW(), ${params.userNo}, NOW())`);
 
     return await repo.insert(query, conn);
 }
@@ -92,6 +94,7 @@ exports.updateAccountList = async (params, conn) => {
             , A.ACCT_NUM
             , A.ACCT_NM
             , A.BANK_CD
+            , A.ACCT_TP_CD
             , A.ACCT_SEQ
             , A.USE_YN
             , ${params.userNo} AS UPT_NO
@@ -100,7 +103,7 @@ exports.updateAccountList = async (params, conn) => {
     `;
     for(let i=0; i<params.updateList.length; i++){
         let p = params.updateList[i];
-        query += `      SELECT ${p.acctNo} AS ACCT_NO, ${repo.string(p.acctNum)} AS ACCT_NUM, ${repo.string(p.acctNm)} AS ACCT_NM,  ${repo.string(p.bankCd)} AS BANK_CD, ${repo.int(p.acctSeq)} AS ACCT_SEQ, ${repo.string(p.useYn)} AS USE_YN`
+        query += `      SELECT ${p.acctNo} AS ACCT_NO, ${repo.string(p.acctNum)} AS ACCT_NUM, ${repo.string(p.acctNm)} AS ACCT_NM,  ${repo.string(p.bankCd)} AS BANK_CD, ${repo.string(p.acctTpCd)} ACCT_TP_CD, ${repo.int(p.acctSeq)} AS ACCT_SEQ, ${repo.string(p.useYn)} AS USE_YN`
         if(i+1 < params.updateList.length){
             query += ' UNION ALL \n';
         }
@@ -116,6 +119,7 @@ exports.updateAccountList = async (params, conn) => {
     M.ACCT_NUM = U.ACCT_NUM
     , M.ACCT_NM = U.ACCT_NM
     , M.BANK_CD = U.BANK_CD
+    , M.ACCT_TP_CD = U.ACCT_TP_CD
     , M.ACCT_SEQ = U.ACCT_SEQ
     , M.USE_YN = U.USE_YN
     , M.UPT_NO = U.UPT_NO

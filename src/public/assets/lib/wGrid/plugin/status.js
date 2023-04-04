@@ -242,12 +242,11 @@ const reIndexing = (self, rowSequence) => {
 const setAllChecked = (self, name, bool) => {
 
     let cellElement = states[self.sequence].seqCellElement;
-    let index = status.getSeqIndex(self, seq);
-    let data = reposit.getData(self, index);
+    let data = reposit.getData(self);
 
     for(let seq in cellElement){
         cellElement[seq][name].checked = bool;
-        data[name] = bool == true ? self.option.checkbox.check : self.option.checkbox.uncheck;
+        data[status.getSeqIndex(self, seq)][name] = bool == true ? self.option.checkbox.check : self.option.checkbox.uncheck;
     }
 }
 

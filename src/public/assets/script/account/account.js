@@ -16,6 +16,17 @@ window.addEventListener('DOMContentLoaded', function(event){
     btnSave.addEventListener('click', applyAccount);
 });
 
+// 공동코드 맵핑
+const mappingCode = __code.reduce((acc, curr) => {
+    acc[curr.code] = curr.codeNm;
+    return acc;
+}, {});
+
+// 은행코드 목록
+const bankCd = __code.filter(f => f.groupCd === 'GRP_CD_BANK');
+// 계좌유형코드 목록
+const acctTpCd = __code.filter(f => f.groupCd === 'GRP_CD_ACCT_TYPE');
+
 // 계좌목록 적용(추가, 수정, 삭제)
 function applyAccount(event){
 
@@ -76,21 +87,21 @@ function applyAccount(event){
 const account = new wGrid('account', {
     fields: [
         {title: null, element:'checkbox', name: 'check', edit: 'checkbox', width:'3%', align:'center'},
-        {title:'번호', element: 'text', name: 'acctNo', width: '5%'},
-        {title:'계좌번호', element: 'text', name: 'acctNum', edit: 'text', width: '15%'},
-        {title:'계좌명', element: 'text', name: 'acctNm', edit: 'text', width: '15%'},
+        {title:'번호', element: 'text', name: 'acctNo', width: '3%'},
         {title:'은행', element: 'text', name: 'bankCd', edit:'select', width: '10%', 
-            data: { 
-                mapping: __code.reduce((acc, curr) => {
-                    acc[curr.code] = curr.codeNm;
-                    return acc;
-                }, {}),  
-                select: {list: __code, value: 'code', text: 'codeNm' }
-            }
+            data: {mapping: mappingCode, select: {list: bankCd, value: 'code', text: 'codeNm'}}
         },
-        {title:'계좌순번', element: 'number', name: 'acctSeq', edit:'text', width: '12%'},
+        {title:'계좌유형', element: 'text', name: 'acctTpCd', edit: 'select', width: '8%',
+            data: {mapping: mappingCode, select: {list: acctTpCd, value: 'code', text: 'codeNm'}}
+        },
+        {title:'계좌명', element: 'text', name: 'acctNm', edit: 'text', width: '16%'},
+        {title:'계좌번호', element: 'text', name: 'acctNum', edit: 'text', width: '15%'},        
+        {title:'순번', element: 'number', name: 'acctSeq', edit:'text', width: '5%'},
         {title:'사용여부', element: 'text', name: 'useYn', edit:'select', width: '6%', 
-            data: {select: {list: [{value:'Y', text:'사용'}, {value:'N', text:'미사용'}]}}
+            data: {
+                mapping: {'Y': '사용', 'N': '미사용'},
+                select: {list: [{value:'Y', text:'사용'}, {value:'N', text:'미사용'}]}
+            }
         },
         {title:'등록자', element: 'text', name: 'insNo', width: '7%'},
         {title:'등록일시', element: 'text', name: 'insDttm', width: '10%'},
@@ -100,7 +111,7 @@ const account = new wGrid('account', {
     option: { 
         isPaging: true,
         style: {
-            height: (window.innerHeight - 200), overflow: { y: 'scroll'}
+            height: (window.innerHeight - 205), overflow: { y: 'scroll'}
         },
         data: { insert: {acctNum: '', acctNm: '', bankCd:'', acctSeq: 0} }
     },
