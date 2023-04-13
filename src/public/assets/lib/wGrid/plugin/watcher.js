@@ -28,7 +28,7 @@ export const watcher = {
 const init = (self, outerEvent) => {
 
     // 생성할 이벤트 종류
-    let evList = ["click", "change", "keyup"];
+    let evList = ['click', 'change', 'keyup', 'dblclick'];
     // 내부 연결 이벤트
     let innerEvent = {};
     // 필드 데이터
@@ -69,6 +69,12 @@ const init = (self, outerEvent) => {
 
     // 헤드 이벤트 세팅
     for(let i=0; i<evList.length; i++){
+
+        // 헤드쪽에서는 더블클릭 이벤트 미사용
+        if(evList[i] === 'dblclick'){
+            continue;
+        }
+
         // 이벤트 등록
         headElement.addEventListener(evList[i], event => {
 
@@ -90,14 +96,26 @@ const init = (self, outerEvent) => {
     // 바디 이벤트 세팅
     for(let i=0; i<evList.length; i++){
 
+        // 더블클릭 이벤트 미사용일 경우 통과
+        if(evList[i] === 'dblclick' && self.option.isDblClick !== true){
+            continue;
+        }
+
         bodyElement.addEventListener(evList[i], event => {
 
             // 체크박스 클릭이벤트 강제 종료
             if(event.type == 'click' && event.target.dataset.sync == 'checkbox') return;
             
+            // 행과 셀 타겟 가져오기
             let row = util.closest("TR", event.target);
             if(!row)return;
+            let cell = util.closest("TD", event.target);
+            if(!cell)return;
+
+            // 셀 이름 가져오기
+            let name = cell.dataset.cellName;
             
+            // 목록 데이터관련 변수
             let sequence = row.dataset.rowSeq;
             let index = status.getSeqIndex(self, sequence);
             let data = reposit.getData(self, index);
@@ -105,26 +123,26 @@ const init = (self, outerEvent) => {
             // 데이터 동기화
             switch(event.target.dataset.sync){
             case 'checkbox':
-                data[event.target.name] = 
+                data[name] = 
                     event.target.checked == true ? self.option.checkbox.check : self.option.checkbox.uncheck;
                 break;
             case 'number':
                 let number = Number(event.target.value.replace('/[^0-9]/g', ''));
-                let value = Number.isNaN(number) ? data[event.target.name] : number;
-                data[event.target.name] = value;
+                let value = Number.isNaN(number) ? data[name] : number;
+                data[name] = value;
                 event.target.value = value;
                 break;
             case 'text': case 'select': case 'date': case 'dateTime':
-                data[event.target.name] = event.target.value;
+                data[name] = event.target.value;
                 break;
             }
 
             // 연결할 이벤트 체크
             if(innerEvent[evList[i]]
-                && innerEvent[evList[i]][event.target.name]
-                && innerEvent[evList[i]][event.target.name].body ){
+                && innerEvent[evList[i]][name]
+                && innerEvent[evList[i]][name].body ){
                 // 연결된 이벤트 호출
-                innerEvent[evList[i]][event.target.name].body(
+                innerEvent[evList[i]][name].body(
                     event,
                     reposit.getDeepData(self, index),
                     index,

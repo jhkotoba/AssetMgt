@@ -18,7 +18,7 @@ export const creator = {
      * @param {*} self 
      * @returns 
      */
-    init: (self, paramater) => init(self, paramater),
+    init: (self, parameter) => init(self, parameter),
 
     /**
      * 저장된 조회함수 호출
@@ -110,7 +110,7 @@ export const creator = {
  * 생성객체 초기화
  * @param {*} self 
  */
-const init = (self, paramater) => {
+const init = (self, parameter) => {
    
     /**
      * 그리드에 사용되는 엘리먼트 생성
@@ -162,7 +162,7 @@ const init = (self, paramater) => {
     elements[self.sequence] = {id, target, head, headTb, headTr, body, bodyTb, bodyEmpty, pagination};
 
     // 호출 함수 저장
-    search[self.sequence] = paramater.search;
+    search[self.sequence] = parameter.search;
 }
 
 /**
@@ -525,6 +525,11 @@ const createBodyRowCell = (self, row, rIdx, cell, cIdx, loaded) => {
 
     // 태그연결
     td.appendChild(div);
+
+    // cell 이름설정
+    if(cell.name){
+        td.dataset.cellName = cell.name;
+    }
 
     // 행 직후 콜백함수 호출 세팅
     if(cell.loaded){

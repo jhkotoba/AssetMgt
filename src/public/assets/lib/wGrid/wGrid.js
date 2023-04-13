@@ -11,10 +11,10 @@ import { deleter } from "./plugin/deleter.js";
  * @author JeHoon 
  * @version 0.11.2
  */
- export class wGrid {
+window.wGrid = class wGrid {
 
     // 생성자
-    constructor(target, paramater){
+    constructor(target, parameter){
 
          // 그리드 아이디 저장
         this.id = target;
@@ -22,20 +22,20 @@ import { deleter } from "./plugin/deleter.js";
         this.self = this;
 
         // 데이터 관리 객체 생성
-        reposit.init(this, paramater);
+        reposit.init(this, parameter);
         // 상태 관리 객체 생성
         status.init(this);
         // 그리드 옵션세팅
-        status.settingOption(this, paramater.option);
+        status.settingOption(this, parameter.option);
 
         // 제작 관리 객체 생성
-        creator.init(this, paramater);
+        creator.init(this, parameter);
         canceler.init(this);
         amender.init(this);
         deleter.init(this);
 
         // 이벤트 관리 객체 생성
-        watcher.init(this, paramater.event);
+        watcher.init(this, parameter.event);
 
         // 그리드 생성
         creator.create(this);
@@ -440,4 +440,3 @@ import { deleter } from "./plugin/deleter.js";
      */
     deleteRow = (rowIdx, rowSeq) => deleter.deleteRow(this, rowIdx, rowSeq);    
 }
-window.wGrid = wGrid;

@@ -331,7 +331,13 @@ const settingOption = (self, option) => {
      * 페이지 사용여부
      * 기본값 : false
      */
-    self.option.isPaging = option?.isPaging === undefined ? false : option.isPaging;    
+    self.option.isPaging = option?.isPaging === undefined ? false : option.isPaging;
+
+    /**
+     * 더블클릭 사용여부
+     * 기본값 : false
+     */
+    self.option.isDblClick = option?.isDblClick === undefined ? false : option.isDblClick;
 
     /**
      * 그리드 빈 상태일 경우 옵션
@@ -373,8 +379,8 @@ const settingOption = (self, option) => {
      * @deprecated
      * 신규행 생성시 기본값 설정
      */
-    self.option.data = {};
-    self.option.data.insert = option?.data?.insert === undefined ? null : option.data.insert;
+    //self.option.data = {};
+    //self.option.data.insert = option?.data?.insert === undefined ? null : option.data.insert;
 }
 
 /**
