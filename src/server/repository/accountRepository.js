@@ -55,7 +55,7 @@ exports.insertAccountList = async (params, conn) => {
     let query = `
     /* accountRepository.insertAccountList */
     INSERT INTO AC_ACCOUNT (
-        , USER_NO
+        USER_NO
         , BANK_CD
         , ACCT_TP_CD
         , ACCT_NM
@@ -69,7 +69,7 @@ exports.insertAccountList = async (params, conn) => {
         , UPT_DTTM
     ) VALUES \n`;
     params.insertList
-        .forEach((item, idx) => query += (idx == 0 ? '\n' : '\n, ') + `(${params.userNo}, ${repo.string(item.bankCd)}, ${repo.string(item.acctTpCd)}, ${repo.string(item.acctNm)}, ${repo.string(item.acctNum)}, ${repo.int(item.acctSeq)}, 0, ${repo.string(item.useYn)}, NOW(), ${params.userNo}, NOW())`);
+        .forEach((item, idx) => query += (idx == 0 ? '\n' : '\n, ') + `(${params.userNo}, ${repo.string(item.bankCd)}, ${repo.string(item.acctTpCd)}, ${repo.string(item.acctNm)}, ${repo.string(item.acctNum)}, ${repo.int(item.acctSeq)}, 0, ${repo.string(item.useYn)}, ${params.userNo}, NOW(), ${params.userNo}, NOW())`);
 
     return await repo.insert(query, conn);
 }

@@ -176,7 +176,7 @@ exports.updateMenuList = async (params, conn) => {
     , M.USE_YN = U.USE_YN
     , M.UPT_NO = ${params.userNo}
     , M.UPT_DTTM = NOW()
-    AND M.MENU_NO IN (${updateNo})
+    WHERE M.MENU_NO IN (${updateNo})
     `;
     return await repo.update(query, conn);
 }
