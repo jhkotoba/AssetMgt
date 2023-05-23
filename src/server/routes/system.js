@@ -6,6 +6,9 @@ const systemController = require(`${basePath}/controllers/systemController.js`)
 // 메뉴관리 페이지
 router.get("/menu", async (request, response) => response.send(await model.modelAndView('system/menu.html', {request, code: ['GRP_CD_AUTH']})));
 
+// 팝업관리 페이지
+router.get("/menu", async (request, response) => response.send(await model.modelAndView('system/popup.html', {request, code: ['GRP_CD_AUTH']})));
+
 // 코드관리 페이지
 router.get("/code", async (request, response) => response.send(await model.modelAndView('system/code.html', {request})));
 

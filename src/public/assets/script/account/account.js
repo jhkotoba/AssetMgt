@@ -1,8 +1,27 @@
 import { sender } from "/script/common/sender.js";
 import { isEmpty } from "/script/common/validation.js";
+import { modal } from "/script/common/modal.js";
 
+// 공동코드 맵핑
+const mappingCode = __code.reduce((acc, curr) => {
+    acc[curr.code] = curr.codeNm;
+    return acc;
+}, {});
+
+// 페이지 로드 완료 실행 로직
 window.addEventListener('DOMContentLoaded', function(event){
+    
+    // 계좌목록 세팅
+    initAcctList();
 
+    // 계좌상세팝업 세팅
+    initAcctModal();
+});
+
+/**
+ * 계좌목록 세팅
+ */
+function initAcctList(){
     // 계좌목록 조회
     account.search().then(data => account.setData(data.list, data.params));
 
@@ -14,13 +33,14 @@ window.addEventListener('DOMContentLoaded', function(event){
 
     // 저장버튼 클릭 이벤트
     btnSave.addEventListener('click', applyAccount);
-});
+}
 
-// 공동코드 맵핑
-const mappingCode = __code.reduce((acc, curr) => {
-    acc[curr.code] = curr.codeNm;
-    return acc;
-}, {});
+/**
+ * 계좌상세팝업 세팅
+ */
+function initAcctModal(){
+
+}
 
 // 은행코드 목록
 const bankCd = __code.filter(f => f.groupCd === 'GRP_CD_BANK');
@@ -87,13 +107,12 @@ const account = new wGrid('account', {
         }
     },
     event: {
-        dblclick: (e, data) => {
-            if(data._state === 'SELECT'){
-                window.open("/account/accountDetail", "_blank", "width=500,height=400,top=200,left=200");
-            }
-        }
+        dblclick: (e, data) => data._state === 'SELECT' ? acctModal.open() : null
     }
 });
+
+// 계좌 상세팝업
+const acctModal = modal.create('acctModal', 'acctClose', {});
 
 // 계좌목록 적용(추가, 수정, 삭제)
 function applyAccount(event){

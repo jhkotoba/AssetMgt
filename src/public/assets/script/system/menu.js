@@ -25,7 +25,6 @@ const menu = {
             top: {check: false, menuNm: '', menuLv: 1, menuSeq: 0, groupNo: 0, dispYn: 'Y', useYn: 'Y'},
             sub: {check: false, menuUrl: '', menuLv: 2, menuSeq: 0, groupNo: 0, dispYn: 'Y', useYn: 'Y'}
         },
-        optionRow: { style: {cursor: 'pointer'}, chose: true},
         code: {
             mapping: __code.reduce((acc, curr) => {
                 acc[curr.code] = curr.codeNm;
@@ -100,7 +99,11 @@ const menu = {
                 {title:'수정일시', element: 'text', name: 'uptDttm', width: '10%'}                
             ],
             option: { 
-                style: { height: Number(gridHeight/2)+13, overflow: { y: 'scroll'}},
+                style: { 
+                    height: Number(gridHeight/2)+13, 
+                    overflow: { y: 'scroll'},
+                    row:{cursor: 'pointer'}
+                },
                 body: { state: true },
             },
             data: { insert: this.data.newRow.top },
@@ -124,7 +127,7 @@ const menu = {
                         this.grid.sub.setData(JSON.parse(JSON.stringify(list)));
                     }
                 }
-            }
+            }            
         });
 
         // 하위메뉴 그리드 생성

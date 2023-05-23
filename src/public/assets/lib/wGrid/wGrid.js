@@ -40,6 +40,10 @@ window.wGrid = class wGrid {
         // 그리드 생성
         creator.create(this);
 
+        // 생성 완료 후 함수 호출
+        if(typeof parameter.loaded === 'function'){
+            parameter.loaded(this);
+        }
         return this;
     }
 
