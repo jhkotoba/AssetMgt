@@ -67,11 +67,12 @@ const menu = {
 
         // 상위메뉴 첫행 혹은 이전에 선택한 행 클릭
         let item = this.grid.top.getData().filter(f => f.menuNo == this.data.topMenuNo)[0];
+        
         if(item?.menuNo){
             this.data.topMenuNo = item.menuNo;
             this.grid.top.getRowElementRowSeq(item._rowSeq).click();
         }else{
-            this.grid.top.getFirstRowElement().click();
+            this.grid.top.getFirstRowElement().children[0].click();
         }
     },
 
