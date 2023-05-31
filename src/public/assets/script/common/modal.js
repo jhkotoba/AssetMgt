@@ -5,11 +5,12 @@ export const modal = {
 
     /**
      * 모달 팝업 생성
-     * @param {*} targetId 
+     * @param {*} openId 
+     * @param {*} closeId
      * @param {*} parameter 
      * @returns 
      */
-    create: (targetId, parameter) => new Modal(targetId, parameter)
+    create: (openId, closeId, parameter) => new Modal(openId, closeId, parameter)
 }
 
 /**
@@ -17,35 +18,45 @@ export const modal = {
  */
 class Modal {
     // 생성자
-    constructor(openId, closeId, option){
+    constructor(openId, closeId, parameter){
         
         // 모달의 타켓
         this.modalTarget = document.getElementById(openId);
         // 모달의 닫기 타겟
         this.closeTarget = document.getElementById(closeId);
+        // 모달의 content
+        this.modalContent = this.modalTarget.querySelector('.content');
 
         /**
          * 옵션 세팅
          */
         // z-index 세팅
-        if(option?.zIndex){
-            this.modalTarget.style.zIndex = option.zIndex;
+        if(parameter?.option?.zIndex){
+            this.modalTarget.style.zIndex = parameter.option.zIndex;
         }
         // open 콜백 세팅
-        if(option?.beforeOpenFn && typeof option.beforeOpenFn == 'function'){
-            this.beforeOpenFn = option.beforeOpenFn;
+        if(parameter?.beforeOpenFn && typeof parameter.beforeOpenFn == 'function'){
+            this.beforeOpenFn = parameter.beforeOpenFn;
         }
-        if(option?.afterOpenFn && typeof option.afterOpenFn == 'function'){
-            this.afterOpenFn = option.afterOpenFn;
+        if(parameter?.afterOpenFn && typeof parameter.afterOpenFn == 'function'){
+            this.afterOpenFn = parameter.afterOpenFn;
         }
         // close 콜백 세팅
-        if(option?.beforeCloseFn && typeof option.beforeCloseFn == 'function'){
-            this.beforeCloseFn = option.beforeCloseFn;
+        if(parameter?.beforeCloseFn && typeof parameter.beforeCloseFn == 'function'){
+            this.beforeCloseFn = parameter.beforeCloseFn;
         }
-        if(option?.afterCloseFn && typeof option.afterCloseFn == 'function'){
-            this.afterCloseFn = option.afterCloseFn;
+        if(parameter?.afterCloseFn && typeof parameter.afterCloseFn == 'function'){
+            this.afterCloseFn = parameter.afterCloseFn;
         }
 
+        // 높이 설정
+        if(parameter?.option?.height){
+            this.modalContent.style.height = parameter.option.height;
+        }
+        // 넓이 설정
+        if(parameter?.option?.width){
+            this.modalContent.style.width = parameter.option.width;
+        }
 
         // 닫기 이벤트 생성
         this.closeTarget.addEventListener('click', e => this.close(e));
@@ -76,29 +87,30 @@ class Modal {
     /**
      * 모달팝업 열기
      */
-    open = () => {
+    open = (parameter) => {
 
         // 모달창 열기 전 콜백함수 호출
         if(typeof this.beforeOpenFn === 'function'){
-            this.beforeOpenFn();
+            this.beforeOpenFn(parameter);
         }
+
         // 모달팝업 표시
         this.modalTarget.classList.add('on');
 
         // 모달창 표시 후 콜백함수 호출
         if(typeof this.afterOpenFn === 'function'){
-            this.afterOpenFn();
+            this.afterOpenFn(parameter);
         }
     }
 
     /**
      * 모달팝업 닫기
      */
-    close = () => {
+    close = (parameter) => {
 
         // 모달창 열기 전 콜백함수 호출
         if(typeof this.beforeCloseFn === 'function'){
-            this.beforeCloseFn();
+            this.beforeCloseFn(parameter);
         }
 
         // 모달팝업 표시
@@ -106,7 +118,7 @@ class Modal {
 
         // 모달창 표시 후 콜백함수 호출
         if(typeof this.afterCloseFn === 'function'){
-            this.afterCloseFn();
+            this.afterCloseFn(parameter);
         }
     }
 }

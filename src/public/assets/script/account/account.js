@@ -13,39 +13,13 @@ window.addEventListener('DOMContentLoaded', function(event){
     
     // 계좌목록 세팅
     initAcctList();
-
-    // 계좌상세팝업 세팅
-    initAcctModal();
 });
-
-/**
- * 계좌목록 세팅
- */
-function initAcctList(){
-    // 계좌목록 조회
-    account.search().then(data => account.setData(data.list, data.params));
-
-    // 버튼 이벤트 등록
-    btnAdd.addEventListener('click', () => account.prependRow());
-
-    // 편집 버튼
-    btnEdit.addEventListener('click', () => account.modifyRowCheckedElement('check'));
-
-    // 저장버튼 클릭 이벤트
-    btnSave.addEventListener('click', applyAccount);
-}
-
-/**
- * 계좌상세팝업 세팅
- */
-function initAcctModal(){
-
-}
 
 // 은행코드 목록
 const bankCd = __code.filter(f => f.groupCd === 'GRP_CD_BANK');
 // 계좌유형코드 목록
 const acctTpCd = __code.filter(f => f.groupCd === 'GRP_CD_ACCT_TYPE');
+__code = undefined;
 
 // 계좌목록 그리드 선언
 const account = new wGrid('account', {
@@ -107,12 +81,41 @@ const account = new wGrid('account', {
         }
     },
     event: {
-        dblclick: (e, data) => data._state === 'SELECT' ? acctModal.open() : null
+        dblclick: (e, data) => data._state === 'SELECT' ? acctModal.open(data) : null
     }
 });
 
 // 계좌 상세팝업
-const acctModal = modal.create('acctModal', 'acctClose', {});
+const acctModal = modal.create('acctModal', 'acctClose', {
+    option: {
+        height: '700px',
+        width: '500px'
+    },
+    beforeOpenFn: function(data){
+
+        // 계좌상세 모달 데이터 비우기
+        cleanAcctModal();
+        // 계좌상세 모달 데이터 세팅
+        setAcctModal(data);
+    }
+});
+
+/**
+ * 계좌목록 세팅
+ */
+function initAcctList(){
+    // 계좌목록 조회
+    account.search().then(data => account.setData(data.list, data.params));
+
+    // 버튼 이벤트 등록
+    btnAdd.addEventListener('click', () => account.prependRow());
+
+    // 편집 버튼
+    btnEdit.addEventListener('click', () => account.modifyRowCheckedElement('check'));
+
+    // 저장버튼 클릭 이벤트
+    btnSave.addEventListener('click', applyAccount);
+}
 
 // 계좌목록 적용(추가, 수정, 삭제)
 function applyAccount(event){
@@ -168,4 +171,22 @@ function applyAccount(event){
         element.focus();
         return isValidation;
     }
+}
+
+/**
+ * 계좌상세팝업 클린
+ */
+function cleanAcctModal(){
+    console.log('function cleanModal');
+
+
+}
+
+/**
+ * 계좌상세팝업 데이터 세팅
+ */
+function setAcctModal(data){
+    console.log('function setAcctModal ::', data);
+
+
 }
