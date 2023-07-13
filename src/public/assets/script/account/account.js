@@ -88,8 +88,10 @@ const account = new wGrid('account', {
 // 계좌 상세팝업
 const acctModal = modal.create('acctModal', 'acctClose', {
     option: {
-        height: '700px',
-        width: '500px'
+        dimensions: {
+            height: '500px',
+            width: '700px'
+        }
     },
     beforeOpenFn: function(data){
 

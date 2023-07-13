@@ -49,13 +49,19 @@ class Modal {
             this.afterCloseFn = parameter.afterCloseFn;
         }
 
-        // 높이 설정
-        if(parameter?.option?.height){
-            this.modalContent.style.height = parameter.option.height;
-        }
-        // 넓이 설정
-        if(parameter?.option?.width){
-            this.modalContent.style.width = parameter.option.width;
+        
+
+        // 높이, 넓이 설정
+        if(parameter?.option?.dimensions){
+            // 높이 설정
+            if(parameter?.option?.dimensions?.height){
+                this.modalContent.style.height = parameter.option.dimensions.height;
+                this.modalContent.style.margin = ((window.innerHeight - Number(String(parameter.option.dimensions.height).replace(/\D/g, '')))/2) + 'px auto';
+            }
+            // 넓이 설정
+            if(parameter?.option?.width){
+                this.modalContent.style.width = parameter.option.width;
+            }
         }
 
         // 닫기 이벤트 생성
